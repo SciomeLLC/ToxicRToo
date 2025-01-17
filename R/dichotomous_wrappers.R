@@ -53,23 +53,37 @@
 #' model <- single_dichotomous_fit(D, Y, N, model_type = "hill", fit_type = "laplace")
 #' summary(model)
 #'
-single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
-                                   prior = NULL, BMR = 0.1,
-                                   alpha = 0.05, degree = 2, samples = 21000,
-                                   burnin = 1000, threads=2, seed = 12331) {
+single_dichotomous_fit <- function(
+  D, Y, N, model_type,
+  fit_type = "laplace",
+  prior = NULL,
+  BMR = 0.1,
+  alpha = 0.05,
+  degree = 2,
+  samples = 21000,
+  burnin  = 1000,
+  threads = 2,
+  seed    = 12331
+) {
+
+  # Convert inputs to matrix
   Y <- as.matrix(Y)
   D <- as.matrix(D)
   N <- as.matrix(N)
-  
+
   .setseedGSL(seed)
   .set_threads(threads)
 
   DATA <- cbind(D, Y, N)
   test <- .check_for_na(DATA)
-  Y <- Y[test == TRUE, , drop = F]
-  D <- D[test == TRUE, , drop = F]
-  N <- N[test == TRUE, , drop = F]
+  Y <- Y[test == TRUE, , drop = FALSE]
+  D <- D[test == TRUE, , drop = FALSE]
+  N <- N[test == TRUE, , drop = FALSE]
 
+  # Rebuild DATA
+  DATA <- cbind(D, Y, N)
+
+  # Build or check prior
   if (is.null(prior)) {
     prior <- .bayesian_prior_dich(model_type, degree)
   } else {
@@ -85,100 +99,139 @@ single_dichotomous_fit <- function(D, Y, N, model_type, fit_type = "laplace",
     }
   }
 
+  # map model_type to internal code
   dmodel <- which(model_type == c(
-    "hill", "gamma", "logistic", "log-logistic",
-    "log-probit", "multistage", "probit",
-    "qlinear", "weibull"
+    "hill","gamma","logistic","log-logistic","log-probit",
+    "multistage","probit","qlinear","weibull"
   ))
-  DATA <- cbind(D, Y, N)
+  if (identical(dmodel, integer(0))) {
+    stop(
+      'Please specify one of: "hill","gamma","logistic","log-logistic",',
+      '"log-probit","multistage","probit","qlinear","weibull"'
+    )
+  }
+
+  # Some bounds
   o1 <- c(BMR, alpha, -9999)
   o2 <- c(1, degree)
 
-  if (identical(dmodel, integer(0))) {
-    stop('Please specify one of the following model types:
-            "hill", "gamma", "logistic", "log-logistic"
-            "log-probit", "multistage"
-            "probit", "qlinear", "weibull"')
-  }
-  if (dmodel == 6) {
-    if ((o2[2] < 2) + (o2[2] > nrow(DATA) - 1) > 0) {
-      stop("The multistage model needs to have between
-               2 and nrow(DATA)-1 paramaters. If degree = 1
-               use the quantal linear model.")
+  # If multistage, check degree constraints
+  if (dmodel == 6) { # multistage
+    if ((o2[2] < 2) || (o2[2] > (nrow(DATA) - 1))) {
+      stop("Multistage must have degree between 2 and nrow(DATA)-1. If degree=1, use qlinear.")
     }
   }
-  fit_type = tolower(fit_type)
-  fitter <- which(fit_type == c("mle", "laplace", "mcmc"))
+
+  fit_type <- tolower(fit_type)
+  fitter <- which(fit_type == c("mle","laplace","mcmc"))
   if (identical(fitter, integer(0))) {
-    stop('The fit_type variable must be either "laplace","mle", or "mcmc"\n')
+    stop('fit_type must be "laplace","mle", or "mcmc"')
   }
+  ret_obj <- NULL
 
-
-  if (fitter == 1) { # MLE fit
+  if (fitter == 1) {
+    # MLE fit
     bounds <- .bmd_default_frequentist_settings(model_type, degree)
     temp <- .run_single_dichotomous(dmodel, DATA, bounds, o1, o2, seed)
-    # class(temp$bmd_dist) <- "BMD_CDF"
+
+    # Post-process bmd_dist -> bmd with alpha bounds
     temp_me <- temp$bmd_dist
-
-    temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
-    temp_me <- temp_me[!is.na(temp_me[, 1]), ]
-    temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
-    if (is.null(nrow(temp_me))){temp$bmd <- c(temp$bmd, NA, NA)} else if(nrow(temp_me) > 5) {
-      te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC",ties=mean)
-      temp$bmd <- c(temp$bmd, te(alpha), te(1 - alpha))
+    temp_me <- temp_me[!is.infinite(temp_me[,1]),,drop=FALSE]
+    temp_me <- temp_me[!is.na(temp_me[,1]),,drop=FALSE]
+    temp_me <- temp_me[!is.nan(temp_me[,1]),,drop=FALSE]
+    if (nrow(temp_me) > 5) {
+      te <- splinefun(temp_me[, 2], temp_me[, 1], method="monoH.FC", ties=mean)
+      bmd_val <- c(temp$bmd, te(alpha), te(1 - alpha))
     } else {
-      temp$bmd <- c(temp$bmd, NA, NA)
+      bmd_val <- c(temp$bmd, NA, NA)
     }
-    temp$bounds <- bounds
-    temp$model <- model_type
-    temp$data <- DATA
-    temp$options <- c(BMR, alpha, samples, burnin)
-    class(temp) <- "BMDdich_fit_maximized"
-  }
+    names(bmd_val) <- c("BMD","BMDL","BMDU")
 
-  if (fitter == 2) { # laplace fit
+    # Build the S4 object
+    outObj <- BMD_dichotomous_fit_maximized(
+      full_model   = temp$full_model,
+      parameters   = temp$parameters,
+      covariance   = temp$covariance,
+      bmd_dist     = temp$bmd_dist,
+      bmd          = bmd_val,
+      maximum      = temp$maximum,
+      gof_p_value  = temp$gof_p_value,
+      gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
+      prior        = NA,  # MLE => no prior
+      model        = model_type,
+      data         = DATA,
+      mcmc_result  = NULL,
+      options      = c(BMR, alpha, samples, burnin)
+    )
+
+  } else if (fitter == 2) {
+    # Laplace
     temp <- .run_single_dichotomous(dmodel, DATA, prior$priors, o1, o2, seed)
-    # class(temp$bmd_dist) <- "BMD_CDF"
     temp_me <- temp$bmd_dist
-    temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
-    temp_me <- temp_me[!is.na(temp_me[, 1]), ]
-    temp_me <- temp_me[!is.nan(temp_me[, 1]), ]
-    if (is.null(nrow(temp_me))){temp$bmd <- c(temp$bmd, NA, NA)} else if(nrow(temp_me) > 5) {
-      te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC",ties=mean)
-      temp$bmd <- c(temp$bmd, te(alpha), te(1 - alpha))
+    temp_me <- temp_me[!is.infinite(temp_me[,1]),,drop=FALSE]
+    temp_me <- temp_me[!is.na(temp_me[,1]),,drop=FALSE]
+    temp_me <- temp_me[!is.nan(temp_me[,1]),,drop=FALSE]
+    if (nrow(temp_me) > 5) {
+      te <- splinefun(temp_me[, 2], temp_me[, 1], method="monoH.FC", ties=mean)
+      bmd_val <- c(temp$bmd, te(alpha), te(1 - alpha))
     } else {
-      temp$bmd <- c(temp$bmd, NA, NA)
+      bmd_val <- c(temp$bmd, NA, NA)
     }
-    temp$prior <- prior
-    temp$model <- model_type
-    temp$data <- DATA
-    temp$options <- c(BMR, alpha, samples, burnin)
-    class(temp) <- "BMDdich_fit_maximized"
-  }
-  if (fitter == 3) {
+    names(bmd_val) <- c("BMD","BMDL","BMDU")
+
+    outObj <- BMD_dichotomous_fit_maximized(
+      full_model   = temp$full_model,
+      parameters   = temp$parameters,
+      covariance   = temp$covariance,
+      bmd_dist     = temp$bmd_dist,
+      bmd          = bmd_val,
+      maximum      = temp$maximum,
+      gof_p_value  = temp$gof_p_value,
+      gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
+      prior        = prior,  # store the prior
+      model        = model_type,
+      data         = DATA,
+      mcmc_result  = NULL,
+      options      = c(BMR, alpha, samples, burnin)
+    )
+
+  } else if (fitter == 3) {
+    # MCMC
     temp <- .run_dichotomous_single_mcmc(
-      dmodel, DATA[, 2:3, drop = F], DATA[, 1, drop = F], prior$priors,
+      dmodel, DATA[,2:3,drop=FALSE], DATA[,1,drop=FALSE], prior$priors,
       c(BMR, alpha, samples, burnin), seed
     )
-    # class(temp$fitted_model$bmd_dist) <- "BMD_CDF"
-    temp$bmd_dist <- cbind(quantile(temp$mcmc_result$BMD_samples, seq(0.005, 0.995, 0.005),na.rm=TRUE), seq(0.005, 0.995, 0.005))
+    # build bmd_dist from BMD_samples
+    my_samps <- temp$mcmc_result$BMD_samples
+    bmd_med  <- mean(my_samps, na.rm=TRUE)
+    bmd_l    <- stats::quantile(my_samps, alpha,    na.rm=TRUE)
+    bmd_u    <- stats::quantile(my_samps, 1-alpha, na.rm=TRUE)
+    bmd_val  <- c(bmd_med, bmd_l, bmd_u)
+    names(bmd_val) <- c("BMD","BMDL","BMDU")
 
-    temp$options <- options <- c(BMR, alpha, samples, burnin)
-    temp$prior <- prior <- list(prior = prior)
-    temp$model <- model_type
-    temp$data <- DATA
-    temp$full_model <- temp$fitted_model$full_model
-    temp$parameters <- temp$fitted_model$parameters
-    temp$covariance <- temp$fitted_model$covariance
-    temp$maximum <- temp$fitted_model$maximum
-    temp$bmd <- as.numeric(c(mean(temp$mcmc_result$BMD_samples,na.rm=TRUE), quantile(temp$mcmc_result$BMD_samples, c(alpha, 1 - alpha), na.rm = TRUE)))
-    temp$fitted_model <- NULL
-    class(temp) <- "BMDdich_fit_MCMC"
+    bmd_grid <- seq(0.005, 0.995, 0.005)
+    bmd_vals <- stats::quantile(my_samps, bmd_grid, na.rm=TRUE)
+    temp_bmd_dist <- cbind(bmd_vals, bmd_grid)
+
+    ret_obj <- BMD_dichotomous_fit_MCMC(
+      full_model   = temp$fitted_model$full_model,
+      parameters   = temp$fitted_model$parameters,
+      covariance   = temp$fitted_model$covariance,
+      bmd_dist     = temp_bmd_dist,
+      bmd          = bmd_val,
+      maximum      = temp$fitted_model$maximum,
+      gof_p_value  = temp$gof_p_value,
+      gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
+      prior        = prior,
+      model        = model_type,
+      data         = DATA,
+      mcmc_result  = temp$mcmc_result,
+      options      = c(BMR, alpha, samples, burnin)
+    )
   }
-  names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
-  return(temp)
-}
 
+  return(ret_obj)
+}
 
 
 

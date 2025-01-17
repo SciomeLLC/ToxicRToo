@@ -410,17 +410,22 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       warning("MCMC did not mix well!", call. = FALSE)
     }
 
-    class(rvals) <- "BMDcont_fit_MCMC";
-    rvals$model <- model_type
-    rvals$options <- options
-    rvals$data <- DATA
     names(rvals$bmd) <- c("BMD", "BMDL", "BMDU")
-
-    rvals$prior <- t_prior_result
-    rvals$transformed <- transform
-    class(rvals) <- "BMDcont_fit_MCMC"
     rvals$fitted_model <- NULL
-    return(rvals)
+    ret_obj <- BMD_continuous_fit_MCMC(
+      bmd = rvals$bmd,
+      data = DATA,
+      prior = t_prior_result,
+      model = model_type,
+      options = options,
+      mcmc_result = rvals$mcmc_result,
+      covariance = rvals$covariance,
+      maximum = rvals$maximum,
+      bmd_dist = rvals$bmd_dist,
+      fitted_model = rvals$fitted_model,
+      transformed = transform
+    )
+    return(ret_obj)
   } else {
 
     options[7] <- (ewald == TRUE) * 1
@@ -453,11 +458,18 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       }
     }
     names(rvals$bmd) <- c("BMD", "BMDL", "BMDU")
-    rvals$model <- model_type
-    rvals$options <- options
-    rvals$data <- DATA
-    class(rvals) <- "BMDcont_fit_maximized"
-    rvals$transformed <- transform
-    return(rvals)
+    ret_obj <- BMD_continuous_fit_maximized(
+        bmd = rvals$bmd,
+        data = DATA,
+        prior = if (fit_type == "laplace") t_prior_result else NULL,
+        model = model_type,
+        options = options,
+        covariance = rvals$covariance,
+        maximum = rvals$maximum,
+        bmd_dist = rvals$bmd_dist,
+        fitted_model = NULL,
+        transformed = transform
+      )
+    return(ret_obj)
   }
 }

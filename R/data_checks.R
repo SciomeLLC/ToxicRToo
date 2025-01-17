@@ -27,7 +27,7 @@
              were removed from the analysis.")
   }
 
-  data <- data[!(is_a_na > 0), , drop = F]
+  data <- data[!(is_a_na > 0),, drop = F]
 
   if (nrow(data) < 3) {
     stop("Less than three viable data rows were found.")

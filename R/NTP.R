@@ -136,6 +136,63 @@ ntp_polyk <- function(dose, tumor, daysOnStudy) {
   cat(sprintf("Poly-3   P-value = %1.4f\n", result[2]))
   cat(sprintf("Poly-6   P-value = %1.4f\n", result[3]))
 }
+
+setClass(
+  "NtpPolyk",
+  slots = c(
+    dose         = "numeric",
+    tumor        = "numeric",
+    daysOnStudy  = "numeric",
+    result       = "matrix"
+  )
+)
+
+ntp_polyk <- function(dose, tumor, daysOnStudy) {
+  # Perform your input checks:
+  if (sum(tumor > 1) > 0) {
+    stop("Tumors need to be 0 or 1.")
+  }
+  if (sum(tumor < 0) > 0) {
+    stop("Tumors need to be 0 or 1.")
+  }
+  if (sum(daysOnStudy < 0) > 0) {
+    stop("Cannot have negative days on study.")
+  }
+  if ((length(dose) != length(tumor)) ||
+      (length(tumor) != length(daysOnStudy))) {
+    stop("All arrays are not of the same length.")
+  }
+  if ((sum(is.na(dose)) + sum(is.na(tumor)) + sum(is.na(daysOnStudy))) > 0) {
+    stop("There is an NA in the data.")
+  }
+
+  # Call your C++ function that does the Poly-K calculation:
+  result <- .polykCPP(dose, tumor, daysOnStudy)
+
+  # Convert to a matrix, set row names (as you did before):
+  result <- as.matrix(result)
+  row.names(result) <- c("Poly 1.5", "Poly-3", "Poly-6")
+
+  # Return a new S4 object
+  new("NtpPolyk",
+      result      = result
+      # If you want to store inputs as well:
+      # dose        = dose,
+      # tumor       = tumor,
+      # daysOnStudy = daysOnStudy
+  )
+}
+
+setMethod(
+  f = "show",
+  signature = "NtpPolyk",
+  definition = function(object) {
+    cat("The results of the Poly-K test for trend.\n")
+    cat(sprintf("Poly-1.5 P-value = %1.4f\n", object@result[1]))
+    cat(sprintf("Poly-3   P-value = %1.4f\n", object@result[2]))
+    cat(sprintf("Poly-6   P-value = %1.4f\n", object@result[3]))
+  }
+)
 ## -----------------------------------------------------------
 ## JONCKHEERE'S TEST
 ## ----------------Changelog----------------------------------
