@@ -2,46 +2,46 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 .owenst_fn <- function(x, fx) {
-    .Call(`_ToxicR_owenst_fn`, x, fx)
+    .Call(`_ToxicRToo_owenst_fn`, x, fx)
 }
 
 .run_single_dichotomous <- function(model, data, pr, options1, options2, seed) {
-    .Call(`_ToxicR_run_single_dichotomous`, model, data, pr, options1, options2, seed)
+    .Call(`_ToxicRToo_run_single_dichotomous`, model, data, pr, options1, options2, seed)
 }
 
 .run_continuous_single <- function(model, Y, X, prior, options, dist_type, seed) {
-    .Call(`_ToxicR_run_continuous_single`, model, Y, X, prior, options, dist_type, seed)
+    .Call(`_ToxicRToo_run_continuous_single`, model, Y, X, prior, options, dist_type, seed)
 }
 
 .run_continuous_ma_laplace <- function(model_priors, model_type, dist_type, Y, X, options, seed) {
-    .Call(`_ToxicR_run_continuous_ma_laplace`, model_priors, model_type, dist_type, Y, X, options, seed)
+    .Call(`_ToxicRToo_run_continuous_ma_laplace`, model_priors, model_type, dist_type, Y, X, options, seed)
 }
 
 .run_continuous_ma_mcmc <- function(model_priors, model_type, dist_type, Y, X, options, seed) {
-    .Call(`_ToxicR_run_continuous_ma_mcmc`, model_priors, model_type, dist_type, Y, X, options, seed)
+    .Call(`_ToxicRToo_run_continuous_ma_mcmc`, model_priors, model_type, dist_type, Y, X, options, seed)
 }
 
 .run_ma_dichotomous <- function(data, priors, models, model_p, is_MCMC, options1, options2, seed) {
-    .Call(`_ToxicR_run_ma_dichotomous`, data, priors, models, model_p, is_MCMC, options1, options2, seed)
+    .Call(`_ToxicRToo_run_ma_dichotomous`, data, priors, models, model_p, is_MCMC, options1, options2, seed)
 }
 
 .run_dichotomous_single_mcmc <- function(model, Y, D, pr, options, seed) {
-    .Call(`_ToxicR_run_dichotomous_single_mcmc`, model, Y, D, pr, options, seed)
+    .Call(`_ToxicRToo_run_dichotomous_single_mcmc`, model, Y, D, pr, options, seed)
 }
 
 .run_continuous_single_mcmc <- function(model, Y, D, priors, options, is_logNormal, suff_stat, seed) {
-    .Call(`_ToxicR_run_continuous_single_mcmc`, model, Y, D, priors, options, is_logNormal, suff_stat, seed)
+    .Call(`_ToxicRToo_run_continuous_single_mcmc`, model, Y, D, priors, options, is_logNormal, suff_stat, seed)
 }
 
 .polykCPP <- function(dose, tumor, daysOnStudy) {
-    .Call(`_ToxicR_polyk`, dose, tumor, daysOnStudy)
+    .Call(`_ToxicRToo_polyk`, dose, tumor, daysOnStudy)
 }
 
 .setseedGSL <- function(s) {
-    invisible(.Call(`_ToxicR_setseedGSL`, s))
+    invisible(.Call(`_ToxicRToo_setseedGSL`, s))
 }
 
 .set_threads <- function(num_threads) {
-    .Call(`_ToxicR_set_threads`, num_threads)
+    .Call(`_ToxicRToo_set_threads`, num_threads)
 }
 

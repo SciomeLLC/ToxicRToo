@@ -20,7 +20,7 @@
   version <- as.character(utils::packageVersion("ToxicR"))
   msg <- paste0("
 
-  _______               _____
+  _______               _____       2
  |__   __|      \U1F913     |  __ \\
     | | _____  ___  ___| |__) |
     | |/ _ \\ \\/ / |/ __|  _  /

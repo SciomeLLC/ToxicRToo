@@ -1095,3 +1095,4 @@ setMethod(
     stop("BMD_dichotomous_fit_MA with unknown fit_type:", x@fit_type)
   }
 )
+

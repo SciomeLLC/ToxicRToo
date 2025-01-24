@@ -55,8 +55,8 @@ The last line fits the Hill Bayesian Laplace model and puts all of the informati
 To see what model you fit, simply type the following line: 
 
 ```{r run_laplace_hill2}
-hill_fit$full_model
-hill_fit$prior
+hill_fit@full_model
+hill_fit@prior
 ```
 
 Here, we see the Hill model is fit using the Normal-NCV, or normal variance proportional 
@@ -68,7 +68,7 @@ hill_fit <- single_continuous_fit(cont_data[, "Dose"],
   model_type = "hill", distribution = "normal",
   fit_type = "mcmc"
 )
-hill_fit$full_model
+hill_fit@full_model
 plot(hill_fit)
 ```
 
@@ -80,7 +80,7 @@ Notice how the `distribution' option controls the distribution. For the "hill", 
 exp5_fit <- single_continuous_fit(cont_data[, "Dose"], Y,
   model_type = "exp-5", distribution = "lognormal", fit_type = "laplace"
 )
-exp5_fit$full_model
+exp5_fit@full_model
 plot(exp5_fit)
 ```
 
@@ -100,7 +100,7 @@ hill_sd_fit <- single_continuous_fit(cont_data[, "Dose"], Y,
   model_type = "hill", distribution = "normal-ncv", fit_type = "mcmc",
   BMR_TYPE = "abs", BMR = 2
 )
-hill_sd_fit$full_model
+hill_sd_fit@full_model
 plot(hill_sd_fit)
 ```
 
@@ -119,7 +119,7 @@ hill_sd_fit <- single_continuous_fit(cont_data[, "Dose"],
   model_type = "hill", distribution = "normal-ncv", fit_type = "laplace",
   BMR_TYPE = "sd", BMR = 1.5
 )
-hill_sd_fit$full_model
+hill_sd_fit@full_model
 plot(hill_sd_fit)
 ```
 
@@ -146,7 +146,7 @@ hill_hybrid_fit <- single_continuous_fit(cont_data[, "Dose"],
   model_type = "hill", distribution = "normal-ncv", fit_type = "mcmc",
   BMR_TYPE = "hybrid", point_p = 0.025, BMR = 0.1
 )
-hill_hybrid_fit$full_model
+hill_hybrid_fit@full_model
 plot(hill_hybrid_fit)
 ```
 
@@ -165,7 +165,7 @@ hill_rd_fit <- single_continuous_fit(cont_data[, "Dose"],
   model_type = "hill", distribution = "normal-ncv", fit_type = "mcmc",
   BMR_TYPE = "rel", BMR = 0.1, samples = 50000
 )
-hill_rd_fit$full_model
+hill_rd_fit@full_model
 plot(hill_rd_fit)
 ```
 Note: The above definitions are for for increasing data, `ToxicR' will determine
@@ -177,7 +177,7 @@ Like the dichotomous case you can modify the priors, to see what prior you want 
 Again, this is easy we can type the following code to see what our current prior is: 
 
 ```{r run_laplace_cprior}
-hill_sd_fit$prior
+hill_sd_fit@prior
 
 prior <- create_prior_list(
   normprior(0, 1, -100, 100),

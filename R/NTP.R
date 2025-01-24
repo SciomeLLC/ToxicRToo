@@ -375,6 +375,30 @@ ntp_jonckeere <- function(formula, data, dose_name = "dose", pair = "Williams") 
   return(william_test_data)
 }
 
+setClass(
+  "NtpShirley",
+  slots = c(
+    results = "data.frame"
+  )
+)
+setClass(
+  "NtpDunn",
+  slots = c(
+    results = "data.frame"
+  )
+)
+setClass(
+  "NtpDunnett",
+  slots = c(
+    results = "data.frame"
+  )
+)
+setClass(
+  "NtpWilliams",
+  slots = c(
+    results = "data.frame"
+  )
+)
 ## ----------------------
 ## 	WILLIAM'S TEST
 ## ----------------------
@@ -679,8 +703,7 @@ ntp_williams <- function(formula, data, dose_name = "dose") {
     will_results2 <- will_results2[, t_idx]
   }
 
-  class(will_results2) <- "ntp.williams"
-  return(will_results2)
+  new("NtpWilliams", results = will_results2)
 }
 
 ## ------------------------
@@ -907,8 +930,7 @@ ntp_dunn <- function(formula, data, dose_name = "dose") {
     dunn_results <- dunn_results[, c(dose_idx, remain_idx, test_idx, p_value_idx)]
     dunn_results <- dunn_results[, -which(names_to_drop %in% c("rank.mean", temp, "DUNSIGN", "num"))]
   }
-  class(dunn_results) <- "ntp.dunn"
-  return(dunn_results)
+  new("NtpDunn", results = dunn_results)
 }
 
 ## ------------------------
@@ -1022,8 +1044,7 @@ ntp_dunnett <- function(formula, data, dose_name = "dose") {
       dunnett_results[, temp_idx3] <- as.numeric(dunnett_results[, temp_idx3])
     }
   }
-  class(dunnett_results) <- "ntp.dunnett"
-  return(dunnett_results)
+  new("NtpDunnett", results = dunnett_results)
 }
 
 ## ----------------------
@@ -1296,9 +1317,7 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
     shirley_results[is.na(shirley_results)] <- ""
   }
 
-  class(shirley_results) <- "ntp.shirley"
-
-  return(shirley_results)
+  new("NtpShirley", results = shirley_results)
 }
 
 .summary_ntpwilliams <- function(object, ...) {
@@ -1316,6 +1335,39 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
 
   print(output, row.names = F)
 }
+setMethod(
+  "summary",
+  signature = "NtpWilliams",
+  definition = function(object) {
+    df <- object@results
+    cat("Williams Trend Test: Monotone Change from Control?\n")
+    cat("--------------------------------------------------\n")
+    if (is.null(df) || nrow(df)==0) {
+      cat("No results.\n")
+      return(invisible(object))
+    }
+    loc <- which(names(df) %in% c("willStat","mult_comp_signif","mult_comp_test"))
+    if (length(loc)>0) df2 <- df[,-loc,drop=FALSE] else df2 <- df
+
+    sign_col <- which(names(df)=="mult_comp_signif")
+    if (length(sign_col)==0) {
+      # no significance column, just print
+      print(df2, row.names=FALSE)
+      return(invisible(object))
+    }
+
+    data_two <- df[, sign_col]
+    data_one <- df2
+
+    data_a <- rep("No", length(data_two))
+    data_a[data_two == 1] <- "<0.05"
+    data_a[data_two == 2] <- "<0.01"
+    output <- data.frame(data_one, Significant = data_a)
+    print(output, row.names = FALSE)
+
+    invisible(object)
+  }
+)
 
 .summary_ntpdunn <- function(object, ...) {
   class(object) <- "data.frame"
@@ -1337,6 +1389,42 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
   print(output, row.names = FALSE)
 }
 
+setMethod(
+  "summary",
+  signature = "NtpDunn",
+  definition = function(object) {
+    df <- object@results
+    cat("Dunn Trend Test: Significant Change from Control?\n")
+    cat("------------------------------------------------\n")
+
+    if (is.null(df) || nrow(df) == 0) {
+      cat("No results.\n")
+      return(invisible(object))
+    }
+
+    # replicate .summary_ntpdunn:
+    loc <- which(names(df) == "TEST")
+    if (length(loc) > 0) df <- df[,-loc,drop=FALSE]
+
+    pv_loc <- which(names(df) == "pvalue")
+    if (length(pv_loc)==0) {
+      print(df, row.names=FALSE)
+      return(invisible(object))
+    }
+
+    data_two <- df[, pv_loc]
+    data_one <- df[, -pv_loc, drop=FALSE]
+
+    data_a <- rep("No", length(data_two))
+    data_a[data_two < 0.05] <- "<0.05"
+    data_a[data_two < 0.01] <- "<0.01"
+    output <- data.frame(data_one, Significant = data_a)
+    print(output, row.names = FALSE)
+
+    invisible(object)
+  }
+)
+
 .summary_ntpdunnett <- function(object, ...) {
   class(object) <- "data.frame"
   loc <- which(names(object) %in% c("TEST", "tstat", "mult_comp_test", "tstat", "mult_comp_signif"))
@@ -1357,6 +1445,40 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
   print(output, row.names = FALSE)
 }
 
+setMethod(
+  "summary",
+  signature = "NtpDunnett",
+  definition = function(object) {
+    df <- object@results
+    cat("Dunnett Trend Test: Significant Change from control?\n")
+    cat("------------------------------------------------\n")
+
+    if (is.null(df) || nrow(df)==0) {
+      cat("No results.\n")
+      return(invisible(object))
+    }
+
+    loc <- which(names(df) %in% c("TEST", "tstat", "mult_comp_test","mult_comp_signif"))
+    if (length(loc)>0) df <- df[, -loc, drop=FALSE]
+
+    pv_loc <- which(names(df) == "pvalue")
+    if (length(pv_loc)==0) {
+      print(df, row.names=FALSE)
+      return(invisible(object))
+    }
+    data_two <- df[, pv_loc]
+    data_one <- df[, -pv_loc, drop=FALSE]
+
+    data_a <- rep("No", length(data_two))
+    data_a[data_two < 0.10] <- "<0.10"
+    data_a[data_two < 0.05] <- "<0.05"
+    data_a[data_two < 0.01] <- "<0.01"
+
+    output <- data.frame(data_one, Significant = data_a)
+    print(output, row.names=FALSE)
+    invisible(object)
+  }
+)
 .summary_ntpshirley <- function(object, ...) {
   class(object) <- "data.frame"
   loc <- which(names(object) %in% c("testStats", "mult_comp_test"))
@@ -1375,3 +1497,40 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
   names(output) <- c(names(data_one), "Significant")
   print(output, row.names = FALSE)
 }
+
+setMethod(
+  "summary",
+  signature = "NtpShirley",
+  definition = function(object) {
+    df <- object@results
+    cat("Shirley's Trend Test: Monotone Change from Control?\n")
+    cat("---------------------------------------------------\n")
+
+    if (is.null(df) || nrow(df) == 0) {
+      cat("No results.\n")
+      return(invisible(object))
+    }
+
+    loc <- which(names(df) %in% c("testStats", "mult_comp_test"))
+    if (length(loc) > 0) {
+      df <- df[, -loc, drop=FALSE]
+    }
+    pv_loc <- which(names(df) == "mult_comp_signif")
+    if (length(pv_loc) == 0) {
+      # maybe no significance column
+      print(df, row.names=FALSE)
+      return(invisible(object))
+    }
+
+    data_two <- df[, pv_loc]
+    data_one <- df[, -pv_loc, drop=FALSE]
+
+    data_a <- rep("No", length(data_two))
+    data_a[data_two == 1] <- "<0.05"
+    data_a[data_two == 2] <- "<0.01"
+    output <- data.frame(data_one, Significant = data_a)
+    print(output, row.names = FALSE)
+
+    invisible(object)
+  }
+)

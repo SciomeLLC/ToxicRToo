@@ -148,7 +148,7 @@ single_dichotomous_fit <- function(
     names(bmd_val) <- c("BMD","BMDL","BMDU")
 
     # Build the S4 object
-    outObj <- BMD_dichotomous_fit_maximized(
+    ret_obj <- BMD_dichotomous_fit_maximized(
       full_model   = temp$full_model,
       parameters   = temp$parameters,
       covariance   = temp$covariance,
@@ -179,7 +179,7 @@ single_dichotomous_fit <- function(
     }
     names(bmd_val) <- c("BMD","BMDL","BMDU")
 
-    outObj <- BMD_dichotomous_fit_maximized(
+    ret_obj <- BMD_dichotomous_fit_maximized(
       full_model   = temp$full_model,
       parameters   = temp$parameters,
       covariance   = temp$covariance,

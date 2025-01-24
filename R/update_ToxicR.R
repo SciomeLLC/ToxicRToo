@@ -1,7 +1,7 @@
-#' Update the package 'ToxicR'
+#' Update the package 'ToxicRToo'
 #'
 #' @title update_ToxicR - downloads and tries to install the latest version of the package from github
-#' Updates the current package 'ToxicR' by installing the
+#' Updates the current package 'ToxicRToo' by installing the
 #' most recent version of the package from GitHub
 #' This function requires installing Package 'remotes' v2.4.2
 #' (or possibly a higher version) by Csardi et al. (2021),
