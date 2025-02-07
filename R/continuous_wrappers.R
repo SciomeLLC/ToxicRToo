@@ -68,7 +68,7 @@
 #' @param degree the number of degrees of a polynomial model. Only used for polynomial models. 
 #' @param burnin the number of burnin samples to take (MCMC only)
 #' @param distribution The underlying distribution used as the data distribution. 
-#' @param BMD_priors Logical specifying if BMD Express-3 priors should be used instead of ToxicR defaults
+#' @param BMD_priors Logical specifying if BMD Express-3 priors should be used instead of ToxicRToo defaults
 #' @param ewald perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)
 #' @param transform Transforms doses using \eqn{\log(dose+\sqrt{dose^2+1})}. Note: this is a log transform that has a derivative defined when dose =0.
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
@@ -144,7 +144,6 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
   D = D[test == TRUE,, drop = F]
   DATA <- cbind(D, Y);
 
-
   myD = Y;
   sstat = F # set sufficient statistics to false if there is only one column
   if (ncol(Y) > 1) {
@@ -157,10 +156,10 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
     }
     t_prior_result <- .parse_prior(prior)
-    distribution <- t_prior_result$distribution
-    model_type <- t_prior_result$model
-    prior = t_prior_result$prior
-    PR = t_prior_result$prior
+    distribution <- t_prior_result@distribution
+    model_type <- t_prior_result@model
+    prior = t_prior_result@prior
+    PR = t_prior_result@prior
   } else {
     dmodel = which(model_type == .continuous_models)
 
@@ -195,7 +194,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       }
     }
     t_prior_result = create_continuous_prior(PR, model_type, distribution, degree)
-    PR = t_prior_result$prior
+    PR = t_prior_result@prior
   }
   dmodel = which(model_type == .continuous_models)
 
@@ -377,7 +376,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       rvals$mcmc_result$PARM_samples = rvals$mcmc_result$PARM_samples[, -3]
     }
 
-    rvals$bmd <- c(rvals$fitted_model$bmd, NA, NA)
+    rvals$bmd <- c(rvals$fitted_model@bmd, NA, NA)
 
     rvals$full_model <- rvals$fitted_model$full_model
     rvals$parameters <- rvals$fitted_model$parameters

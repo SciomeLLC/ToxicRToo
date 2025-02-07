@@ -1,5 +1,28 @@
 setGeneric("cleveland_plot", function(A) standardGeneric("cleveland_plot"))
 
+#' Create a Cleveland plot from a model averaged model.
+#'
+#' @title cleveland_plot - Create a Cleveland plot from a model averaged model.
+#' @param A the model averaged model to plot
+#' @return Returns a \code{ggplot2} graphics object.
+#' @examples
+#' \donttest{
+#' mData <- matrix(c(
+#'   0, 2, 50,
+#'   1, 2, 50,
+#'   3, 10, 50,
+#'   16, 18, 50,
+#'   32, 18, 50,
+#'   33, 17, 50
+#' ), nrow = 6, ncol = 3, byrow = TRUE)
+#' D <- mData[, 1]
+#' Y <- mData[, 2]
+#' N <- mData[, 3]
+#'
+#' model <- ma_dichotomous_fit(D, Y, N)
+#' cleveland_plot(model)
+#' }
+#' @export
 setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
   # 'A@submodels' is assumed to be a list of submodel objects,
   # each with a bmd slot (length 3), a model slot, etc.

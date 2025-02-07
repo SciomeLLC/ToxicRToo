@@ -45,7 +45,7 @@ continuous model priors using \code{create_continuous_prior}.}
 
 \item{alpha}{Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% }.  By default, it is set to 0.05.}
 
-\item{EFSA}{This option is a logical allowing users to use the default EFSA models to average instead of the original option in previous ToxicR versions. If false, the models are: 
+\item{EFSA}{This option is a logical allowing users to use the default EFSA models to average instead of the original option in previous ToxicRToo versions. If false, the models are: 
 hill, hill normal-ncv, exp-3, exp-3 normal-ncv, exp-3 lognormal, exp-5, exp-5 normal-ncv, exp-5 lognormal, power, power normal-ncv. If true, it follows the EFSA guidelines;
 these models are (normal then lognormal for each model): exp-aerts, invexp-aerts, hill-aerts, lognormal-aerts, gamma-efsa, LMS, probit-aerts, and logistic-aerts. 
 See \code{\link{single_continuous_fit}} for details on the models.}

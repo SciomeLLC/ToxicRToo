@@ -17,10 +17,10 @@
 # CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 .onAttach <- function(libname, pkgname) {
-  version <- as.character(utils::packageVersion("ToxicR"))
+  version <- as.character(utils::packageVersion("ToxicRToo"))
   msg <- paste0("
 
-  _______               _____       2
+  _______               _____ 2
  |__   __|      \U1F913     |  __ \\
     | | _____  ___  ___| |__) |
     | |/ _ \\ \\/ / |/ __|  _  /
@@ -55,7 +55,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     error = function(e) "unknown")
   # github url
   github_url <- paste0(
-    "https://raw.githubusercontent.com/SciomeLLC/ToxicR/",
+    "https://raw.githubusercontent.com/SciomeLLC/ToxicRToo/",
     "main/DESCRIPTION")
   # get github description or handle errors
   github_pkg_desc <- tryCatch(
@@ -81,7 +81,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       github_pkg_version != "unknown" &
       compare_version_result == 0) {
     startup_message <- paste0(
-      "Package attached: ToxicR v", current_pkg_version,
+      "Package attached: ToxicRToo v", current_pkg_version,
       " (the most recent version available through GitHub).")
   } else if (
     # skip update for case 4
@@ -89,17 +89,17 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     github_pkg_version != "unknown" &
     compare_version_result > 0) {
     startup_message <- paste0(
-      "Package attached: ToxicR v", current_pkg_version,
+      "Package attached: ToxicRToo v", current_pkg_version,
       " (probably the most recent version available through GitHub).")
   } else {
     # simply notify of the OPTION to update the package
     # this is simply a notification of the option to update,
     # rather than a recommendation to update
     startup_message <- paste0(
-      "Package attached: ToxicR v", current_pkg_version,
+      "Package attached: ToxicRToo v", current_pkg_version,
       "; Most recent version available on GitHub: v", github_pkg_version,
       "\n\nYou have an option to update the package ",
-      "with the function `update_ToxicR()`. ",
+      "with the function `update_ToxicRToo()`. ",
       "If you do so, make sure to restart R.\n\n")
   }
   packageStartupMessage(msg)

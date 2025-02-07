@@ -81,10 +81,10 @@
   s_fit <- x
 
   if (grepl("MLE", s_fit$fit_method)) {
-    cat(sprintf("Summary of single model fit (%s) using ToxicR\n", "MLE"))
+    cat(sprintf("Summary of single model fit (%s) using ToxicRToo\n", "MLE"))
     cat(s_fit$fit, "\n")
   } else {
-    cat(sprintf("Summary of single model fit (%s) using ToxicR\n\n", "Bayesian-MAP"))
+    cat(sprintf("Summary of single model fit (%s) using ToxicRToo\n\n", "Bayesian-MAP"))
     s_fit$GOF[, 2] <- round(s_fit$GOF[, 2], 2)
   }
   cat("\n")
@@ -135,7 +135,7 @@
 .print_summary_continuous_mcmc <- function(x, ...) {
   s_fit <- x
 
-  cat(sprintf("Summary of single model fit (%s) using ToxicR\n", "MCMC"))
+  cat(sprintf("Summary of single model fit (%s) using ToxicRToo\n", "MCMC"))
   cat(s_fit$fit, "\n")
 
   cat("\n")

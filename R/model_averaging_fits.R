@@ -16,7 +16,7 @@
 #' @param BMR This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."
 #' @param point_p This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose.
 #' @param alpha Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% }.  By default, it is set to 0.05.
-#' @param EFSA This option is a logical allowing users to use the default EFSA models to average instead of the original option in previous ToxicR versions. If false, the models are: 
+#' @param EFSA This option is a logical allowing users to use the default EFSA models to average instead of the original option in previous ToxicRToo versions. If false, the models are: 
 #'        hill, hill normal-ncv, exp-3, exp-3 normal-ncv, exp-3 lognormal, exp-5, exp-5 normal-ncv, exp-5 lognormal, power, power normal-ncv. If true, it follows the EFSA guidelines;
 #'        these models are (normal then lognormal for each model): exp-aerts, invexp-aerts, hill-aerts, lognormal-aerts, gamma-efsa, LMS, probit-aerts, and logistic-aerts. 
 #'        See \code{\link{single_continuous_fit}} for details on the models.
@@ -141,7 +141,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         }
       }
       t_prior_result <- create_continuous_prior(PR, model_list[ii], distribution_list[ii], 2)
-      PR <- t_prior_result$prior
+      PR <- t_prior_result@prior
       prior_list[[ii]] <- list(prior = PR, model_tye = model_list[ii], dist = distribution_list[ii])
     }
     model_list2 <- model_list
@@ -466,7 +466,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     model_i <- rep(0, length(model_list))
     for (ii in 1:length(model_list)) {
       temp_prior_l[[ii]] <- .bayesian_prior_dich(model_list[ii])
-      priors[[ii]] <- temp_prior_l[[ii]]$priors
+      priors[[ii]] <- temp_prior_l[[ii]]@priors
       model_i[ii] <- .dichotomous_model_type(model_list[ii])
     }
   } else {

@@ -23,7 +23,7 @@ the first element as 4 (for Gamma), the second element the mean, the third
 element the standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
 }
 \description{
-Specify a Gamma prior for a ToxicR Bayesian model fit
+Specify a Gamma prior for a ToxicRToo Bayesian model fit
 }
 \examples{
 # Gamma Prior with mean 1,sd 1, and lower bound 0.1

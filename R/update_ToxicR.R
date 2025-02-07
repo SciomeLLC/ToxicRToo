@@ -1,6 +1,6 @@
 #' Update the package 'ToxicRToo'
 #'
-#' @title update_ToxicR - downloads and tries to install the latest version of the package from github
+#' @title update_ToxicRToo - downloads and tries to install the latest version of the package from github
 #' Updates the current package 'ToxicRToo' by installing the
 #' most recent version of the package from GitHub
 #' This function requires installing Package 'remotes' v2.4.2
@@ -23,15 +23,15 @@
 #' need to confirm the update. If \code{confirm = FALSE}, the confirmation
 #' step will be skipped. By default, \code{confirm = TRUE}.
 #' @return there will be no output from this function. Rather, executing
-#' this function will update the current 'ToxicR' package by installing
+#' this function will update the current 'ToxicRToo' package by installing
 #' the most recent version of the package from GitHub.
 #' @examples
 #' \dontrun{
-#' if (interactive()) {update_ToxicR()}
+#' if (interactive()) {update_ToxicRToo()}
 #' }
 #'
 #' @export
-update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRUE) {
+update_ToxicRToo <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRUE) {
     # 6 possible cases
     # 1. error in getting the current package version -> yes
     # 2. error in getting the github package version -> yes
@@ -41,14 +41,14 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
     # 6. the user forces the update -> yes
     # in short, notify the option to update unless the version numbers match
     if (force == TRUE) {
-        # unload the package ToxicR
-        while ("package:ToxicR" %in% search()) {
-            unloadNamespace("ToxicR")
+        # unload the package ToxicRToo
+        while ("package:ToxicRToo" %in% search()) {
+            unloadNamespace("ToxicRToo")
         }
         remotes::install_github(
-        "SciomeLLC/ToxicR", force = force, upgrade = upgrade_other_pkg)
+        "SciomeLLC/ToxicRToo", force = force, upgrade = upgrade_other_pkg)
         # attach the package
-        ToxicR::prep("ToxicR", silent_if_successful = TRUE)
+        ToxicRToo::prep("ToxicRToo", silent_if_successful = TRUE)
     } else {
         # get version of the currently installed package
     current_pkg_version <- tryCatch(
@@ -57,7 +57,7 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
     # github url
     github_url <- paste0(
       "https://raw.githubusercontent.com/SciomeLLC/",
-      "ToxicR/github-actions-build/DESCRIPTION")
+      "ToxicRToo/github-actions-build/DESCRIPTION")
     # get github description or handle errors
     github_pkg_desc <- tryCatch(
       readLines(github_url),
@@ -82,7 +82,7 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
         github_pkg_version != "unknown" &
         compare_version_result == 0) {
       message(paste0(
-        "Current version of 'ToxicR': v", current_pkg_version,
+        "Current version of 'ToxicRToo': v", current_pkg_version,
         " (same as the most recent version available through GitHub)."))
     } else if (
     # skip update for case 4
@@ -90,7 +90,7 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
     github_pkg_version != "unknown" &
     compare_version_result > 0) {
     message(paste0(
-        "Current version of 'ToxicR': v", current_pkg_version,
+        "Current version of 'ToxicRToo': v", current_pkg_version,
         " (probably the most recent version available through GitHub)."))
     } else {
         # confirm update
@@ -98,7 +98,7 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
             # ask the user to confirm
             user_reply <- utils::menu(
             c("Yes.", "No."),
-            title = "\nDo you want to try to update the package 'ToxicR'?")
+            title = "\nDo you want to try to update the package 'ToxicRToo'?")
         } else {
             # if not asked, assume the user wants to update
             user_reply <- 1
@@ -106,13 +106,13 @@ update_ToxicR <- function(force = TRUE, upgrade_other_pkg = FALSE, confirm = TRU
         # update if user wants the update
         if (user_reply == 1) {
             # unload the package kim
-            while ("package:ToxicR" %in% search()) {
-                unloadNamespace("ToxicR")
+            while ("package:ToxicRToo" %in% search()) {
+                unloadNamespace("ToxicRToo")
             }
             remotes::install_github(
-            "SciomeLLC/ToxicR", force = force, upgrade = upgrade_other_pkg)
+            "SciomeLLC/ToxicRToo", force = force, upgrade = upgrade_other_pkg)
             # attach the package
-            prep("ToxicR", silent_if_successful = TRUE)
+            prep("ToxicRToo", silent_if_successful = TRUE)
             }
         }
     }

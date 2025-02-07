@@ -23,7 +23,7 @@ the first element as 4 (for Cauchy), the second element the mean, the third
 element the standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
 }
 \description{
-Specify a Cauchy prior for a ToxicR Bayesian model fit
+Specify a Cauchy prior for a ToxicRToo Bayesian model fit
 }
 \examples{
 # Cauchy Prior with mean 0,sd-1

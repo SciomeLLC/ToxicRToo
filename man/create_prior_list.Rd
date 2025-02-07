@@ -3,7 +3,7 @@
 \name{create_prior_list}
 \alias{create_prior_list}
 \title{create_prior_lists .. Given priors
-       created using the ToxicR prior functions, create a list of priors
+       created using the ToxicRToo prior functions, create a list of priors
        for a model.}
 \usage{
 create_prior_list(x1, x2, ...)
@@ -21,7 +21,7 @@ row is  an element defined by a prior object (e.g., normprior or lnormprior).
 }
 \description{
 create_prior_lists .. Given priors
-       created using the ToxicR prior functions, create a list of priors
+       created using the ToxicRToo prior functions, create a list of priors
        for a model.
 }
 \examples{

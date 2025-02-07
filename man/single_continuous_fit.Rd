@@ -90,7 +90,7 @@ for lognormal data.  For more information, see Aerts, Wheeler, and Abrahantes (2
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 
-\item{BMD_priors}{Logical specifying if BMD Express-3 priors should be used instead of ToxicR defaults}
+\item{BMD_priors}{Logical specifying if BMD Express-3 priors should be used instead of ToxicRToo defaults}
 
 \item{ewald}{perform Wald CI computation instead of the default profile likelihood computation. This is the the 'FAST BMD' method of Ewald et al (2021)}
 

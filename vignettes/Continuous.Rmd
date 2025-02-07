@@ -1,10 +1,10 @@
 ---
-title: "ToxicR: Continuous Analysis"
+title: "ToxicRToo: Continuous Analysis"
 author: "Matt Wheeler Ph.D."
 date: "2/15/2022"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ToxicR: Continuous Analysis}
+  %\VignetteIndexEntry{ToxicRToo: Continuous Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ## Basics of Toxic R Continuous run. 
 
-This file shows ToxicR for dichotomous benchmark dose analyses using both single model and multiple model fits. The first thing we need to do is load the data.  From an excel file this can be done using the following R commands:
+This file shows ToxicRToo for dichotomous benchmark dose analyses using both single model and multiple model fits. The first thing we need to do is load the data.  From an excel file this can be done using the following R commands:
 
 
 ```{r load_data}
@@ -35,7 +35,7 @@ Y <- cont_data[, 2:4]
 ### Hill fit
 In what follows, I describe fitting the models using summary statistics.  One can also fit these models using the original data with no change to the function call except the Y is a $n\times 1$ now one column vector, and the dose vector is also $n\times 1$ and corresponds to each entry in the data vector. 
 
-When summary data are used, ToxicR expects $Y$ to be a $n\times 3$ matrix. The first column of $Y$ is the the mean, the second colunn is the number of units on test, and the third column
+When summary data are used, ToxicRToo expects $Y$ to be a $n\times 3$ matrix. The first column of $Y$ is the the mean, the second colunn is the number of units on test, and the third column
 is the observed standard deviation. In what follows, lets look at the Hill model fit, where the
 Hill model is 
 \begin{align}
@@ -43,9 +43,11 @@ f(dose) &= a + \frac{b\times dose}{c^d + [dose]^d}
 \end{align}
 
 ```{r run_laplace_hill}
-library(ToxicR)
+library(ToxicRToo)
 library(ggplot2)
-hill_fit <- single_continuous_fit(cont_data[, "Dose"], Y,
+hill_fit <- single_continuous_fit(
+  cont_data[, "Dose"], 
+  Y,
   model_type = "hill"
 )
 ```
@@ -168,7 +170,7 @@ hill_rd_fit <- single_continuous_fit(cont_data[, "Dose"],
 hill_rd_fit@full_model
 plot(hill_rd_fit)
 ```
-Note: The above definitions are for for increasing data, `ToxicR' will determine
+Note: The above definitions are for for increasing data, `ToxicRToo' will determine
 the direction of adversity and adjust computations accordingly. 
 
 ## Prior Specification

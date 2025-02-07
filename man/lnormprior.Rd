@@ -24,7 +24,7 @@ the first element as 2 (for log-normal), the second element the mean, the third
 element the log-standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
 }
 \description{
-Specify a log-normal prior for a ToxicR Bayesian model fit.
+Specify a log-normal prior for a ToxicRToo Bayesian model fit.
 }
 \examples{
 # Log-Normal Prior with mean 0,sd-1

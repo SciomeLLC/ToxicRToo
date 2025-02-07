@@ -34,11 +34,7 @@ MAdensity_plot <- function(A) {
   # Dose levels
   data <- A[[fit_idx[1]]]$data
   doses <- data[, 1]
-
-
-
   t_combine <- NA
-
 
   for (i in fit_idx) {
     # Loop for the model
@@ -88,11 +84,7 @@ MAdensity_plot <- function(A) {
     # D1_y = Dens$y[temp]
     # D1_x = Dens$x[temp]
 
-
-
     # Do I need to stack up the dataset?
-
-
     temp_density <- data.frame(matrix(0, length(temp), 3))
     temp_density[, 2] <- fit$model
     temp_density[, 1] <- temp
@@ -110,8 +102,6 @@ MAdensity_plot <- function(A) {
   #
   # t_combine<-rbind(t_1,t_2,t_3,t_4,t_5,t_6,t_7,t_8,t_9)
   #
-
-
   # This part is needed to get MA density plots
   #
   # idx <- sample(1:9, length(A$Individual_Model_1$mcmc_result$BMD_samples),replace=TRUE,prob=A$posterior_probs)
@@ -119,8 +109,6 @@ MAdensity_plot <- function(A) {
   idx <- sample(1:length(fit_idx), length(A[[fit_idx[1]]]$mcmc_result$BMD_samples), replace = TRUE, prob = A$posterior_probs)
 
   df <- NA
-
-
 
   # How should I initialize this?
   for (i in 1:length(fit_idx)) {
@@ -130,11 +118,6 @@ MAdensity_plot <- function(A) {
   }
 
   df_samples <- data.frame(df[, -1])
-
-
-
-
-
 
   # Select MA values
   BMD_MA <- matrix(NA, length(A[[fit_idx[1]]]$mcmc_result$BMD_samples), 1)
@@ -157,8 +140,6 @@ MAdensity_plot <- function(A) {
   t_combine3 <- t_combine2 %>%
     filter(as.numeric(X3) > 0.05, as.numeric(X1) != Inf)
 
-
-
   p <- ggplot() +
     stat_density_ridges(
       data = t_combine3, aes(x = X1, y = fct_reorder(X2, X3, .desc = T), group = X2, alpha = sqrt(X3), fill = cut(X3, c(0, 0.99, 1))),
@@ -170,15 +151,10 @@ MAdensity_plot <- function(A) {
     labs(x = "Dose Level (Dotted Line : MA BMD)", y = "", title = "Density plots for each fitted model (Fit type: MCMC)") +
     theme_classic()
 
-
-
   p2 <- p + theme(legend.position = "none", axis.text.y = element_text(size = 12))
-
   p2
   return(p2) # Return output
 }
-
-
 
 .plot.density.BMDdichotomous_MA_maximized <- function(A) {
   t_1 <- t_2 <- t_3 <- t_4 <- t_5 <- t_6 <- t_7 <- t_8 <- t_9 <- c3 <- X1 <- X2 <- X3 <- NULL
@@ -263,13 +239,9 @@ MAdensity_plot <- function(A) {
   }
 
   BMD_MA <- data.frame(BMD_MA)
-
   t_ma <- BMD_MA %>% mutate(X1 = BMD_MA, X2 = "Model Average", X3 = 1)
   # BMD_CDF should be shown here - it
   t_ma <- t_ma %>% select(X1, X2, X3)
-
-
-
   t_combine2 <- rbind(t_combine, t_ma)
 
   # From samples
@@ -299,11 +271,8 @@ MAdensity_plot <- function(A) {
       labels = c("(0, 0.025]", "(0.025, 0.975]", "(0.975, 1]")
     ) + theme(legend.position = "none")
 
-
   return(p2) # Return output
 }
-
-
 
 .plot.density.BMDcontinous_MA_MCMC <- function(A) {
   # Construct bmd sample plots for mcmc
@@ -315,11 +284,7 @@ MAdensity_plot <- function(A) {
   # Dose levels
   data <- A[[fit_idx[1]]]$data
   doses <- data[, 1]
-
-
-
   t_combine <- NA
-
 
   for (i in fit_idx) {
     # Loop for the model
@@ -371,7 +336,6 @@ MAdensity_plot <- function(A) {
   t_combine3 <- t_combine %>% filter(!is.infinite(as.numeric(X3)), 
                                      !is.na(as.numeric(X1)))
 
-
   # John's comment- I want to fill the color as
   p <- ggplot() +
     stat_density_ridges(
@@ -384,9 +348,6 @@ MAdensity_plot <- function(A) {
     labs(x = "Dose Level (Dotted Line : MA BMD)", y = "", title = "Density plots for each fitted model (Fit type: MCMC)") +
     theme_classic()
 
-
-
   p2 <- p + theme(legend.position = "none", axis.text.y = element_text(size = 12))
-
   return(p2) # Return output
 }

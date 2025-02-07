@@ -22,7 +22,7 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-#' Specify a normal prior for a ToxicR Bayesian model fit.
+#' Specify a normal prior for a ToxicRToo Bayesian model fit.
 #' @title normprior - create a normal prior object
 #' @param mean mean of the prior distribution.
 #' @param sd sd of the prior distribution.
@@ -50,7 +50,7 @@ normprior <- function(mean = 0, sd = 1, lb = -100, ub = 100) {
   return(retValue)
 }
 
-#' Specify a log-normal prior for a ToxicR Bayesian model fit.
+#' Specify a log-normal prior for a ToxicRToo Bayesian model fit.
 #' @title lnormprior - create a lognormal prior.
 #' @param mean log-mean of the prior distribution.
 #' @param sd log-sd of the prior distribution.
@@ -83,7 +83,7 @@ lnormprior <- function(mean = 0, sd = 1, lb = -100, ub = 100) {
   return(retValue)
 }
 
-#' Specify a Cauchy prior for a ToxicR Bayesian model fit
+#' Specify a Cauchy prior for a ToxicRToo Bayesian model fit
 #' @title cauchyprior - create a Cauchy prior.
 #' @param mean mean of the prior distribution.
 #' @param sd sd of the prior distribution.
@@ -109,7 +109,7 @@ cauchyprior <- function(mean = 0, sd = 1, lb = -100, ub = 100) {
   return(retValue)
 }
 
-#' Specify a Gamma prior for a ToxicR Bayesian model fit
+#' Specify a Gamma prior for a ToxicRToo Bayesian model fit
 #' @title gammaprior - create a Gamma prior.
 #' @param mean mean of the prior distribution.
 #' @param sd sd of the prior distribution.
@@ -135,7 +135,7 @@ gammaprior <- function(mean = 1, sd = 1, lb = 0, ub = 100){
   return(retValue)
 }
 
-#' Specify a modified-PERT (essentially a continuous version of a triangular distribution) prior for a ToxicR Bayesian model fit
+#' Specify a modified-PERT (essentially a continuous version of a triangular distribution) prior for a ToxicRToo Bayesian model fit
 #' @title pertprior - create a PERT prior.
 #' @param mode mode of the prior distribution.
 #' @param shape shape of the modified PERT prior distribution (often denoted as gamma), optional
@@ -168,7 +168,7 @@ pertprior <- function(mode = 1, shape = 4, lb = 0.1, ub = 100){
 
 
 #' @title create_prior_lists .. Given priors
-#'        created using the ToxicR prior functions, create a list of priors
+#'        created using the ToxicRToo prior functions, create a list of priors
 #'        for a model.
 #' @param x1 First Prior
 #' @param x2 Second Prior

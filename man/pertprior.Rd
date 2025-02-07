@@ -21,7 +21,7 @@ the first element as 5 (for PERT), the second element the mean, the third
 element the standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
 }
 \description{
-Specify a modified-PERT (essentially a continuous version of a triangular distribution) prior for a ToxicR Bayesian model fit
+Specify a modified-PERT (essentially a continuous version of a triangular distribution) prior for a ToxicRToo Bayesian model fit
 }
 \examples{
 # standard PERT Prior with mode 3, lower bound 1, upper bound 5
