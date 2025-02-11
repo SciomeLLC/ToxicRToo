@@ -376,7 +376,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       rvals$mcmc_result$PARM_samples = rvals$mcmc_result$PARM_samples[, -3]
     }
 
-    rvals$bmd <- c(rvals$fitted_model@bmd, NA, NA)
+    rvals$bmd <- c(rvals$fitted_model$bmd, NA, NA)
 
     rvals$full_model <- rvals$fitted_model$full_model
     rvals$parameters <- rvals$fitted_model$parameters
@@ -410,7 +410,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
     }
 
     names(rvals$bmd) <- c("BMD", "BMDL", "BMDU")
-    rvals$fitted_model <- NULL
+    # rvals$fitted_model <- NULL
     ret_obj <- BMD_continuous_fit_MCMC(
       bmd = rvals$bmd,
       data = DATA,
@@ -422,7 +422,9 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       maximum = rvals$maximum,
       bmd_dist = rvals$bmd_dist,
       fitted_model = rvals$fitted_model,
-      transformed = transform
+      transformed = transform,
+      full_model = rvals$full_model, 
+      parameters = rvals$parameters
     )
     return(ret_obj)
   } else {
@@ -467,7 +469,9 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
         maximum = rvals$maximum,
         bmd_dist = rvals$bmd_dist,
         fitted_model = NULL,
-        transformed = transform
+        transformed = transform,
+        full_model = rvals$full_model, 
+        parameters = rvals$parameters
       )
     return(ret_obj)
   }

@@ -22,7 +22,9 @@ setClass(
     maximum = "numeric",
     bmd_dist = "matrix",
     fitted_model = "ANY",
-    transformed = "logical"
+    transformed = "logical",
+    full_model = "character",
+    parameters = "numeric"
   )
 )
 
@@ -39,7 +41,9 @@ setClass(
     maximum = "numeric",
     bmd_dist = "matrix",
     fitted_model = "ANY",
-    transformed = "logical"
+    transformed = "logical",
+    full_model = "character",
+    parameters = "numeric"
   )
 )
 
@@ -54,7 +58,9 @@ BMD_continuous_fit_MCMC <- function(
   maximum = NA_real_,
   bmd_dist = matrix(),
   fitted_model = NULL,
-  transformed = FALSE
+  transformed = FALSE,
+  full_model = character(),
+  parameters = numeric()
 ) {
   new("BMD_continuous_fit_MCMC",
     bmd = bmd,
@@ -67,7 +73,9 @@ BMD_continuous_fit_MCMC <- function(
     maximum = maximum,
     bmd_dist = bmd_dist,
     fitted_model = fitted_model,
-    transformed = transformed
+    transformed = transformed,
+    full_model = full_model,
+    parameters = parameters
   )
 }
 
@@ -81,7 +89,9 @@ BMD_continuous_fit_maximized <- function(
   maximum = NA_real_,
   bmd_dist = matrix(),
   fitted_model = NULL,
-  transformed = FALSE
+  transformed = FALSE,
+  full_model = character(),
+  parameters = numeric()
 ) {
   new("BMD_continuous_fit_maximized",
     bmd = bmd,
@@ -93,7 +103,9 @@ BMD_continuous_fit_maximized <- function(
     maximum = maximum,
     bmd_dist = bmd_dist,
     fitted_model = fitted_model,
-    transformed = transformed
+    transformed = transformed,
+    full_model = full_model,
+    parameters = parameters
   )
 }
 
@@ -511,31 +523,31 @@ setMethod(
       me <- exp(me)
     }
     if (x@model == "FUNL") {
-      me <- .cont_FUNL_f(x@parameters, test_doses)
+      me <- .cont_FUNL_f(fit$parameters, test_doses)
     }
     if (x@model == "hill") {
-      me <- .cont_hill_f(x@parameters, test_doses)
+      me <- .cont_hill_f(fit$parameters, test_doses)
     }
     if (x@model == "exp-3") {
-      me <- .cont_exp_3_f(x@parameters, test_doses, decrease)
+      me <- .cont_exp_3_f(fit$parameters, test_doses, decrease)
     }
     if (x@model == "exp-5") {
-      me <- .cont_exp_5_f(x@parameters, test_doses)
+      me <- .cont_exp_5_f(fit$parameters, test_doses)
     }
     if (x@model == "power") {
-      me <- .cont_power_f(x@parameters, test_doses)
+      me <- .cont_power_f(fit$parameters, test_doses)
     }
     if (x@model == "polynomial") {
       # if distribution is normal-ncv vs normal, etc.
       if (length(grep(": normal-ncv", tolower(x@full_model))) > 0) {
-        deg <- length(x@parameters) - 2
+        deg <- length(fit$parameters) - 2
       } else {
-        deg <- length(x@parameters) - 1
+        deg <- length(fit$parameters) - 1
       }
-      me <- .cont_polynomial_f(x@parameters[1:deg], test_doses)
+      me <- .cont_polynomial_f(fit$parameters[1:deg], test_doses)
     }
     if (isLogNormal) {
-      var_ <- exp(x@parameters[length(x@parameters)])
+      var_ <- exp(fit$parameters[length(fit$parameters)])
       me <- exp(log(me) + var_ / 2)
     }
 
