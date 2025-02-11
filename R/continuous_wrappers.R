@@ -468,7 +468,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
         covariance = rvals$covariance,
         maximum = rvals$maximum,
         bmd_dist = rvals$bmd_dist,
-        fitted_model = NULL,
+        fitted_model = rvals$fitted_model,
         transformed = transform,
         full_model = rvals$full_model, 
         parameters = rvals$parameters
