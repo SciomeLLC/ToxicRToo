@@ -12,7 +12,7 @@ setClass(
   slots = c(
     models = "list",
     bmd = "numeric",
-    ma_bmd = "numeric",
+    ma_bmd = "matrix",
     posterior_probs = "numeric",
     type = "character"
   )
@@ -23,10 +23,10 @@ setClass(
   slots = c(
     models = "list",
     bmd = "numeric",
-    ma_bmd = "numeric",
+    ma_bmd = "matrix",
     posterior_probs = "numeric",
     type = "character",
-    BMD_CDF = "numeric"
+    BMD_CDF = "matrix"
   )
 )
 ## Continuous model class
@@ -79,7 +79,7 @@ priorClass <- function(prior, model = character(), mean = character(), parameter
   new("priorClass", prior = prior, model = model, mean = mean, parameters = parameters)
 }
 
-BMD_continuous_MA <- function(models = list(), bmd = numeric(), ma_bmd = numeric(), posterior_probs = numeric(), type = character()) {
+BMD_continuous_MA <- function(models = list(), bmd = numeric(), ma_bmd = matrix(), posterior_probs = numeric(), type = character()) {
   new("BMD_continuous_MA", 
     models = models,
     bmd = bmd, 
@@ -89,7 +89,7 @@ BMD_continuous_MA <- function(models = list(), bmd = numeric(), ma_bmd = numeric
   )
 } 
 
-BMD_dichotomous_MA <- function(models = list(), bmd = numeric(), ma_bmd = numeric(), posterior_probs = numeric(), type = character(), BMD_CDF = numeric()) {
+BMD_dichotomous_MA <- function(models = list(), bmd = numeric(), ma_bmd = matrix(), posterior_probs = numeric(), type = character(), BMD_CDF = matrix()) {
   new("BMD_dichotomous_MA", 
     models = models,
     bmd = bmd, 
