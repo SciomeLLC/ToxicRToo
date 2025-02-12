@@ -105,16 +105,21 @@ setMethod("create_continuous_prior",
         p <- .check_power(prior_list, distribution)
       }
     }
-
-    ret_obj <- BMD_Bayes_continuous_model(
+    prior <- priorClass(
       prior = p$prior,
-      distribution = distribution,
       model = p$model,
-      parameters = p$parameters,
       mean = p$mean,
-      degree = ifelse(!is.null(p$degree), p$degree, deg)
+      parameters = p$parameters
     )
-    return(ret_obj)
+    # ret_obj <- BMD_Bayes_continuous_model(
+    #   prior = prior,
+    #   distribution = distribution,
+    #   model = p$model,
+    #   parameters = p$parameters,
+    #   mean = p$mean,
+    #   degree = ifelse(!is.null(p$degree), p$degree, deg)
+    # )
+    return(prior)
   }
 )
 
@@ -173,6 +178,13 @@ setMethod(
       p <- .check_d_weibull(prior)
     }
 
+
+    # prior <- priorClass(
+    #   prior = p$prior,
+    #   model = p$model,
+    #   mean = p$mean,
+    #   parameters = p$parameters
+    # )
     ret_obj <- BMD_Bayes_dichotomous_model(
       prior      = p$priors,             # or p$prior depending on your code
       model      = p$model,              # e.g. "Hill Model [binomial]"

@@ -1,3 +1,34 @@
+setClass("priorClass",
+slots = c(
+  prior = "ANY",
+  model = "character",
+  mean = "character",
+  parameters = "character"
+))
+
+## MA model class
+setClass(
+  "BMD_continuous_MA",
+  slots = c(
+    models = "list",
+    bmd = "numeric",
+    ma_bmd = "numeric",
+    posterior_probs = "numeric",
+    type = "character"
+  )
+)
+
+setClass(
+  "BMD_dichotomous_MA",
+  slots = c(
+    models = "list",
+    bmd = "numeric",
+    ma_bmd = "numeric",
+    posterior_probs = "numeric",
+    type = "character",
+    BMD_CDF = "numeric"
+  )
+)
 ## Continuous model class
 setClass(
   "BMD_Bayes_continuous_model",
@@ -43,6 +74,31 @@ setClass(
     TRUE
   }
 )
+
+priorClass <- function(prior, model = character(), mean = character(), parameters = character()) {
+  new("priorClass", prior = prior, model = model, mean = mean, parameters = parameters)
+}
+
+BMD_continuous_MA <- function(models = list(), bmd = numeric(), ma_bmd = numeric(), posterior_probs = numeric(), type = character()) {
+  new("BMD_continuous_MA", 
+    models = models,
+    bmd = bmd, 
+    ma_bmd = ma_bmd,
+    posterior_probs = posterior_probs,
+    type = type
+  )
+} 
+
+BMD_dichotomous_MA <- function(models = list(), bmd = numeric(), ma_bmd = numeric(), posterior_probs = numeric(), type = character(), BMD_CDF = numeric()) {
+  new("BMD_dichotomous_MA", 
+    models = models,
+    bmd = bmd, 
+    ma_bmd = ma_bmd,
+    posterior_probs = posterior_probs,
+    type = type,
+    BMD_CDF = BMD_CDF
+  )
+}
 
 BMD_Bayes_continuous_model <- function(prior, model, distribution,
                                        parameters = character(),

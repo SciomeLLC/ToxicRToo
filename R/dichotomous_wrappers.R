@@ -166,7 +166,7 @@ single_dichotomous_fit <- function(
 
   } else if (fitter == 2) {
     # Laplace
-    temp <- .run_single_dichotomous(dmodel, DATA, prior@priors, o1, o2, seed)
+    temp <- .run_single_dichotomous(dmodel, DATA, prior@prior, o1, o2, seed)
     temp_me <- temp$bmd_dist
     temp_me <- temp_me[!is.infinite(temp_me[,1]),,drop=FALSE]
     temp_me <- temp_me[!is.na(temp_me[,1]),,drop=FALSE]
@@ -198,7 +198,7 @@ single_dichotomous_fit <- function(
   } else if (fitter == 3) {
     # MCMC
     temp <- .run_dichotomous_single_mcmc(
-      dmodel, DATA[,2:3,drop=FALSE], DATA[,1,drop=FALSE], prior@priors,
+      dmodel, DATA[,2:3,drop=FALSE], DATA[,1,drop=FALSE], prior@prior,
       c(BMR, alpha, samples, burnin), seed
     )
     # build bmd_dist from BMD_samples
