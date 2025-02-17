@@ -1,5 +1,3 @@
-setGeneric("cleveland_plot", function(A) standardGeneric("cleveland_plot"))
-
 #' Create a Cleveland plot from a model averaged model.
 #'
 #' @title cleveland_plot - Create a Cleveland plot from a model averaged model.
@@ -23,19 +21,21 @@ setGeneric("cleveland_plot", function(A) standardGeneric("cleveland_plot"))
 #' cleveland_plot(model)
 #' }
 #' @export
-setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
+setGeneric("cleveland_plot", function(A) standardGeneric("cleveland_plot"))
+
+setMethod("cleveland_plot", "BMD_dichotomous_MA", function(A) {
   # 'A@submodels' is assumed to be a list of submodel objects,
   # each with a bmd slot (length 3), a model slot, etc.
-  submods <- A@submodels
-  n_sub <- length(submods)
+  #submods <- A@models
+  n_sub <- length(A@models)
   bmd_ind <- matrix(0, n_sub + 1, 5)
 
   for (i in seq_len(n_sub)) {
     # Submodel's BMD vector: median, 5%, 95%
-    bmd_ind[i, 1] <- submods[[i]]@bmd[1] # median
-    bmd_ind[i, 2] <- submods[[i]]@bmd[2] # 5%
-    bmd_ind[i, 3] <- submods[[i]]@bmd[3] # 95%
-    bmd_ind[i, 4] <- submods[[i]]@model
+    bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
+    bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
+    bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
+    bmd_ind[i, 4] <- A@models[[i]]@model
     bmd_ind[i, 5] <- A@posterior_probs[i] # posterior probability
   }
 
@@ -87,18 +87,18 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
   return(out)
 })
 
-setMethod("cleveland_plot", "BMD_Bayes_continuous_model", function(A) {
+setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
   # submodels is a list of submodel objects, each with a bmd, model, etc.
-  submods <- A@submodels
-  n_sub <- length(submods)
+  #submods <- A@models
+  n_sub <- length(A@models)
 
   bmd_ind <- matrix(0, n_sub + 1, 5)
 
   for (i in seq_len(n_sub)) {
-    bmd_ind[i, 1] <- submods[[i]]@bmd[1] # median
-    bmd_ind[i, 2] <- submods[[i]]@bmd[2] # 5%
-    bmd_ind[i, 3] <- submods[[i]]@bmd[3] # 95%
-    bmd_ind[i, 4] <- submods[[i]]@model
+    bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
+    bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
+    bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
+    bmd_ind[i, 4] <- names(A@posterior_probs)[i]#A@models[[i]]@full_model
     bmd_ind[i, 5] <- A@posterior_probs[i]
   }
 
