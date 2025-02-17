@@ -3,7 +3,8 @@ slots = c(
   prior = "ANY",
   model = "character",
   mean = "character",
-  parameters = "character"
+  parameters = "character",
+  distribution = "character"
 ))
 
 ## MA model class
@@ -75,8 +76,8 @@ setClass(
   }
 )
 
-priorClass <- function(prior, model = character(), mean = character(), parameters = character()) {
-  new("priorClass", prior = prior, model = model, mean = mean, parameters = parameters)
+priorClass <- function(prior, model = character(), mean = character(), parameters = character(), distribution = character()) {
+  new("priorClass", prior = prior, model = model, mean = mean, parameters = parameters, distribution = distribution)
 }
 
 BMD_continuous_MA <- function(models = list(), bmd = numeric(), ma_bmd = matrix(), posterior_probs = numeric(), type = character()) {

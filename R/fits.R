@@ -118,8 +118,8 @@ setClass(
     bmd_dist = "matrix",
     bmd = "numeric",
     maximum = "numeric",
-    gof_p_value = "numeric",
-    gof_chi_sqr_statistic = "numeric",
+    #gof_p_value = "numeric",
+    #gof_chi_sqr_statistic = "numeric",
     prior = "ANY",
     model = "character",
     data = "matrix",
@@ -135,8 +135,8 @@ BMD_dichotomous_fit_MCMC <- function(
   bmd_dist     = matrix(0,0,0),
   bmd          = numeric(3),
   maximum      = NA_real_,
-  gof_p_value  = NA_real_,
-  gof_chi_sqr_statistic = NA_real_,
+  #gof_p_value  = NA_real_,
+  #gof_chi_sqr_statistic = NA_real_,
   prior        = NULL,
   model        = "",
   data         = matrix(),
@@ -150,8 +150,8 @@ BMD_dichotomous_fit_MCMC <- function(
       bmd_dist     = bmd_dist,
       bmd          = bmd,
       maximum      = maximum,
-      gof_p_value  = gof_p_value,
-      gof_chi_sqr_statistic = gof_chi_sqr_statistic,
+      #gof_p_value  = gof_p_value,
+      #gof_chi_sqr_statistic = gof_chi_sqr_statistic,
       prior        = prior,
       model        = model,
       data         = data,
@@ -385,14 +385,14 @@ setMethod(
                   geom_point(aes(x=data_d[,1],y=data_d[,2]))+
                   geom_errorbar(aes(x=data_d[,1], ymin=lerror, ymax=uerror),color="grey",linewidth=0.8,width=width)+
                   xlim(c(min(data_d[,1])-width,max(data_d[,1])*1.03))+
-                  labs(x="Dose", y="Response",title="Continous MA fitting")+
+                  labs(x="Dose", y="Response",title="Continuous MA fitting")+
                   theme_minimal()
           
           }else{
             plot_gg<-ggplot()+xlim(-max(test_doses)*5,min(test_doses)*5)+
               geom_point(aes(x=doses,y=Response))+
               xlim(c(min(doses),max(doses)*1.03))+
-              labs(x="Dose", y="Response",title="Continous MA fitting")+
+              labs(x="Dose", y="Response",title="Continuous MA fitting")+
               theme_minimal()
           }
           
@@ -968,51 +968,51 @@ setMethod(
     }
 
     me <- switch(x@model,
-      "exp-aerts" = .cont_exp_aerts_f(fit$parameters, test_doses),
-      "invexp-aerts" = .cont_invexp_aerts_f(fit$parameters, test_doses),
-      "gamma-aerts" = .cont_gamma_aerts_f(fit$parameters, test_doses),
-      "invgamma-aerts" = .cont_invgamma_aerts_f(fit$parameters, test_doses),
-      "hill-aerts" = .cont_hill_aerts_f(fit$parameters, test_doses),
-      "lomax-aerts" = .cont_lomax_aerts_f(fit$parameters, test_doses),
-      "invlomax-aerts" = .cont_invlomax_aerts_f(fit$parameters, test_doses),
-      "lognormal-aerts" = .cont_lognormal_aerts_f(fit$parameters, test_doses),
-      "logskew-aerts" = .cont_logskew_aerts_f(fit$parameters, test_doses),
-      "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$parameters, test_doses),
-      "logistic-aerts" = .cont_logistic_aerts_f(fit$parameters, test_doses),
-      "probit-aerts" = .cont_probit_aerts_f(fit$parameters, test_doses),
-      "LMS" = .cont_LMS_f(fit$parameters, test_doses),
-      "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters, test_doses)
+      "exp-aerts" = .cont_exp_aerts_f(x@parameters, test_doses),
+      "invexp-aerts" = .cont_invexp_aerts_f(x@parameters, test_doses),
+      "gamma-aerts" = .cont_gamma_aerts_f(x@parameters, test_doses),
+      "invgamma-aerts" = .cont_invgamma_aerts_f(x@parameters, test_doses),
+      "hill-aerts" = .cont_hill_aerts_f(x@parameters, test_doses),
+      "lomax-aerts" = .cont_lomax_aerts_f(x@parameters, test_doses),
+      "invlomax-aerts" = .cont_invlomax_aerts_f(x@parameters, test_doses),
+      "lognormal-aerts" = .cont_lognormal_aerts_f(x@parameters, test_doses),
+      "logskew-aerts" = .cont_logskew_aerts_f(x@parameters, test_doses),
+      "invlogskew-aerts" = .cont_invlogskew_aerts_f(x@parameters, test_doses),
+      "logistic-aerts" = .cont_logistic_aerts_f(x@parameters, test_doses),
+      "probit-aerts" = .cont_probit_aerts_f(x@parameters, test_doses),
+      "LMS" = .cont_LMS_f(x@parameters, test_doses),
+      "gamma-efsa" = .cont_gamma_efsa_f(x@parameters, test_doses)
     )
 
     if (isLogNormal && !is.null(me)) {
       me <- exp(me)
     }
     if (x@model == "FUNL") {
-      me <- .cont_FUNL_f(fit$parameters, test_doses)
+      me <- .cont_FUNL_f(x@parameters, test_doses)
     }
     if (x@model == "hill") {
-      me <- .cont_hill_f(fit$parameters, test_doses)
+      me <- .cont_hill_f(x@parameters, test_doses)
     }
     if (x@model == "exp-3") {
-      me <- .cont_exp_3_f(fit$parameters, test_doses, decrease)
+      me <- .cont_exp_3_f(x@parameters, test_doses, decrease)
     }
     if (x@model == "exp-5") {
-      me <- .cont_exp_5_f(fit$parameters, test_doses)
+      me <- .cont_exp_5_f(x@parameters, test_doses)
     }
     if (x@model == "power") {
-      me <- .cont_power_f(fit$parameters, test_doses)
+      me <- .cont_power_f(x@parameters, test_doses)
     }
     if (x@model == "polynomial") {
       # if distribution is normal-ncv vs normal, etc.
       if (length(grep(": normal-ncv", tolower(x@full_model))) > 0) {
-        deg <- length(fit$parameters) - 2
+        deg <- length(x@parameters) - 2
       } else {
-        deg <- length(fit$parameters) - 1
+        deg <- length(x@parameters) - 1
       }
-      me <- .cont_polynomial_f(fit$parameters[1:deg], test_doses)
+      me <- .cont_polynomial_f(x@parameters[1:deg], test_doses)
     }
     if (isLogNormal) {
-      var_ <- exp(fit$parameters[length(fit$parameters)])
+      var_ <- exp(x@parameters[length(x@parameters)])
       me <- exp(log(me) + var_ / 2)
     }
 
@@ -1295,7 +1295,7 @@ setMethod(
 # We store x@fit_type == "mcmc" or "laplace" (like your old class checks).
 setMethod(
   "plot",
-  signature = signature(x = "BMD_dichotomous_fit_MA", y = "missing"),
+  signature = signature(x = "BMD_dichotomous_MA", y = "missing"),
   function(x, y, ...) {
     temp_args <- list(...)
     if (!"qprob" %in% names(temp_args)) {
@@ -1306,12 +1306,12 @@ setMethod(
 
     density_col <- "blueviolet"
     credint_col <- "azure2"
-    submods <- x@submodels
+    submods <- x@models
     nSub <- length(submods)
     if (nSub < 1) {
       stop("No submodels found in this MA object.")
     }
-    A <- x
+    # A <- x
 
     # assume all submodels share same data shape
     # take data from first submodel
@@ -1326,17 +1326,18 @@ setMethod(
     plot_gg <- ggplot() +
       geom_errorbar(aes(x = doses, ymin = lerror, ymax = uerror), color = "grey") +
       xlim(c(-5 * max(doses)), 5 * max(doses)) +
-      labs(x = "Dose", y = "Proportion", title = paste(x@full_model, "MA")) +
+      labs(x = "Dose", y = "Proportion", title = paste("Dichotomous MA fit")) +
       theme_minimal()
 
     max_dose <- max(doses)
     min_dose <- min(doses)
     test_doses <- seq(min_dose, max_dose, (max_dose - min_dose) / 500)
 
-    if (x@fit_type == "mcmc") {
+    if (x@type == "mcmc") {
       # -------------- "BMDdichotomous_MA_mcmc" logic --------------
       # sample submodels with prob A@posterior_probs,
       n_samps <- nrow(submods[[1]]@mcmc_result$PARM_samples)
+      x@posterior_probs[!is.finite(x@posterior_probs)] <- 0
       ma_samps <- sample(seq_along(submods), n_samps, replace = TRUE, prob = x@posterior_probs)
       temp_f <- matrix(0, n_samps, length(test_doses))
       temp_bmd <- rep(0, n_samps)
@@ -1465,7 +1466,7 @@ setMethod(
 
       return(plot_gg + coord_cartesian(xlim = c(min(doses), max(doses)), expand = FALSE))
 
-    } else if (x@fit_type == "laplace") {
+    } else if (x@type == "laplace") {
       # -------------- "BMDdichotomous_MA_laplace" logic --------------
       x@posterior_probs[!is.finite(x@posterior_probs)] <- 0
       num_model <- length(x@posterior_probs)
@@ -1530,9 +1531,9 @@ setMethod(
       # overlay submodels with posterior prob > 0.05
       df <- NULL
       for (ii in seq_len(num_model)) {
-        if (!is.finite(x@posterior_probs[ii])) {
-          x@posterior_probs[ii] = 0
-        }
+        # if (!is.finite(x@posterior_probs[ii])) {
+        #   x@posterior_probs[ii] = 0
+        # }
         if (x@posterior_probs[ii] > 0.05) {
           fit_i <- submods[[ii]]
           # single line
@@ -1569,7 +1570,7 @@ setMethod(
     }
 
     # if fit_type is neither "mcmc" nor "laplace"
-    stop("BMD_dichotomous_fit_MA with unknown fit_type:", x@fit_type)
+    stop("BMD_dichotomous_fit_MA with unknown fit_type:", x@type)
   }
 )
 

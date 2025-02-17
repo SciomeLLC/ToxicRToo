@@ -109,7 +109,8 @@ setMethod("create_continuous_prior",
       prior = p$prior,
       model = p$model,
       mean = p$mean,
-      parameters = p$parameters
+      parameters = p$parameters,
+      distribution = distribution
     )
     # ret_obj <- BMD_Bayes_continuous_model(
     #   prior = prior,
