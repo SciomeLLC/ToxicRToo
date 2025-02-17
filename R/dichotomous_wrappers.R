@@ -214,14 +214,14 @@ single_dichotomous_fit <- function(
     temp_bmd_dist <- cbind(bmd_vals, bmd_grid)
 
     ret_obj <- BMD_dichotomous_fit_MCMC(
-      full_model   = temp$fitted_model@full_model,
+      full_model   = temp$fitted_model$full_model,
       parameters   = temp$fitted_model$parameters,
       covariance   = temp$fitted_model$covariance,
       bmd_dist     = temp_bmd_dist,
       bmd          = bmd_val,
       maximum      = temp$fitted_model$maximum,
-      gof_p_value  = temp$gof_p_value,
-      gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
+      #gof_p_value  = temp$gof_p_value,
+      #gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
       prior        = prior,
       model        = model_type,
       data         = DATA,

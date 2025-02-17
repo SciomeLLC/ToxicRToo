@@ -118,7 +118,7 @@
 #' 
 #' summary(model)
 single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace",
-                                   prior = NA, BMR_TYPE = "sd",
+                                   prior = NULL, BMR_TYPE = "sd",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
                                    alpha = 0.05, samples = 25000, degree = 2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
@@ -150,16 +150,30 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
     sstat = T
   }
 
-  if (!is.na(prior[1])) {
+  if(!is.null(prior)) {
     #parse the prior
-    if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
-      stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
+    # if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
+    if(!isClass(prior, "priorClass")){
+      stop("Prior is not the correct form. Please create a priorClass object with create_prior_list.")
     }
-    t_prior_result <- .parse_prior(prior)
-    distribution <- t_prior_result@distribution
-    model_type <- t_prior_result@model
-    prior = t_prior_result@prior
-    PR = t_prior_result@prior
+    #now no need to parse at all?!
+    #t_prior_result <- .parse_prior(prior)
+    distribution <- prior@distribution
+    model_type <- prior@mean
+    t_prior_result = prior
+    # prior = prior@prior
+    PR = prior@prior
+
+    dmodel = which(model_type == .continuous_models)
+
+    if (identical(dmodel, integer(0))) {
+      show("Error with prior specification!")
+      stop('Please specify one of the following model types: \n
+            "hill","exp-3","exp-5","power","polynomial", "exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts",
+            "lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS",
+            "gamma-efsa"')
+    }
+
   } else {
     dmodel = which(model_type == .continuous_models)
 
