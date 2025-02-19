@@ -444,7 +444,7 @@ ma_continuous_fit <- function(D, Y, model_list = NULL, fit_type = "laplace",
 #' @param Y response matrix
 #' @param N number of replicates matrix
 #' @param model_list a list of configurations for the single models (priors, model type)
-#' @param fit_type the method used to fit (laplace, mle, or mcmc)
+#' @param fit_type the method used to fit (laplace or mcmc)
 #' @param BMR_TYPE Specifies the type of benchmark dose analysis to be performed. For dichotomous models, "extra" is the default BMR type. Other strings lead to "added" BMR calculations.
 #' @param BMR This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."
 #' @param point_p This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose.
@@ -723,7 +723,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     bmd = temp$bmd,
     ma_bmd = temp$ma_bmd,
     posterior_probs = temp$posterior_probs,
-    type = if (fit_type == "mcmc") "mcmc" else "laplace"
+    type = if (fit_type == "laplace") "laplace" else "mcmc"
   )
   
   return(ret_val)

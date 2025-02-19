@@ -157,7 +157,7 @@ single_dichotomous_fit <- function(
       maximum      = temp$maximum,
       gof_p_value  = temp$gof_p_value,
       gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
-      prior        = NA,  # MLE => no prior
+      prior        = NULL,  # MLE => no prior
       model        = model_type,
       data         = DATA,
       mcmc_result  = NULL,
