@@ -21,7 +21,7 @@ build_ma_dataset_2 <- function() {
 
         mean <- ToxicR:::.cont_hill_f(as.numeric(hill[1, ]), doses)
         set.seed(2020)
-        y <- rinvgauss(length(mean), mean, 45528.14)
+        y <- actuar::rinvgauss(length(mean), mean, 45528.14)
         return(list(doses = doses, y = y))
 }
 
@@ -50,11 +50,12 @@ build_single_dichotomous_dataset_2 <- function() {
 
 validate_model2 <- function(model, name, parameters, bmd_estimates,
                             gof) {
-        expect_equal(name, model$full_model)
-        expect_equal(parameters, model$parameters, tolerance = 10e-3)
-        expect_equal(setNames(bmd_estimates, c("BMD", "BMDL", "BMDU")), model$bmd, tolerance = 10e-3)
-        A <- summary(model)
-        expect_equal(as.numeric(A$GOF), gof, tolerance = 10e-3)
+        expect_equal(name, model@full_model)
+        expect_equal(parameters, model@parameters, tolerance = 10e-3)
+        expect_equal(setNames(bmd_estimates, c("BMD", "BMDL", "BMDU")), model@bmd, tolerance = 10e-3)
+        #A <- summary(model)
+        #expect_equal(as.numeric(A$GOF), gof, tolerance = 10e-3)
+        expect_equal(c(model@gof_chi_sqr_statistic, model@gof_p_value), gof, tolerance = 10e-3)
 }
 
 build_single_dichotomous_dataset <- function() {
@@ -80,9 +81,9 @@ build_single_dichotomous_dataset2 <- function(){
 }
 
 validate_model <- function(model, name, parameters, bmd_estimates, tolerance = 10e-2) {
-        expect_equal(name, model$full_model)
-        expect_equal(parameters, model$parameters, tolerance = tolerance)
-        expect_equal(setNames(bmd_estimates, c("BMD", "BMDL", "BMDU")), model$bmd, tolerance = tolerance)
+        expect_equal(name, model@full_model)
+        expect_equal(parameters, model@parameters, tolerance = tolerance)
+        expect_equal(setNames(bmd_estimates, c("BMD", "BMDL", "BMDU")), model@bmd, tolerance = tolerance)
         # show(model$full_model)
         # show(model$parameters)
         # show(model$bmd)
@@ -126,7 +127,7 @@ build_ma_dataset <- function() {
         dosesq <- rep(c(0, 6.25, 12.5, 25, 50, 100), each = 30)
 
         mean <- ToxicR:::.cont_hill_f(as.numeric(hill[6, ]), doses)
-        y <- rinvgauss(length(mean), mean, 18528.14)
+        y <- actuar::rinvgauss(length(mean), mean, 18528.14)
         return(list(doses = doses, y = y))
 }
 
