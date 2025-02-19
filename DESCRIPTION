@@ -1,7 +1,7 @@
 Package: ToxicRToo
 Type: Package
 Title: Analyzing Toxicology Dose-Response Data
-Version: 0.99.3
+Version: 0.99.4
 Date: 2024-11-12
 Authors@R: 
     c(
