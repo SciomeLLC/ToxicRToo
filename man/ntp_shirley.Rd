@@ -35,5 +35,5 @@ ntp_shirley Shirley's test as programmed at the NTP
 }
 \examples{
 a <- ntp_shirley(weight ~ sex, data = ntp_weight_data)
-summary(a)
+a
 }

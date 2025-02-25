@@ -424,7 +424,7 @@ setClass(
 #' @examples
 #'
 #' a <- ntp_williams(weight ~ sex, data = ntp_weight_data)
-#' summary(a)
+#' a
 ntp_williams <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -724,7 +724,7 @@ ntp_williams <- function(formula, data, dose_name = "dose") {
 #'   data = ntp_599_hemotology,
 #'   dose_name = "concentration"
 #' )
-#' summary(a)
+#' a
 ntp_dunn <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- numTies <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -951,7 +951,7 @@ ntp_dunn <- function(formula, data, dose_name = "dose") {
 #'        data = ntp_599_hemotology, 
 #'        dose_name = "concentration"
 #' )
-#' summary(a)
+#' a
 ntp_dunnett <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -1071,7 +1071,7 @@ ntp_dunnett <- function(formula, data, dose_name = "dose") {
 #' }
 #' @examples
 #' a <- ntp_shirley(weight ~ sex, data = ntp_weight_data)
-#' summary(a)
+#' a
 ntp_shirley <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- numTies <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -1336,7 +1336,7 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
   print(output, row.names = F)
 }
 setMethod(
-  "summary",
+  "show",
   signature = "NtpWilliams",
   definition = function(object) {
     df <- object@results
@@ -1390,7 +1390,7 @@ setMethod(
 }
 
 setMethod(
-  "summary",
+  "show",
   signature = "NtpDunn",
   definition = function(object) {
     df <- object@results
@@ -1446,7 +1446,7 @@ setMethod(
 }
 
 setMethod(
-  "summary",
+  "show",
   signature = "NtpDunnett",
   definition = function(object) {
     df <- object@results
@@ -1499,7 +1499,7 @@ setMethod(
 }
 
 setMethod(
-  "summary",
+  "show",
   signature = "NtpShirley",
   definition = function(object) {
     df <- object@results

@@ -29,5 +29,5 @@ a <- ntp_dunn(response ~ sex + response_type,
   data = ntp_599_hemotology,
   dose_name = "concentration"
 )
-summary(a)
+a
 }

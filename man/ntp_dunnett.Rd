@@ -29,5 +29,5 @@ a <- ntp_dunnett(
        data = ntp_599_hemotology, 
        dose_name = "concentration"
 )
-summary(a)
+a
 }

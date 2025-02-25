@@ -35,5 +35,5 @@ Williams Trend test for
 \examples{
 
 a <- ntp_williams(weight ~ sex, data = ntp_weight_data)
-summary(a)
+a
 }
