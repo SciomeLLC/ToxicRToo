@@ -7,7 +7,7 @@
 ma_continuous_fit(
   D,
   Y,
-  model_list = NA,
+  model_list = NULL,
   fit_type = "laplace",
   BMR_TYPE = "sd",
   BMR = 0.1,
@@ -84,6 +84,6 @@ doses <- rep(c(0, 6.25, 12.5, 25, 50, 100), each = 10)
 mean <- hill_m(doses)
 y <- rnorm(length(mean), mean, 20.14)
 model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMR_TYPE = "sd", BMR = 1)
-summary(model)
+model
 }
 }

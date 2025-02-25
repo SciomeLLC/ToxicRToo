@@ -87,6 +87,6 @@ D <- mData[, 1]
 Y <- mData[, 2]
 N <- mData[, 3]
 model <- single_dichotomous_fit(D, Y, N, model_type = "hill", fit_type = "laplace")
-summary(model)
+model
 
 }

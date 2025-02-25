@@ -51,7 +51,7 @@
 #' Y <- mData[, 2]
 #' N <- mData[, 3]
 #' model <- single_dichotomous_fit(D, Y, N, model_type = "hill", fit_type = "laplace")
-#' summary(model)
+#' model
 #'
 single_dichotomous_fit <- function(
   D, Y, N, model_type,

@@ -30,7 +30,7 @@ ma_dichotomous_fit(
 
 \item{model_list}{a list of configurations for the single models (priors, model type)}
 
-\item{fit_type}{the method used to fit (laplace, mle, or mcmc)}
+\item{fit_type}{the method used to fit (laplace or mcmc)}
 
 \item{BMR_TYPE}{Specifies the type of benchmark dose analysis to be performed. For dichotomous models, "extra" is the default BMR type. Other strings lead to "added" BMR calculations.}
 
@@ -79,6 +79,6 @@ Y <- mData[, 2]
 N <- mData[, 3]
 model <- ma_dichotomous_fit(D, Y, N)
 
-summary(model)
+model
 }
 }

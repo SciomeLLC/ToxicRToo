@@ -116,7 +116,7 @@
 #'          seed = 12331
 #' )
 #' 
-#' summary(model)
+#' model
 single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace",
                                    prior = NULL, BMR_TYPE = "sd",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",

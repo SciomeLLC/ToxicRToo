@@ -44,7 +44,7 @@
 #' mean <- hill_m(doses)
 #' y <- rnorm(length(mean), mean, 20.14)
 #' model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMR_TYPE = "sd", BMR = 1)
-#' summary(model)
+#' model
 #' }
 ma_continuous_fit <- function(D, Y, model_list = NULL, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
@@ -478,7 +478,7 @@ ma_continuous_fit <- function(D, Y, model_list = NULL, fit_type = "laplace",
 #' N <- mData[, 3]
 #' model <- ma_dichotomous_fit(D, Y, N)
 #' 
-#' summary(model)
+#' model
 #' }
 #' @export
 ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "laplace",
