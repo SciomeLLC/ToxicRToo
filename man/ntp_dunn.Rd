@@ -18,7 +18,7 @@ interested in looking at the trend across sex one would have 'weight ~ sex'.}
 It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 }
 \value{
-The results of a Dunn's  test for each level in \eqn{dose_name}.
+The results of a Dunn's  test for each level in \eqn{dose\_name}.
 }
 \description{
 ntp_dunn Dunn's test

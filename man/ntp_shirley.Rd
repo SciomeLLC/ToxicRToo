@@ -19,7 +19,7 @@ It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 }
 \value{
 The results of a non-parametric Shirley's isotone test for trend on
-each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
+each level in \eqn{dose\_name}. For more information see: \doi{10.2307/2529789}
 The returned list contains:
 \itemize{
  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.

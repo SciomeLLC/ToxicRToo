@@ -97,7 +97,7 @@
 #' @param tumor A data frame with column names in the formula.
 #' @param daysOnStudy The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of a Williams trend test for each level in dose_name.
+#' @return The results of a Williams trend test for each level in \eqn{dose\_name}.
 #' More information on this procedure at: \doi{10.2307/2531856} and \doi{10.2307/2532200}
 #' This procedure returns a vector of three p-values for the poly-1.5, poly-3, and poly-6 test
 #' respectively.
@@ -402,7 +402,7 @@ setClass(
 ## ----------------------
 ## 	WILLIAM'S TEST
 ## ----------------------
-#' Williams Trend test for
+#' Williams Trend test for each level in \eqn{dose\_name}.
 #' @title Wiliam's trend test
 #' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
 #' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
@@ -411,7 +411,7 @@ setClass(
 #' @param data A data frame with column names in the formula.
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of a Williams trend test for each level in \eqn{dose_name}.
+#' @return The results of a Williams trend test for each level in \eqn{dose\_name}.
 #' For more information on the Williams trend test: \doi{10.2307/2528930}
 #' #' \itemize{
 #'  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
@@ -717,7 +717,7 @@ ntp_williams <- function(formula, data, dose_name = "dose") {
 #' @param data A data frame with column names in the formula.
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of a Dunn's  test for each level in \eqn{dose_name}.
+#' @return The results of a Dunn's  test for each level in \eqn{dose\_name}.
 #' @examples
 #'
 #' a <- ntp_dunn(response ~ sex + response_type,
@@ -944,7 +944,7 @@ ntp_dunn <- function(formula, data, dose_name = "dose") {
 #' @param data A data frame with column names in the formula.
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of Dunnet's  test for each level in \eqn{dose_name}
+#' @return The results of Dunnet's  test for each level in \eqn{dose\_name}
 #' @examples
 #' a <- ntp_dunnett(
 #'        response ~ sex + response_type,
@@ -1059,7 +1059,7 @@ ntp_dunnett <- function(formula, data, dose_name = "dose") {
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @return The results of a non-parametric Shirley's isotone test for trend on
-#' each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
+#' each level in \eqn{dose\_name}. For more information see: \doi{10.2307/2529789}
 #' The returned list contains:
 #' \itemize{
 #'  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
