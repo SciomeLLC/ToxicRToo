@@ -19,7 +19,8 @@ It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 }
 \value{
 The results of a Williams trend test for each level in \eqn{dose\_name}.
-For more information on the Williams trend test: \doi{10.2307/2528930}
+For more information on the Williams trend test: \doi{10.2307/2528930}.
+An S4 object with a results slot that returns a data.frame containing:
 #' \itemize{
  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
  \item \code{dose:} the dose groups relative to control.

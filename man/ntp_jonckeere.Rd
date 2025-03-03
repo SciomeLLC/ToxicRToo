@@ -22,7 +22,8 @@ It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 "Williams" or "Shirley"}
 }
 \value{
-The results of a global test for difference from background.
+An S4 object with results of a global test for difference from background 
+contained in the S4 slot results.
 }
 \description{
 ntp_jonckeere

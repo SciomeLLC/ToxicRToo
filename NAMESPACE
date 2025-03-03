@@ -31,7 +31,7 @@ import(ggridges)
 #register all of the S3 methods for the print commands
 #and the plot commands etc. 
 
-S3method(print, ntp.polyk, .print_polyk_ntp )
+# S3method(print, ntp.polyk, .print_polyk_ntp )
 
 # Summary Methods
 # S3method(summary, BMDcont_fit_maximized ,.summary_continuous_max)
