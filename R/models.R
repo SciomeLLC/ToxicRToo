@@ -18,6 +18,8 @@ slots = c(
 ))
 
 #' Model averaged continuous fit class
+#' 
+#' Methods include plot, MAdensity_plot, and cleveland_plot
 #'
 #' @slot models List of BMD_continuous_fit_* objects (one per model)
 #' @slot bmd Named vector of model averaged BMD, BMDL, BMDU
@@ -25,7 +27,7 @@ slots = c(
 #' @slot posterior_probs Named vector of posterior probabilities of each model
 #' @slot type Character string of fit_type
 #'
-#' @return
+#' @return A BMD_continuous_MA object
 #' @export
 setClass(
   "BMD_continuous_MA",
@@ -39,6 +41,8 @@ setClass(
 )
 
 #' Model averaged dichotomous fit class
+#' 
+#' Methods include plot, MAdensity_plot, and cleveland_plot
 #'
 #' @slot models List of BMD_dichotomous_fit_* objects (one per model)
 #' @slot bmd Named vector of model averaged BMD, BMDL, BMDU
@@ -47,7 +51,7 @@ setClass(
 #' @slot type Character string of fit_type
 #' @slot BMD_CDF Matrix of spline BMD CDF
 #'
-#' @return
+#' @return A BMD_dichotomous_MA object
 #' @export
 setClass(
   "BMD_dichotomous_MA",
@@ -183,6 +187,61 @@ setMethod("show", "BMD_Bayes_continuous_model", function(object) {
   invisible(object)
 })
 
+##follows old .print.BMD_Bayes_model
+setMethod("show", "priorClass", function(object){
+  if (!is.null(object@model)) {
+    cat(object@model, " Parameter Priors\n")
+  } else {
+    cat("Model Parameter Priors\n ")
+  }
+
+  cat("------------------------------------------------------------------------\n")
+
+  if(is.null(object@prior)){
+    cat("Null prior!")
+  }else{
+    X = object@prior
+    for (ii in 1:nrow(X)) {
+      V <- X[ii, ]
+      if (!is.null(object@parameters)) {
+        temp_text <- sprintf("Prior [%s]:", object@parameters[ii])
+      } else {
+        temp_text <- "Prior: "
+      }
+      if (V[1] == 1) {
+        cat(sprintf(
+          "%sNormal(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n", temp_text, V[2],
+          V[3], V[4], V[5]
+        ))
+      }
+      if (V[1] == 2) {
+        cat(sprintf(
+          "%sLog-Normal(log-mu = %1.2f, log-sd = %1.3f) 1[%1.2f,%1.2f]\n", temp_text, V[2],
+          V[3], V[4], V[5]
+        ))
+      }
+      if (V[1] == 3) {
+        cat(sprintf(
+          "%sCauchy(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n", temp_text, V[2],
+          V[3], V[4], V[5]
+        ))
+      }
+      if (V[1] == 4) {
+        cat(sprintf(
+          "%sGamma(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n", temp_text, V[2],
+          V[3], V[4], V[5]
+        ))
+      }
+      if (V[1] == 5) {
+        cat(sprintf(
+          "%sPERT(mu = %1.2f, sd = %1.3f) 1[%1.2f,%1.2f]\n", temp_text, V[2],
+          V[3], V[4], V[5]
+        ))
+      }
+    }
+  }
+})
+
 setMethod("show", "BMD_Bayes_dichotomous_model", function(object) {
   cat("BMD Bayesian Dichotomous Model\n")
   cat("  Model:       ", object@model, "\n")
@@ -226,7 +285,8 @@ setMethod("show", "BMD_dichotomous_MA", function(object) {
 #' Create a density plot from a model averaged model fit with MCMC.
 #'
 #' @title MAdensity_plot - Create a density plot from a model averaged model.
-#' @param A the model averaged model to plot
+#' @param A The model averaged model to plot. An \code{\link{BMD_continuous_MA}} 
+#' or \code{\link{BMD_dichotomous_MA}} object.
 #' @return Returns a \code{ggplot2} graphics object.
 #' @examples
 #' \donttest{
@@ -471,7 +531,8 @@ setMethod("MAdensity_plot", "BMD_dichotomous_MA", function(A) {
 #' Create a Cleveland plot from a model averaged model.
 #'
 #' @title cleveland_plot - Create a Cleveland plot from a model averaged model.
-#' @param A the model averaged model to plot
+#' @param A the model averaged model to plot. An \code{\link{BMD_continuous_MA}} 
+#' or \code{\link{BMD_dichotomous_MA}} object.
 #' @return Returns a \code{ggplot2} graphics object.
 #' @examples
 #' \donttest{

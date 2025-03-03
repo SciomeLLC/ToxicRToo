@@ -25,14 +25,14 @@
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
 #' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @param seed specify the GSL seed. Default = 12331
-#' @return This function model object containing a list of individual fits and model averaging fits
+#' @return Returns a fitted S4 model class (\code{\link{BMD_continuous_MA}}) with the following slots:
 #' \itemize{
-#'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
-#'         is the number of models in the model average.  For each \code{X}, this is an individual model
-#'         fit identical to what is returned in `\code{single_continuous_fit}.'
+#'  \item \code{models}: A list of \code{\link{BMD_continuous_fit_maximized}} or 
+#'         \code{\link{BMD_continuous_fit_MCMC}} objects of length equal to the number of models to average.
 #'  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
 #'  \item \code{posterior_probs}: The posterior model probabilities used in the MA.
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
+#'  \item \code{type}: String describing the fit_type
 #' }
 #' @examples
 #' \donttest{
@@ -454,14 +454,14 @@ ma_continuous_fit <- function(D, Y, model_list = NULL, fit_type = "laplace",
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
 #' @param threads number of threads to use. Default = 2
 #' @param seed specify the GSL seed. Default = 12331
-#' @return a model object containing a list of single models
+#' @return Returns a fitted S4 model class (\code{\link{BMD_dichotomous_MA}}) with the following slots:
 #' \itemize{
-#'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
-#'         is the number of models in the model average.  For each \code{X}, this is an individual model
-#'         fit identical to what is returned in `\code{single_continuous_fit}.'
+#'  \item \code{models}: A list of \code{\link{BMD_dichotomous_fit_maximized}} or 
+#'         \code{\link{BMD_dichotomous_fit_MCMC}} objects of length equal to the number of models to average.
 #'  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
 #'  \item \code{posterior_probs}: The posterior model probabilities used in the MA.
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
+#'  \item \code{type}: String describing the fit_type
 #' }
 #' @examples
 #' \donttest{
@@ -609,7 +609,8 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       bmd_fit <- BMD_dichotomous_fit_maximized(
           bmd = temp[[ii]]$bmd,
           data = temp[[ii]]$data,
-          prior = temp[[ii]]$prior,
+          prior = priors[[jj]],
+          #prior = temp[[ii]]$prior,
           model = .dichotomous_models[model_i[jj]],#temp[[ii]]$full_model,
           options = temp[[ii]]$options,
           covariance = temp[[ii]]$covariance,
@@ -617,7 +618,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
           bmd_dist = temp[[ii]]$bmd_dist,
           full_model = temp[[ii]]$full_model, 
           parameters = temp[[ii]]$parameters,
-          mcmc_result = NULL,
+#          mcmc_result = NULL,
           gof_p_value = temp[[ii]]$gof_p_value,
           gof_chi_sqr_statistic = temp[[ii]]$gof_chi_sqr_statistic
         )
@@ -688,7 +689,8 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       bmd_fit <- BMD_dichotomous_fit_MCMC(
           bmd = temp[[jj]]$bmd,
           data = temp[[jj]]$data,
-          prior = temp[[jj]]$prior,
+          prior = priors[[jj]],
+          #prior = temp[[jj]]$prior,
           model = .dichotomous_models[model_i[jj]],#temp[[jj]]$full_model,
           options = temp[[jj]]$options,
           covariance = temp[[jj]]$covariance,

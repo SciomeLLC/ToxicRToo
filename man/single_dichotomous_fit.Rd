@@ -49,7 +49,8 @@ single_dichotomous_fit(
 \item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
-Returns a model object class with the following structure:
+Returns a fitted S4 model class (either \code{\link{BMD_dichotomous_fit_MCMC}} or
+\code{\link{BMD_dichotomous_fit_maximized}}) with a subset of the following slots:
 \itemize{
    \item \code{full_model}:  The model along with the likelihood distribution.
    \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
@@ -59,9 +60,10 @@ Returns a model object class with the following structure:
    \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals.
    \item \code{maximum}:  The maximum value of the likelihod/posterior.
    \item \code{gof_p_value}:  GOF p-value for the Pearson \eqn{\chi^2} GOF test.
-   \item \code{gof_chi_sqr_statistic}: The GOF statistic.
+   \item \code{gof_chi_sqr_statistic}: The GOF statistic. (Not with MCMC)
    \item \code{prior}:     This value gives the prior for the Bayesian analysis.
-   \item \code{model}:     Parameter specifies t mean model used.
+   \item \code{model}:     String specifying the mean model used.
+   \item \code{options}:   Numeric vector of options used in the fitting procedure.
    \item \code{data}:      The data used in the fit.
    \itemize{
        When MCMC is specified, an additional variable \code{mcmc_result}

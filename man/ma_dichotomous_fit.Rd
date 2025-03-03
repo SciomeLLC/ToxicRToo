@@ -51,14 +51,14 @@ ma_dichotomous_fit(
 \item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
-a model object containing a list of single models
+Returns a fitted S4 model class (\code{\link{BMD_dichotomous_MA}}) with the following slots:
 \itemize{
- \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
-        is the number of models in the model average.  For each \code{X}, this is an individual model
-        fit identical to what is returned in `\code{single_continuous_fit}.'
+ \item \code{models}: A list of \code{\link{BMD_dichotomous_fit_maximized}} or 
+        \code{\link{BMD_dichotomous_fit_MCMC}} objects of length equal to the number of models to average.
  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
  \item \code{posterior_probs}: The posterior model probabilities used in the MA.
  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
+ \item \code{type}: String describing the fit_type
 }
 }
 \description{

@@ -7,7 +7,8 @@
 MAdensity_plot(A)
 }
 \arguments{
-\item{A}{the model averaged model to plot}
+\item{A}{The model averaged model to plot. An \code{\link{BMD_continuous_MA}} 
+or \code{\link{BMD_dichotomous_MA}} object.}
 }
 \value{
 Returns a \code{ggplot2} graphics object.

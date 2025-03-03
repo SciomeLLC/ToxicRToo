@@ -180,19 +180,19 @@ setMethod(
     }
 
 
-    # prior <- priorClass(
-    #   prior = p$prior,
-    #   model = p$model,
-    #   mean = p$mean,
-    #   parameters = p$parameters
-    # )
-    ret_obj <- BMD_Bayes_dichotomous_model(
-      prior      = p$priors,             # or p$prior depending on your code
-      model      = p$model,              # e.g. "Hill Model [binomial]"
-      parameters = p$parameters,         # e.g. c("logit(g)","b","c","d")
-      mean       = p$mean,               # e.g. "hill"
-      degree     = if(!is.null(p$degree)) p$degree else NA_real_
+    ret_obj <- priorClass(
+      prior = p$prior,
+      model = p$model,
+      mean = p$mean,
+      parameters = p$parameters
     )
+    # ret_obj <- BMD_Bayes_dichotomous_model(
+    #   prior      = p$priors,             # or p$prior depending on your code
+    #   model      = p$model,              # e.g. "Hill Model [binomial]"
+    #   parameters = p$parameters,         # e.g. c("logit(g)","b","c","d")
+    #   mean       = p$mean,               # e.g. "hill"
+    #   degree     = if(!is.null(p$degree)) p$degree else NA_real_
+    # )
 
     return(ret_obj)
   }
