@@ -42,7 +42,7 @@
 #' @return Predicted response values for the model
 #' @export
 predict.ToxicRToo <- function(x, new_doses = NULL, ...){
-  show("See documentation!")
+  #show("See documentation!")
   predict(x, new_doses = new_doses)
 }
 
