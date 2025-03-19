@@ -8,32 +8,39 @@ ntp_williams(formula, data, dose_name = "dose")
 }
 \arguments{
 \item{formula}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete
+ experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
 \item{data}{A data frame with column names in the formula.}
 
-\item{dose_name}{The name of the variable containing the doses in the data frame \eqn{data}.
-It is expected multiple doses for each of the experimental conditions \eqn{X}.}
+\item{dose_name}{The name of the variable containing the doses in
+the data frame \eqn{data}.
+It is expected multiple doses for each of the experimental conditions
+\eqn{X}.}
 }
 \value{
-The results of a Williams trend test for each level in \eqn{dose_name}.
-For more information on the Williams trend test: \doi{10.2307/2528930}
+The results of a Williams trend test for each level in
+ \eqn{dose\_name}.
+For more information on the Williams trend test: \doi{10.2307/2528930}.
+An S4 object with a results slot that returns a data.frame containing:
 #' \itemize{
- \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
+ \item \code{X}: this represents all the class objects on the right hand
+ side of \eqn{ Y \sim X} above.
  \item \code{dose:} the dose groups relative to control.
  \item \code{willStat}: Value of the Shirley test statistic.
- \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant,
+ \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which
+ is not-significant,
  significant at the 0.05% level and significant at the 0.01% level.
  \item \code{mult_comp_test}: The type of test, i.e. "William"
 }
 }
 \description{
-Williams Trend test for
+Williams Trend test for each level in \eqn{dose\_name}.
 }
 \examples{
-
+data(ntp_weight_data)
 a <- ntp_williams(weight ~ sex, data = ntp_weight_data)
-summary(a)
+a
 }

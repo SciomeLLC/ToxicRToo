@@ -12,7 +12,8 @@ A data frame with 2727 rows and 11 variables:
   \item{data.source}{-Source of the risk assessment data.}
   \item{CASRN}{-Chemical's CASRN}
   \item{dose}{-Dose spacing of the study using the original study.}
-  \item{r.dose}{-Doses of the experiment relative to 1 being the maximum dose tested.}
+  \item{r.dose}{-Doses of the experiment relative to 1 being
+       the maximum dose tested.}
   \item{n}{-Number of animals on test.}
   \item{obs}{-Number of adverse events.}
   \item{organ}{-Organ impacted.}
@@ -22,10 +23,10 @@ A data frame with 2727 rows and 11 variables:
 More information at: \doi{10.1111/risa.13218}
 }
 \usage{
-dichotomousDR
+data(dichotomousDR)
 }
 \description{
-A dataset containing 733 dichotomous dose-response studies that were involved in
-regulatory risk assessment.
+A dataset containing 733 dichotomous dose-response
+studies that were involved in regulatory risk assessment.
 }
 \keyword{datasets}

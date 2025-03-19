@@ -11,19 +11,21 @@ gammaprior(mean = 1, sd = 1, lb = 0, ub = 100)
 
 \item{sd}{sd of the prior distribution.}
 
-\item{lb}{lower bound on the distribution. Necessary for the optimization algorithms, 
-must be >= 0}
+\item{lb}{lower bound on the distribution. Necessary for the optimization
+algorithms, must be >= 0}
 
-\item{ub}{Upper bound on the distribution. Necessary for the optimization algorithms,
-To make sure it is a fully Gamma prior, make ub large relative to the mean/sd.}
+\item{ub}{Upper bound on the distribution. Necessary for the optimization
+algorithms, To make sure it is a fully Gamma prior, make ub large relative
+to the mean/sd.}
 }
 \value{
-a normal prior model object.  This object is essentially a vector with
-the first element as 4 (for Gamma), the second element the mean, the third
-element the standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
+a normal prior model object.  This object is essentially a vector
+with the first element as 4 (for Gamma), the second element the mean, the
+third element the standard deviation, the fourth and fifth elements the
+lower and upper bounds, respectively.
 }
 \description{
-Specify a Gamma prior for a ToxicR Bayesian model fit
+Specify a Gamma prior for a ToxicRToo Bayesian model fit
 }
 \examples{
 # Gamma Prior with mean 1,sd 1, and lower bound 0.1

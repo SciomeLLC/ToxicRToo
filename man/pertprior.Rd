@@ -9,23 +9,29 @@ pertprior(mode = 1, shape = 4, lb = 0.1, ub = 100)
 \arguments{
 \item{mode}{mode of the prior distribution.}
 
-\item{shape}{shape of the modified PERT prior distribution (often denoted as gamma), optional}
+\item{shape}{shape of the modified PERT prior distribution
+(often denoted as gamma), optional}
 
-\item{lb}{lower bound on the distribution. Necessary for the optimization algorithms.}
+\item{lb}{lower bound on the distribution. Necessary for the optimization
+algorithms.}
 
-\item{ub}{Upper bound on the distribution. Necessary for the optimization algorithms,}
+\item{ub}{Upper bound on the distribution. Necessary for the optimization
+algorithms,}
 }
 \value{
-a normal prior model object.  This object is essentially a vector with
-the first element as 5 (for PERT), the second element the mean, the third
-element the standard deviation, the fourth and fifth elements the lower and upper bounds, respectively.
+a normal prior model object.  This object is essentially a vector
+with the first element as 5 (for PERT), the second element the mean, the
+third element the standard deviation, the fourth and fifth elements the
+lower and upper bounds, respectively.
 }
 \description{
-Specify a modified-PERT (essentially a continuous version of a triangular distribution) prior for a ToxicR Bayesian model fit
+Specify a modified-PERT
+(essentially a continuous version of a triangular distribution) prior for a
+ToxicRToo Bayesian model fit
 }
 \examples{
 # standard PERT Prior with mode 3, lower bound 1, upper bound 5
 pertprior(mode = 3, lb = 1, ub = 5)
-#modified PERT Prior with smaller shape parameter
+# modified PERT Prior with smaller shape parameter
 pertprior(mode = 3, lb = 1, ub = 5, shape = 3)
 }

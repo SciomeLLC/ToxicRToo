@@ -14,4 +14,7 @@
 ^\.log$
 ^CHANGELOG\.md$
 ^cran-comments\.md$
-^llvm/
+^llvm
+^doc$
+^Meta$
+^\.lintr$

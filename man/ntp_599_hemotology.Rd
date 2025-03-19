@@ -15,7 +15,7 @@ A data frame with 200 rows and 4 variables:
 For more information see: \doi{10.22427/NTP-DATA-TR-599}
 }
 \usage{
-ntp_599_hemotology
+data(ntp_599_hemotology)
 }
 \description{
 This dataset contains clinical chemistry data  for

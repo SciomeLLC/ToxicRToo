@@ -15,7 +15,7 @@ A data frame with 200 rows and 4 variables:
 For more information see: \doi{10.22427/NTP-DATA-TR-599}
 }
 \usage{
-ntp_599_female
+data(ntp_599_female)
 }
 \description{
 This dataset contains Thyroid Adenoma data  for

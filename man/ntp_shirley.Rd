@@ -8,24 +8,29 @@ ntp_shirley(formula, data, dose_name = "dose")
 }
 \arguments{
 \item{formula}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
-conditions. For example, if weight is the dependent variable, and you are
-interested in looking at the trend across sex one would have 'weight ~ sex'.}
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete
+experimental conditions. For example, if weight is the dependent variable,
+and you are interested in looking at the trend across sex one would have
+'weight ~ sex'.}
 
 \item{data}{A data frame with column names in the formula.}
 
-\item{dose_name}{The name of the variable containing the doses in the data frame \eqn{data}.
-It is expected multiple doses for each of the experimental conditions \eqn{X}.}
+\item{dose_name}{The name of the variable containing the doses in the data
+frame \eqn{data}. It is expected multiple doses for each of the experimental
+conditions \eqn{X}.}
 }
 \value{
 The results of a non-parametric Shirley's isotone test for trend on
-each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
-The returned list contains:
+each level in \eqn{dose\_name}. For more information see:
+\doi{10.2307/2529789}
+The S4 object has a slot called results that contains a data.frame with:
 \itemize{
- \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
+ \item \code{X}: this represents all the class objects on the right hand
+                 side of \eqn{ Y \sim X} above.
  \item \code{dose:} the dose groups relative to control.
  \item \code{testStats}: Value of the Shirley test statistic.
- \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which is not-significant,
+ \item \code{mult_comp_signif}: Test's significance as 0, 1, or 2 which
+                                is not-significant,
  significant at the 0.05% level and significant at the 0.01% level.
  \item \code{mult_comp_test}: The type of test, i.e. "SHIRLEY"
 }
@@ -34,6 +39,7 @@ The returned list contains:
 ntp_shirley Shirley's test as programmed at the NTP
 }
 \examples{
+data(ntp_weight_data)
 a <- ntp_shirley(weight ~ sex, data = ntp_weight_data)
-summary(a)
+a
 }

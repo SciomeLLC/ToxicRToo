@@ -14,7 +14,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // owenst_fn
 double owenst_fn(double x, double fx);
-RcppExport SEXP _ToxicR_owenst_fn(SEXP xSEXP, SEXP fxSEXP) {
+RcppExport SEXP _ToxicRToo_owenst_fn(SEXP xSEXP, SEXP fxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +26,7 @@ END_RCPP
 }
 // run_single_dichotomous
 List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data, Eigen::MatrixXd pr, NumericVector options1, IntegerVector options2, int seed);
-RcppExport SEXP _ToxicR_run_single_dichotomous(SEXP modelSEXP, SEXP dataSEXP, SEXP prSEXP, SEXP options1SEXP, SEXP options2SEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_single_dichotomous(SEXP modelSEXP, SEXP dataSEXP, SEXP prSEXP, SEXP options1SEXP, SEXP options2SEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,7 +42,7 @@ END_RCPP
 }
 // run_continuous_single
 List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y, Eigen::MatrixXd X, Eigen::MatrixXd prior, NumericVector options, IntegerVector dist_type, int seed);
-RcppExport SEXP _ToxicR_run_continuous_single(SEXP modelSEXP, SEXP YSEXP, SEXP XSEXP, SEXP priorSEXP, SEXP optionsSEXP, SEXP dist_typeSEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_continuous_single(SEXP modelSEXP, SEXP YSEXP, SEXP XSEXP, SEXP priorSEXP, SEXP optionsSEXP, SEXP dist_typeSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -59,7 +59,7 @@ END_RCPP
 }
 // run_continuous_ma_laplace
 List run_continuous_ma_laplace(List model_priors, NumericVector model_type, NumericVector dist_type, Eigen::MatrixXd Y, Eigen::MatrixXd X, NumericVector options, int seed);
-RcppExport SEXP _ToxicR_run_continuous_ma_laplace(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_continuous_ma_laplace(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -76,7 +76,7 @@ END_RCPP
 }
 // run_continuous_ma_mcmc
 List run_continuous_ma_mcmc(List model_priors, NumericVector model_type, NumericVector dist_type, Eigen::MatrixXd Y, Eigen::MatrixXd X, NumericVector options, int seed);
-RcppExport SEXP _ToxicR_run_continuous_ma_mcmc(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_continuous_ma_mcmc(SEXP model_priorsSEXP, SEXP model_typeSEXP, SEXP dist_typeSEXP, SEXP YSEXP, SEXP XSEXP, SEXP optionsSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -93,7 +93,7 @@ END_RCPP
 }
 // run_ma_dichotomous
 List run_ma_dichotomous(Eigen::MatrixXd data, List priors, NumericVector models, NumericVector model_p, bool is_MCMC, NumericVector options1, IntegerVector options2, int seed);
-RcppExport SEXP _ToxicR_run_ma_dichotomous(SEXP dataSEXP, SEXP priorsSEXP, SEXP modelsSEXP, SEXP model_pSEXP, SEXP is_MCMCSEXP, SEXP options1SEXP, SEXP options2SEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_ma_dichotomous(SEXP dataSEXP, SEXP priorsSEXP, SEXP modelsSEXP, SEXP model_pSEXP, SEXP is_MCMCSEXP, SEXP options1SEXP, SEXP options2SEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -111,7 +111,7 @@ END_RCPP
 }
 // run_dichotomous_single_mcmc
 List run_dichotomous_single_mcmc(NumericVector model, Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::MatrixXd pr, NumericVector options, int seed);
-RcppExport SEXP _ToxicR_run_dichotomous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP prSEXP, SEXP optionsSEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_dichotomous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP prSEXP, SEXP optionsSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -127,7 +127,7 @@ END_RCPP
 }
 // run_continuous_single_mcmc
 List run_continuous_single_mcmc(NumericVector model, Eigen::MatrixXd Y, Eigen::MatrixXd D, Eigen::MatrixXd priors, NumericVector options, bool is_logNormal, bool suff_stat, int seed);
-RcppExport SEXP _ToxicR_run_continuous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP priorsSEXP, SEXP optionsSEXP, SEXP is_logNormalSEXP, SEXP suff_statSEXP, SEXP seedSEXP) {
+RcppExport SEXP _ToxicRToo_run_continuous_single_mcmc(SEXP modelSEXP, SEXP YSEXP, SEXP DSEXP, SEXP priorsSEXP, SEXP optionsSEXP, SEXP is_logNormalSEXP, SEXP suff_statSEXP, SEXP seedSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -145,7 +145,7 @@ END_RCPP
 }
 // polyk
 NumericVector polyk(NumericVector dose, NumericVector tumor, NumericVector daysOnStudy);
-RcppExport SEXP _ToxicR_polyk(SEXP doseSEXP, SEXP tumorSEXP, SEXP daysOnStudySEXP) {
+RcppExport SEXP _ToxicRToo_polyk(SEXP doseSEXP, SEXP tumorSEXP, SEXP daysOnStudySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -158,7 +158,7 @@ END_RCPP
 }
 // setseedGSL
 void setseedGSL(int s);
-RcppExport SEXP _ToxicR_setseedGSL(SEXP sSEXP) {
+RcppExport SEXP _ToxicRToo_setseedGSL(SEXP sSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type s(sSEXP);
@@ -168,7 +168,7 @@ END_RCPP
 }
 // set_threads
 int set_threads(int num_threads);
-RcppExport SEXP _ToxicR_set_threads(SEXP num_threadsSEXP) {
+RcppExport SEXP _ToxicRToo_set_threads(SEXP num_threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -179,21 +179,21 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_ToxicR_owenst_fn", (DL_FUNC) &_ToxicR_owenst_fn, 2},
-    {"_ToxicR_run_single_dichotomous", (DL_FUNC) &_ToxicR_run_single_dichotomous, 6},
-    {"_ToxicR_run_continuous_single", (DL_FUNC) &_ToxicR_run_continuous_single, 7},
-    {"_ToxicR_run_continuous_ma_laplace", (DL_FUNC) &_ToxicR_run_continuous_ma_laplace, 7},
-    {"_ToxicR_run_continuous_ma_mcmc", (DL_FUNC) &_ToxicR_run_continuous_ma_mcmc, 7},
-    {"_ToxicR_run_ma_dichotomous", (DL_FUNC) &_ToxicR_run_ma_dichotomous, 8},
-    {"_ToxicR_run_dichotomous_single_mcmc", (DL_FUNC) &_ToxicR_run_dichotomous_single_mcmc, 6},
-    {"_ToxicR_run_continuous_single_mcmc", (DL_FUNC) &_ToxicR_run_continuous_single_mcmc, 8},
-    {"_ToxicR_polyk", (DL_FUNC) &_ToxicR_polyk, 3},
-    {"_ToxicR_setseedGSL", (DL_FUNC) &_ToxicR_setseedGSL, 1},
-    {"_ToxicR_set_threads", (DL_FUNC) &_ToxicR_set_threads, 1},
+    {"_ToxicRToo_owenst_fn", (DL_FUNC) &_ToxicRToo_owenst_fn, 2},
+    {"_ToxicRToo_run_single_dichotomous", (DL_FUNC) &_ToxicRToo_run_single_dichotomous, 6},
+    {"_ToxicRToo_run_continuous_single", (DL_FUNC) &_ToxicRToo_run_continuous_single, 7},
+    {"_ToxicRToo_run_continuous_ma_laplace", (DL_FUNC) &_ToxicRToo_run_continuous_ma_laplace, 7},
+    {"_ToxicRToo_run_continuous_ma_mcmc", (DL_FUNC) &_ToxicRToo_run_continuous_ma_mcmc, 7},
+    {"_ToxicRToo_run_ma_dichotomous", (DL_FUNC) &_ToxicRToo_run_ma_dichotomous, 8},
+    {"_ToxicRToo_run_dichotomous_single_mcmc", (DL_FUNC) &_ToxicRToo_run_dichotomous_single_mcmc, 6},
+    {"_ToxicRToo_run_continuous_single_mcmc", (DL_FUNC) &_ToxicRToo_run_continuous_single_mcmc, 8},
+    {"_ToxicRToo_polyk", (DL_FUNC) &_ToxicRToo_polyk, 3},
+    {"_ToxicRToo_setseedGSL", (DL_FUNC) &_ToxicRToo_setseedGSL, 1},
+    {"_ToxicRToo_set_threads", (DL_FUNC) &_ToxicRToo_set_threads, 1},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_ToxicR(DllInfo *dll) {
+RcppExport void R_init_ToxicRToo(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

@@ -1,0 +1,13 @@
+linters: linters_with_defaults(
+    line_length_linter(80L),
+    commented_code_linter = NULL,
+    object_name_linter = NULL,
+    object_length_linter = NULL,
+    object_usage_linter = NULL,
+    indentation_linter(
+      indent = 4L,
+      hanging_indent_style = "never",
+      assignment_as_infix = FALSE
+    )
+  )
+encoding: "UTF-8"

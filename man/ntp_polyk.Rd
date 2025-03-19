@@ -9,25 +9,38 @@ ntp_polyk(dose, tumor, daysOnStudy)
 }
 \arguments{
 \item{dose}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete
+ experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
 \item{tumor}{A data frame with column names in the formula.}
 
-\item{daysOnStudy}{The name of the variable containing the doses in the data frame \eqn{data}.
-It is expected multiple doses for each of the experimental conditions \eqn{X}.}
+\item{daysOnStudy}{The name of the variable containing the doses in the data
+ frame \eqn{data}.
+It is expected multiple doses for each of the experimental conditions
+ \eqn{X}.}
 }
 \value{
-The results of a Williams trend test for each level in dose_name.
-More information on this procedure at: \doi{10.2307/2531856} and \doi{10.2307/2532200}
-This procedure returns a vector of three p-values for the poly-1.5, poly-3, and poly-6 test
-respectively.
+An S4 object with results of a PolyK trend test for each level
+in \eqn{dose\_name}.
+More information on this procedure at: \doi{10.2307/2531856} and
+ \doi{10.2307/2532200}
+This procedure returns a vector of three p-values for the poly-1.5,
+ poly-3, and poly-6 test
+respectively. The S4 slot results contains the p-values, while the other
+ slots contain
+the input data.
 }
 \description{
 Poly-k test
 This function implements the NTP's polyK trend test.
 }
 \examples{
-ntp_polyk(ntp_599_female$dose, ntp_599_female$adenoma, ntp_599_female$days_on_study)
+data(ntp_599_female)
+ntp_polyk(
+    ntp_599_female$dose,
+    ntp_599_female$adenoma,
+    ntp_599_female$days_on_study
+)
 }

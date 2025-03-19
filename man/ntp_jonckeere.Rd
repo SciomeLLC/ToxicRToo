@@ -9,30 +9,35 @@ ntp_jonckeere(formula, data, dose_name = "dose", pair = "Williams")
 }
 \arguments{
 \item{formula}{An equation of the form \eqn{Y \sim X.} Here the variable
-\eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
+\eqn{Y} is the response of interest, and \eqn{X} represents discrete
+ experimental
 conditions. For example, if weight is the dependent variable, and you are
 interested in looking at the trend across sex one would have 'weight ~ sex'.}
 
 \item{data}{A data frame with column names in the formula.}
 
-\item{dose_name}{The name of the variable containing the doses in the data frame \eqn{data}.
-It is expected multiple doses for each of the experimental conditions \eqn{X}.}
+\item{dose_name}{The name of the variable containing the doses in the data
+ frame \eqn{data}.
+It is expected multiple doses for each of the experimental conditions
+ \eqn{X}.}
 
 \item{pair}{The type of test used for pairwise comparison. It can either be
 "Williams" or "Shirley"}
 }
 \value{
-The results of a global test for difference from background.
+An S4 object with results of a global test for difference from
+ background
+contained in the S4 slot results.
 }
 \description{
 ntp_jonckeere
 Jonckherre's test for significant differences from background dose
 }
 \examples{
-
+data(ntp_599_hemotology)
 ntp_jonckeere(
-     response ~ sex + response_type, 
-     data = ntp_599_hemotology, 
-     dose_name = "concentration"
+    response ~ sex + response_type,
+    data = ntp_599_hemotology,
+    dose_name = "concentration"
 )
 }

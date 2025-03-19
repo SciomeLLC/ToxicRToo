@@ -15,7 +15,7 @@ A data frame with 120 rows and 4 variables:
 For more information see: \doi{10.22427/NTP-DATA-TR-599}
 }
 \usage{
-ntp_weight_data
+data(ntp_weight_data)
 }
 \description{
 This dataset contains terminal body-weight data for male and

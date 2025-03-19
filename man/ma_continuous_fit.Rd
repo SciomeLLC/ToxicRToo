@@ -7,7 +7,7 @@
 ma_continuous_fit(
   D,
   Y,
-  model_list = NA,
+  model_list = NULL,
   fit_type = "laplace",
   BMR_TYPE = "sd",
   BMR = 0.1,
@@ -26,64 +26,129 @@ ma_continuous_fit(
 
 \item{Y}{response matrix}
 
-\item{model_list}{a list of configurations for the single models (priors, model type).  To create a model list, one creates a list of
+\item{model_list}{a list of configurations for the single models
+(priors, model type).  To create a model list, one creates a list of
 continuous model priors using \code{create_continuous_prior}.}
 
 \item{fit_type}{the method used to fit ("laplace", "mle", or "mcmc")}
 
-\item{BMR_TYPE}{Specifies the type of benchmark dose analysis to be performed. For continuous models, there are four types of BMD definitions that are commonly used:
+\item{BMR_TYPE}{Specifies the type of benchmark dose analysis to be
+performed. For continuous models, there are four types of BMD
+definitions that are commonly used:
 \itemize{
-  \item Standard deviation is the default option, but it can be explicitly specified with 'BMR_TYPE = "sd"' This definition defines the BMD as the dose associated with the mean/median changing a specified number of standard deviations from the mean at the control dose., i.e., it is the dose, BMD, that solves \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma}
-  \item Relative deviation can be specified with 'BMR_TYPE = "rel"'. This defines the BMD as the dose that changes the control mean/median a certain percentage from the background dose, i.e. it is the dose, BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)} 
-  \item Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.  This defines the BMD that changes the probability of an adverse event by a stated amount relitive to no exposure (i.e 0).  That is, it is the dose, BMD, that solves \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}. For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0}, where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p," and it defaults to 0.01.  Note: this discussion assumed increasing data.  The fitter determines the direction of the data and inverts the probability statements for decreasing data.
-  \item Absolute deviation can be specified with 'BMR_TYPE="abs"'. This defines the BMD as an absolute change from the control dose of zero by a specified amount. That is the BMD is the dose that solves the equation \eqn{\mid f(dose) - f(0) \mid = BMR}. 
+  \item Standard deviation is the default option, but it can be
+    explicitly specified with 'BMR_TYPE = "sd"' This definition
+    defines the BMD as the dose associated with the mean/median
+    changing a specified number of standard deviations from the mean at
+    the control dose., i.e., it is the dose, BMD, that solves
+    \eqn{\mid f(dose)-f(0) \mid = BMR \times \sigma}
+  \item Relative deviation can be specified with 'BMR_TYPE = "rel"'.
+    This defines the BMD as the dose that changes the control mean/median
+    a certain percentage from the background dose, i.e. it is the dose,
+    BMD that solves \eqn{\mid f(dose) - f(0) \mid = (1 \pm BMR) f(0)}
+  \item Hybrid deviation can be specified with 'BMR_TYPE = "hybrid"'.
+    This defines the BMD that changes the probability of an adverse event
+    by a stated amount relitive to no exposure (i.e 0).  That is, it is
+    the dose, BMD, that solves
+    \eqn{\frac{Pr(X > x| dose) - Pr(X >x|0)}{Pr(X < x|0)} = BMR}.
+    For this definition, \eqn{Pr(X < x|0) = 1 - Pr(X > X|0) = \pi_0},
+    where \eqn{0 \leq \pi_0 < 1} is defined by the user as "point_p,"
+    and it defaults to 0.01.  Note: this discussion assumed increasing
+    data. The fitter determines the direction of the data and inverts the
+    probability statements for decreasing data.
+  \item Absolute deviation can be specified with 'BMR_TYPE="abs"'. This
+    defines the BMD as an absolute change from the control dose of zero
+    by a specified amount. That is the BMD is the dose that solves the
+    equation \eqn{\mid f(dose) - f(0) \mid = BMR}.
 }}
 
-\item{BMR}{This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."}
+\item{BMR}{This option specifies the benchmark response BMR. The BMR is
+defined in relation to the BMD calculation requested (see BMD).
+By default, the "BMR = 0.1."}
 
-\item{point_p}{This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose.}
+\item{point_p}{This option is only used for hybrid BMD calculations. It
+defines a probability that is the cutpoint for observations. It is the
+probability that observations have this probability, or less, of being
+observed at the background dose.}
 
-\item{alpha}{Alpha is the specified nominal coverage rate for computation of the lower bound on the BMDL and BMDU, i.e., one computes a \eqn{100\times(1-\alpha)\%} confidence interval.  For the interval (BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% }.  By default, it is set to 0.05.}
+\item{alpha}{Alpha is the specified nominal coverage rate for computation of
+the lower bound on the BMDL and BMDU, i.e., one computes a
+\eqn{100\times(1-\alpha)\%} confidence interval. For the interval
+(BMDL,BMDU) this is a \eqn{100\times(1-2\alpha)\% }.
+By default, it is set to 0.05.}
 
-\item{EFSA}{This option is a logical allowing users to use the default EFSA models to average instead of the original option in previous ToxicR versions. If false, the models are: 
-hill, hill normal-ncv, exp-3, exp-3 normal-ncv, exp-3 lognormal, exp-5, exp-5 normal-ncv, exp-5 lognormal, power, power normal-ncv. If true, it follows the EFSA guidelines;
-these models are (normal then lognormal for each model): exp-aerts, invexp-aerts, hill-aerts, lognormal-aerts, gamma-efsa, LMS, probit-aerts, and logistic-aerts. 
+\item{EFSA}{This option is a logical allowing users to use the default EFSA
+models to average instead of the original option in previous ToxicRToo
+versions. If false, the models are:
+      hill, hill normal-ncv, exp-3, exp-3 normal-ncv, exp-3 lognormal,
+      exp-5, exp-5 normal-ncv, exp-5 lognormal, power, power normal-ncv.
+If true, it follows the EFSA guidelines; these models are
+(normal then lognormal for each model):
+      exp-aerts, invexp-aerts, hill-aerts, lognormal-aerts, gamma-efsa,
+      LMS, probit-aerts, and logistic-aerts.
 See \code{\link{single_continuous_fit}} for details on the models.}
 
 \item{samples}{the number of samples to take (MCMC only)}
 
 \item{burnin}{the number of burnin samples to take (MCMC only)}
 
-\item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed}
+\item{BMD_TYPE}{Deprecated version of BMR_TYPE that specifies the type of
+benchmark dose analysis to be performed}
 
-\item{threads}{specify the number of OpenMP threads to use for the calculations. Default = 2}
+\item{threads}{specify the number of OpenMP threads to use for the
+calculations. Default = 2}
 
 \item{seed}{specify the GSL seed. Default = 12331}
 }
 \value{
-This function model object containing a list of individual fits and model averaging fits
+Returns a fitted S4 model class (\code{\link{BMD_continuous_MA}})
+ with the following slots:
 \itemize{
- \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
-        is the number of models in the model average.  For each \code{X}, this is an individual model
-        fit identical to what is returned in `\code{single_continuous_fit}.'
+ \item \code{models}: A list of \code{\link{BMD_continuous_fit_maximized}}
+   or \code{\link{BMD_continuous_fit_MCMC}} objects of length equal to the
+   number of models to average.
  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
- \item \code{posterior_probs}: The posterior model probabilities used in the MA.
- \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
+ \item \code{posterior_probs}: The posterior model probabilities used in
+   the MA.
+ \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence
+   intervals.
+ \item \code{type}: String describing the fit_type
 }
 }
 \description{
 Fit a model averaged continuous BMD model.
 }
 \examples{
-\donttest{
-hill_m <- function(doses) {
-  returnV <- 481 - 250.3 * doses^1.3 / (40^1.3 + doses^1.3)
-  return(returnV)
-}
-doses <- rep(c(0, 6.25, 12.5, 25, 50, 100), each = 10)
-mean <- hill_m(doses)
-y <- rnorm(length(mean), mean, 20.14)
-model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMR_TYPE = "sd", BMR = 1)
-summary(model)
-}
+prior <- create_prior_list(
+    normprior(0, 1, -100, 100),
+    normprior(0, 1, -1e4, 1e4),
+    lnormprior(0, 1, 0, 100),
+    lnormprior(log(1), 0.4215, 0, 18),
+    normprior(0, 10, -100, 100)
+)
+p_hill_norm <- create_continuous_prior(prior, "hill", "normal")
+prior <- create_prior_list(
+    normprior(0, 1, -100, 100),
+    normprior(0, 1, -1e4, 1e4),
+    lnormprior(0, 1, 0, 100),
+    lnormprior(log(1), 0.4215, 0, 18),
+    lnormprior(0, 1, 0, 100),
+    normprior(0, 10, -100, 100)
+)
+p_hill_ncv <- create_continuous_prior(prior, "hill", "normal-ncv")
+prior_list <- list(p_hill_norm, p_hill_ncv)
+doses <- cbind(c(0, 25, 50, 100, 200))
+y <- cbind(
+    c(6, 5.2, 2.4, 1.1, 0.75),
+    c(20, 20, 19, 20, 20),
+    c(1, 1.1, 0.81, 0.74, 1)
+)
+model <- ma_continuous_fit(doses, y,
+    fit_type = "mcmc",
+    BMR_TYPE = "abs",
+    BMR = 0.1,
+    samples = 1e4,
+    model_list = prior_list
+)
+model
 }
