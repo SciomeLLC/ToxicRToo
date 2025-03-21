@@ -26,9 +26,9 @@
 #' @return there will be no output from this function. Rather, executing
 #' this function will update the current 'ToxicRToo' package by installing
 #' the most recent version of the package from GitHub.
+#' @examples
+#' update_ToxicRToo()
 #' @export
-#' @noRd
-#'
 update_ToxicRToo <- function(
     force = TRUE,
     upgrade_other_pkg = FALSE,

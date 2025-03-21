@@ -33,19 +33,19 @@
 
 #define STRICT_R_HEADERS
 
-#include <DichGammaBMD_NC.h>
-#include <DichHillBMD_NC.h>
-#include <DichLogLogisticBMD_NC.h>
-#include <DichLogProbitBMD_NC.h>
-#include <DichLogisticBMD_NC.h>
-#include <DichMultistageBMD_NC.h>
-#include <DichProbitBMD_NC.h>
-#include <DichQlinearBMD_NC.h>
-#include <DichWeibullBMD_NC.h>
+#include "DichGammaBMD_NC.h"
+#include "DichHillBMD_NC.h"
+#include "DichLogLogisticBMD_NC.h"
+#include "DichLogProbitBMD_NC.h"
+#include "DichLogisticBMD_NC.h"
+#include "DichMultistageBMD_NC.h"
+#include "DichProbitBMD_NC.h"
+#include "DichQlinearBMD_NC.h"
+#include "DichWeibullBMD_NC.h"
 
 #include "mcmc_analysis.h"
 
-#include <bmd_calculate.h>
+#include "bmd_calculate.h"
 
 #include "normal_EXP_NC.h"
 #include "normal_HILL_NC.h"

@@ -1760,7 +1760,7 @@ setMethod(
 #' This is equivalent to object@prior, but the accessor is
 #' needed to avoid BiocCheck warnings for the vignette.
 #'
-#' @param oject A single continuous fit object
+#' @param object A single continuous fit object
 #' @return Returns the included priorClass
 #' @examples
 #' M2 <- matrix(0, nrow = 5, ncol = 4)
@@ -1782,13 +1782,21 @@ setMethod(
 #' )
 #'
 #' get_prior(model)
+#' @rdname get_prior
+#' @name get_prior
 #' @export
 setGeneric("get_prior", function(object) standardGeneric("get_prior"))
+#' @rdname get_prior
+#' @aliases get_prior,BMD_continuous_fit_maximized-method
+#' @exportMethod get_prior
 setMethod(
     "get_prior",
     signature(object = "BMD_continuous_fit_maximized"),
     function(object) object@prior
 )
+#' @rdname get_prior
+#' @aliases get_prior,BMD_continuous_fit_MCMC-method
+#' @exportMethod get_prior
 setMethod(
     "get_prior",
     signature(object = "BMD_continuous_fit_MCMC"),
@@ -1801,7 +1809,7 @@ setMethod(
 #' This is equivalent to object@full_model, but the accessor is
 #' needed to avoid BiocCheck warnings for the vignette.
 #'
-#' @param oject A single continuous fit object
+#' @param object A single continuous fit object
 #' @return Returns a string description of the model
 #' @examples
 #' M2 <- matrix(0, nrow = 5, ncol = 4)
@@ -1823,13 +1831,23 @@ setMethod(
 #' )
 #'
 #' get_model(model)
+#' @rdname get_model
+#' @name get_model
 #' @export
 setGeneric("get_model", function(object) standardGeneric("get_model"))
+
+#' @rdname get_model
+#' @aliases get_model,BMD_continuous_fit_maximized-method
+#' @exportMethod get_model
 setMethod(
     "get_model",
     signature(object = "BMD_continuous_fit_maximized"),
     function(object) object@full_model
 )
+
+#' @rdname get_model
+#' @aliases get_model,BMD_continuous_fit_MCMC-method
+#' @exportMethod get_model
 setMethod(
     "get_model",
     signature(object = "BMD_continuous_fit_MCMC"),

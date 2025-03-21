@@ -2,12 +2,18 @@
 % Please edit documentation in R/fits.R
 \name{get_model}
 \alias{get_model}
+\alias{get_model,BMD_continuous_fit_maximized-method}
+\alias{get_model,BMD_continuous_fit_MCMC-method}
 \title{Gets the model of a BMD_continuous_fit}
 \usage{
 get_model(object)
+
+\S4method{get_model}{BMD_continuous_fit_maximized}(object)
+
+\S4method{get_model}{BMD_continuous_fit_MCMC}(object)
 }
 \arguments{
-\item{oject}{A single continuous fit object}
+\item{object}{A single continuous fit object}
 }
 \value{
 Returns a string description of the model

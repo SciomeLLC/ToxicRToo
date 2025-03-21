@@ -2,12 +2,18 @@
 % Please edit documentation in R/fits.R
 \name{get_prior}
 \alias{get_prior}
+\alias{get_prior,BMD_continuous_fit_maximized-method}
+\alias{get_prior,BMD_continuous_fit_MCMC-method}
 \title{Gets the prior of a BMD_continuous_fit}
 \usage{
 get_prior(object)
+
+\S4method{get_prior}{BMD_continuous_fit_maximized}(object)
+
+\S4method{get_prior}{BMD_continuous_fit_MCMC}(object)
 }
 \arguments{
-\item{oject}{A single continuous fit object}
+\item{object}{A single continuous fit object}
 }
 \value{
 Returns the included priorClass

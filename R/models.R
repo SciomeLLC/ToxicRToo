@@ -320,39 +320,40 @@ BMD_dichotomous_MA <- function(
         BMD_CDF = BMD_CDF
     )
 }
+# #' @noRd
+# BMD_Bayes_continuous_model <- function(
+#     prior, model, distribution,
+#     parameters = character(), mean = character(), degree = NA_real_,
+#     bmd = numeric(), posterior_probs = numeric(), submodels = list()) {
+#     new("BMD_Bayes_continuous_model",
+#         prior = prior,
+#         model = model,
+#         distribution = distribution,
+#         parameters = parameters,
+#         mean = mean,
+#         degree = degree,
+#         bmd = bmd,
+#         posterior_probs = posterior_probs,
+#         submodels = submodels
+#     )
+# }
 
-BMD_Bayes_continuous_model <- function(
-    prior, model, distribution,
-    parameters = character(), mean = character(), degree = NA_real_,
-    bmd = numeric(), posterior_probs = numeric(), submodels = list()) {
-    new("BMD_Bayes_continuous_model",
-        prior = prior,
-        model = model,
-        distribution = distribution,
-        parameters = parameters,
-        mean = mean,
-        degree = degree,
-        bmd = bmd,
-        posterior_probs = posterior_probs,
-        submodels = submodels
-    )
-}
-
-BMD_Bayes_dichotomous_model <- function(
-    prior, model,
-    parameters = character(), mean = character(), degree = NA_real_,
-    bmd = numeric(), posterior_probs = numeric(), submodels = list()) {
-    new("BMD_Bayes_dichotomous_model",
-        prior = prior,
-        model = model,
-        parameters = parameters,
-        mean = mean,
-        degree = degree,
-        bmd = bmd,
-        posterior_probs = posterior_probs,
-        submodels = submodels
-    )
-}
+# #' @noRd
+# BMD_Bayes_dichotomous_model <- function(
+#     prior, model,
+#     parameters = character(), mean = character(), degree = NA_real_,
+#     bmd = numeric(), posterior_probs = numeric(), submodels = list()) {
+#     new("BMD_Bayes_dichotomous_model",
+#         prior = prior,
+#         model = model,
+#         parameters = parameters,
+#         mean = mean,
+#         degree = degree,
+#         bmd = bmd,
+#         posterior_probs = posterior_probs,
+#         submodels = submodels
+#     )
+# }
 
 # setMethod("show", "BMD_Bayes_continuous_model", function(object) {
 #   cat("BMD Bayesian Continuous Model\n")
@@ -1024,8 +1025,10 @@ setMethod("cleveland_plot", "BMD_dichotomous_MA", function(A) {
         labs(
             x = "Dose Level",
             y = "",
-            title = "BMD Estimates by Each Model
-            (Sorted by Posterior Probability)",
+            title = paste0(
+                "BMD Estimates by Each Model ",
+                "(Sorted by Posterior Probability)"
+            ),
             size = "Posterior Probability"
         ) +
         theme(legend.position = "none") +
@@ -1091,8 +1094,10 @@ setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
         labs(
             x = "Dose Level",
             y = "",
-            title = "BMD Estimates by Each Model
-            (Sorted by Posterior Probability)",
+            title = paste0(
+                "BMD Estimates by Each Model ",
+                "(Sorted by Posterior Probability)"
+            ),
             size = "Posterior Probability"
         ) +
         theme(legend.position = "none") +
@@ -1112,7 +1117,8 @@ setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
 })
 
 # Helper function to obtain predictions from a model fit.
-getPredictionForFit <- function(
+
+.getPredictionForFit <- function(
     fit, test_doses, sample_idx = NULL,
     decrease = FALSE, type = c("mcmc", "laplace")) {
     type <- match.arg(type)
@@ -1881,9 +1887,7 @@ setMethod(
 
             # Not sure about this part - SL 05/28/21
             # Plot only level >2
-
-
-            for (ii in seq_len(fit_idx)) {
+            for (ii in seq_along(fit_idx)) {
                 df <- NULL
                 if (!is.finite(A@posterior_probs[ii])) {
                     A@posterior_probs[ii] <- 0

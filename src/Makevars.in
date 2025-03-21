@@ -1,5 +1,5 @@
-PKG_CXXFLAGS=-I./code_base -I./include @OPENMP@ @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION -DNO_OMP -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
-PKG_LIBS=$(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) @NLOPT_LIBS@ @GSL_LIBS@ @OPENMP@
+PKG_CXXFLAGS=-I./code_base -I./include @NLOPT_CPPFLAGS@ @GSL_CPPFLAGS@ -DR_COMPILATION -DNO_OMP -DEIGEN_PERMANENTLY_DISABLE_STUPID_WARNINGS
+PKG_LIBS=$(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) @NLOPT_LIBS@ @GSL_LIBS@
 
 # Debug / clear eigen warnings from compilation 
 #PKG_CXXFLAGS+=-Wno-ignored-attributes -DToxicR_DEBUG
@@ -15,8 +15,3 @@ all: $(SHLIB)
 # Provide recipe to remove all objects
 clean:
 	@rm -f $(OBJECTS)
-
-
-
-
-

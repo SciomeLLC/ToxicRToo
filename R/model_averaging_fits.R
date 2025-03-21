@@ -712,8 +712,8 @@ ma_dichotomous_fit <- function(
                 )
             }
             temp_prior_l <- tmodel_list[[ii]]
-            priors[[ii]] <- temp_prior_l$priors
-            model_list[ii] <- temp_prior_l$mean
+            priors[[ii]] <- temp_prior_l@prior
+            model_list[ii] <- temp_prior_l@mean
             model_i[ii] <- .dichotomous_model_type(model_list[ii])
         }
     }

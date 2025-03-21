@@ -378,13 +378,8 @@ optimizationResult cfindMAX_W_EQUALITY(cBMDModel<LL, PR> *M,
     try {
       result = opt.optimize(x, minf);
       good_opt = true;
-    #if defined(_WIN32) || defined(__APPLE__)
     } catch (nlopt::roundoff_limited &exc) {
       good_opt = false;
-    #else 
-    } catch (nlopt::roundoff_limited2 &exc) {
-      good_opt = false;
-    #endif
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
       // cout << "Error Forced stop" << endl;
@@ -613,25 +608,14 @@ optimizationResult cfindMAX_W_BOUND(cBMDModel<LL, PR> *M, Eigen::MatrixXd start,
       // flush(file);
       good_opt = true;
 // opt_iter++;
-#if defined(_WIN32) || defined(__APPLE__)
     } catch (nlopt::roundoff_limited &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
       //	cout << "Error Round off" << endl;
     } catch (nlopt::forced_stop &exc) {
       good_opt = false;
-      DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
+      DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: forced_stop");
 //	cout << "Error Forced stop" << endl;
-#else
-    } catch (nlopt::roundoff_limited2 &exc) {
-      good_opt = false;
-      DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
-      //	cout << "Error Round off" << endl;
-    } catch (nlopt::forced_stop2 &exc) {
-      good_opt = false;
-      DEBUG_LOG(file, "opt_iter= " << opt_iter << ", error: roundoff_limited");
-//	cout << "Error Forced stop" << endl;
-#endif
     } catch (const std::invalid_argument &exc) {
       good_opt = false;
       DEBUG_LOG(file, "opt_iter= " << opt_iter

@@ -55,15 +55,15 @@ using Rcpp::as;
 
 // const Map<MatrixXd> A(as<Map<MatrixXd>>(AA));
 
-#include <statmod.h>
+#include "statmod.h"
 
-#include <IDPrior.h>
-#include <binomModels.h>
-#include <log_likelihoods.h>
-#include <normalModels.h>
-#include <normal_likelihoods.h>
+#include "IDPrior.h"
+#include "binomModels.h"
+#include "log_likelihoods.h"
+#include "normalModels.h"
+#include "normal_likelihoods.h"
 
-#include <bmd_calculate.h>
+#include "bmd_calculate.h"
 
 #include "normal_EXP_NC.h"
 #include "normal_HILL_NC.h"

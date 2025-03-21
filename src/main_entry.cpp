@@ -42,13 +42,13 @@ SOFTWARE.
 #include <string>
 #include <vector>
 
-#include <bmds_entry.h>
-#include <statmod.h>
-#include <IDPrior.h>
-#include <binomModels.h>
-#include <log_likelihoods.h>
-#include <normalModels.h>
-#include <normal_likelihoods.h>
+#include "bmds_entry.h"
+#include "statmod.h"
+#include "IDPrior.h"
+#include "binomModels.h"
+#include "log_likelihoods.h"
+#include "normalModels.h"
+#include "normal_likelihoods.h"
 
 #include "bmd_calculate.h"
 

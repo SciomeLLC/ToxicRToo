@@ -1,6 +1,6 @@
 name: clang-test
 on:
-  push:
+  workflow_dispatch: 
 
 jobs:
     clang-test:
@@ -10,7 +10,6 @@ jobs:
           fail-fast: false
           matrix:
             compiler:
-                - llvm-16.0.6
                 - llvm-17.0.6
                 - llvm-18.1.8
                 - llvm-19.1.0

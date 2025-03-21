@@ -133,9 +133,9 @@ single_dichotomous_fit <- function(
         Please create a priorClass object with create_prior_list."
             )
         }
-        model_type <- prior$mean
+        model_type <- prior@mean
         if (model_type == "multistage") {
-            degree <- prior$degree
+            degree <- prior@degree
         }
         if (fit_type == "mle") {
             stop("A Bayesian prior model was specified, but MLE was requested.")
