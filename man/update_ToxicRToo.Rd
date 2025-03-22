@@ -40,5 +40,7 @@ the most recent version of the package from GitHub.
 Update the package 'ToxicRToo'
 }
 \examples{
+\dontrun{
 update_ToxicRToo()
+}
 }

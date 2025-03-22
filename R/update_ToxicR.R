@@ -27,7 +27,9 @@
 #' this function will update the current 'ToxicRToo' package by installing
 #' the most recent version of the package from GitHub.
 #' @examples
+#' \dontrun{
 #' update_ToxicRToo()
+#' }
 #' @export
 update_ToxicRToo <- function(
     force = TRUE,

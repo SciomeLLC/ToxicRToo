@@ -20,9 +20,10 @@ Depending on your system, cut and paste the following code into your R terminal.
 
 If you have the package devtools, you can download and install directly from GitHub!
 
-`library(devtools)`
-
-`devtools::install_github("NIEHS/ToxicR")`
+```R
+library(devtools)
+devtools::install_github("SciomeLLC/ToxicRToo")
+```
 
 ***Note:*** For Windows, you will need the rtools executable available at: <https://cran.r-project.org/bin/windows/Rtools/>
 
@@ -46,19 +47,39 @@ For Ubuntu, type
 
 ### First, install the required packages
 
-`install.packages(c("Rcpp","RcppEigen","RcppGSL","ggplot2","shiny","coda","scales","tidyverse","forcats","ggridges","doBy","multcomp","dplyr","rmarkdown", "actuar","ggpubr", "testthat","gridExtra","VIM","knitr", "modules", "plotly" ))`
+```R
+install.packages(c(
+  "Rcpp", 
+  "RcppEigen",
+  "RcppGSL",
+  "ggplot2", 
+  "coda", 
+  "scales",
+  "forcats", 
+  "ggridges", 
+  "doBy", 
+  "multcomp", 
+  "dplyr", 
+  "rmarkdown", 
+  "actuar", 
+  "ggpubr", 
+  "testthat", 
+  "gridExtra", 
+  "VIM", 
+  "knitr", 
+  "modules", 
+  "plotly",
+  "methods",
+  "remotes"
+))
+```
 
 ### Windows R 4.3.0
 
-`download.file("https://github.com/NIEHS/ToxicR/releases/download/v1.10.0/ToxicR_23.4.1.1.0.R4.3.zip",
-              "ToxicR_23.4.1.1.0.zip")`
-`install.packages("ToxicR_23.4.1.1.0.zip", repos = NULL, type = "win.binary")`
-
-### Windows R 4.2.3
-
-`download.file("https://github.com/NIEHS/ToxicR/releases/download/v1.10.0/ToxicR_23.4.1.1.0R4.2.3.zip",
-              "ToxicR_23.4.1.1.0.zip")`
-`install.packages("ToxicR_23.4.1.1.0.zip", repos = NULL, type = "win.binary")`
+```R
+library(devtools)
+devtools::install_github("SciomeLLC/ToxicRToo")
+```
 
 ## Citing ToxicR
 
