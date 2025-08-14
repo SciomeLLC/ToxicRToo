@@ -95,11 +95,19 @@ setMethod("create_continuous_prior",
       prior = p_matrix,
       distribution = distribution,
       model = p$model,
-      parameters = p$parameters,
       mean = p$mean,
-      degree = ifelse(!is.null(p$degree), p$degree, deg)
+      parameters = p$parameters,
+      distribution = distribution
     )
-    return(ret_obj)
+    # ret_obj <- BMD_Bayes_continuous_model(
+    #   prior = prior,
+    #   distribution = distribution,
+    #   model = p$model,
+    #   parameters = p$parameters,
+    #   mean = p$mean,
+    #   degree = ifelse(!is.null(p$degree), p$degree, deg)
+    # )
+    return(prior)
   }
 )
 
@@ -166,13 +174,20 @@ setMethod(
       p <- .check_d_weibull(prior)
     }
 
-    ret_obj <- BMD_Bayes_dichotomous_model(
-      prior      = p$priors,             # or p$prior depending on your code
-      model      = p$model,              # e.g. "Hill Model [binomial]"
-      parameters = p$parameters,         # e.g. c("logit(g)","b","c","d")
-      mean       = p$mean,               # e.g. "hill"
-      degree     = if(!is.null(p$degree)) p$degree else NA_real_
+
+    ret_obj <- priorClass(
+      prior = p$prior,
+      model = p$model,
+      mean = p$mean,
+      parameters = p$parameters
     )
+    # ret_obj <- BMD_Bayes_dichotomous_model(
+    #   prior      = p$priors,             # or p$prior depending on your code
+    #   model      = p$model,              # e.g. "Hill Model [binomial]"
+    #   parameters = p$parameters,         # e.g. c("logit(g)","b","c","d")
+    #   mean       = p$mean,               # e.g. "hill"
+    #   degree     = if(!is.null(p$degree)) p$degree else NA_real_
+    # )
 
     return(ret_obj)
   }

@@ -11,7 +11,7 @@ test_that("Laplace gamma-efsa bounds are respected", {
     cont_data[, 4] <- c(2.23, 1.47, 2.47, 2.24, 1.56)
     Y <- cont_data[, 2:4]
     test_new2 <- single_continuous_fit(cont_data[,1],Y, model_type="gamma-efsa", fit_type = 'laplace', distribution='lognormal', alpha = 0.025)
-    diag_positive <- diag(test_new2$covariance) > zeros
+    diag_positive <- diag(test_new2@covariance) > zeros
     expect_equal(diag_positive, c(TRUE, TRUE, TRUE, TRUE, TRUE))
 })
 
@@ -25,7 +25,7 @@ test_that("Posterior Probabilities dont differ", {
     Y <- cont_data[,2:4]
     suppressWarnings(fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type="mcmc"))
     suppressWarnings(fit1 <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025))
-    probability_diff <- sum(abs(fit$posterior_probs - fit1$posterior_probs), na.rm = T)
+    probability_diff <- sum(abs(fit@posterior_probs - fit1@posterior_probs), na.rm = T)
     expect_lte(probability_diff, 0.01)
 })
 
@@ -40,13 +40,20 @@ test_that("Negative Hessians don't have posterior probability calculated", {
     fit_types <- c("mcmc", "mle", "laplace")
     for (fit_type in fit_types) {
         suppressWarnings(fit <- ma_continuous_fit(cont_data[,1],Y,alpha=0.025,fit_type=fit_type))
-        all_model_names <- names(fit$posterior_probs)
-        na_model_names <- names(which(is.na(fit$posterior_probs)))
-        model_name_prefix <- "Indiv_"
-        for (name in na_model_names) {
-            new_name <- paste0(model_name_prefix, name)
-            determinant <- det(fit[[new_name]]$covariance)
-            is_bmd_na <- is.na(fit[[new_name]]$bmd[1])
+        all_model_names <- names(fit@posterior_probs)
+        # na_model_names <- names(which(is.na(fit@posterior_probs)))
+        na_models = which(is.na(fit@posterior_probs))
+        # model_name_prefix <- "Indiv_"
+        # for (name in na_model_names) {
+        #     new_name <- paste0(model_name_prefix, name)
+        #     determinant <- det(fit[[new_name]]$covariance)
+        #     is_bmd_na <- is.na(fit[[new_name]]$bmd[1])
+        #     expect_equal(TRUE, is_bmd_na || determinant < 0.0)
+        # }
+        for (new_name in na_models) {
+            # new_name <- paste0(model_name_prefix, name)
+            determinant <- det(fit@models[[new_name]]@covariance)
+            is_bmd_na <- is.na(fit@models[[new_name]]@bmd[1])
             expect_equal(TRUE, is_bmd_na || determinant < 0.0)
         }
     }

@@ -74,20 +74,21 @@
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
 #' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @param seed specify the GSL seed. Default = 12331
-#' @return Returns a model object class with the following structure:
+#' @return Returns a fitted S4 model class (either \code{\link{BMD_continuous_fit_MCMC}} or
+#' \code{\link{BMD_continuous_fit_maximized}}) with the following slots:
 #' \itemize{
 #'    \item \code{full_model}:  The model along with the likelihood distribution. 
 #'    \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
 #'    \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
 #'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}.
 #'    \item \code{covariance}: The variance-covariance matrix for the parameters.  
-#'    \item \code{bmd_dis}:  Quantiles for the BMD distribution. 
-#'    \item \code{maximum}:  The maximum value of the likelihod/posterior. 
-#'    \item \code{Deviance}:  An array used to compute the analysis of deviance table. 
+#'    \item \code{bmd_dist}:  Quantiles for the BMD distribution. 
+#'    \item \code{maximum}:  The maximum value of the likelihood/posterior. 
 #'    \item \code{prior}:     This value gives the prior for the Bayesian analysis. 
-#'    \item \code{model}:     Parameter specifies t mean model used. 
-#'    \item \code{options}:   Options used in the fitting procedure.
+#'    \item \code{model}:     String specifying the mean model used.
+#'    \item \code{options}:   Numeric vector of options used in the fitting procedure.
 #'    \item \code{data}:     The data used in the fit. 
+#'    \item \code{fitted_model}:  A list with a simplified S3 object
 #'    \item \code{transformed}: Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
 #'    \itemize{
 #'        When MCMC is specified, an additional variable \code{mcmc_result} 
@@ -118,6 +119,7 @@
 #' 
 #' print(model)
 single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace",
+                                   prior = NULL, BMR_TYPE = "sd",
                                    prior = NULL, BMR_TYPE = "sd",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
                                    alpha = 0.05, samples = 25000, degree = 2,
@@ -152,8 +154,9 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
 
   if (!is.null(prior)) {
     #parse the prior
-    if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
-      stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
+    # if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
+    if(!isClass(prior, "priorClass")){
+      stop("Prior is not the correct form. Please create a priorClass object with create_prior_list.")
     }
   t_prior_result <- parse_prior(prior)
   distribution <- t_prior_result@distribution

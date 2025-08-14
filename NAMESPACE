@@ -36,7 +36,7 @@ importFrom(ggplot2, ggplot, aes, geom_point, geom_errorbar, theme_minimal, labs,
 #register all of the S3 methods for the print commands
 #and the plot commands etc. 
 
-S3method(print, ntp.polyk, .print_polyk_ntp )
+# S3method(print, ntp.polyk, .print_polyk_ntp )
 
 # Summary Methods
 # S3method(summary, BMDcont_fit_maximized ,.summary_continuous_max)

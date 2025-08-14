@@ -16,7 +16,8 @@
 #' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @param seed specify the GSL seed. Default = 12331
 #'
-#' @return Returns a model object class with the following structure:
+#' @return Returns a fitted S4 model class (either \code{\link{BMD_dichotomous_fit_MCMC}} or
+#' \code{\link{BMD_dichotomous_fit_maximized}}) with a subset of the following slots:
 #' \itemize{
 #'    \item \code{full_model}:  The model along with the likelihood distribution.
 #'    \item \code{parameters}: The parameter estimates produced by the procedure, which are relative to the model '
@@ -26,9 +27,10 @@
 #'    \item \code{bmd}:  A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals.
 #'    \item \code{maximum}:  The maximum value of the likelihod/posterior.
 #'    \item \code{gof_p_value}:  GOF p-value for the Pearson \eqn{\chi^2} GOF test.
-#'    \item \code{gof_chi_sqr_statistic}: The GOF statistic.
+#'    \item \code{gof_chi_sqr_statistic}: The GOF statistic. (Not with MCMC)
 #'    \item \code{prior}:     This value gives the prior for the Bayesian analysis.
-#'    \item \code{model}:     Parameter specifies t mean model used.
+#'    \item \code{model}:     String specifying the mean model used.
+#'    \item \code{options}:   Numeric vector of options used in the fitting procedure.
 #'    \item \code{data}:      The data used in the fit.
 #'    \itemize{
 #'        When MCMC is specified, an additional variable \code{mcmc_result}
@@ -51,7 +53,7 @@
 #' Y <- mData[, 2]
 #' N <- mData[, 3]
 #' model <- single_dichotomous_fit(D, Y, N, model_type = "hill", fit_type = "laplace")
-#' summary(model)
+#' model
 #'
 single_dichotomous_fit <- function(
   D, Y, N, model_type,
@@ -157,7 +159,7 @@ single_dichotomous_fit <- function(
       maximum      = temp$maximum,
       gof_p_value  = temp$gof_p_value,
       gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
-      prior        = NA,  # MLE => no prior
+      prior        = NULL,  # MLE => no prior
       model        = model_type,
       data         = DATA,
       mcmc_result  = NULL,
@@ -214,14 +216,14 @@ single_dichotomous_fit <- function(
     temp_bmd_dist <- cbind(bmd_vals, bmd_grid)
 
     ret_obj <- BMD_dichotomous_fit_MCMC(
-      full_model   = temp$fitted_model@full_model,
+      full_model   = temp$fitted_model$full_model,
       parameters   = temp$fitted_model$parameters,
       covariance   = temp$fitted_model$covariance,
       bmd_dist     = temp_bmd_dist,
       bmd          = bmd_val,
       maximum      = temp$fitted_model$maximum,
-      gof_p_value  = temp$gof_p_value,
-      gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
+      #gof_p_value  = temp$gof_p_value,
+      #gof_chi_sqr_statistic = temp$gof_chi_sqr_statistic,
       prior        = prior,
       model        = model_type,
       data         = DATA,

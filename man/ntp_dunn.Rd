@@ -18,7 +18,8 @@ interested in looking at the trend across sex one would have 'weight ~ sex'.}
 It is expected multiple doses for each of the experimental conditions \eqn{X}.}
 }
 \value{
-The results of a Dunn's  test for each level in \eqn{dose_name}.
+An S4 object with results of a Dunn's  test for each level in \eqn{dose\_name}
+in the S4 slot results.
 }
 \description{
 ntp_dunn Dunn's test
@@ -29,5 +30,5 @@ a <- ntp_dunn(response ~ sex + response_type,
   data = ntp_599_hemotology,
   dose_name = "concentration"
 )
-summary(a)
+a
 }

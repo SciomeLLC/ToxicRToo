@@ -85,6 +85,17 @@
 #' For more information see: \doi{10.22427/NTP-DATA-TR-599}
 "ntp_599_hemotology"
 
+
+setClass(
+  "NtpPolyk",
+  slots = c(
+    dose         = "numeric",
+    tumor        = "numeric",
+    daysOnStudy  = "numeric",
+    results       = "matrix"
+  )
+)
+
 ## ----------------------
 ## 	POLYK-TEST
 ## ----------------------
@@ -97,56 +108,14 @@
 #' @param tumor A data frame with column names in the formula.
 #' @param daysOnStudy The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of a Williams trend test for each level in dose_name.
+#' @return An S4 object with results of a Williams trend test for each level in \eqn{dose\_name}.
 #' More information on this procedure at: \doi{10.2307/2531856} and \doi{10.2307/2532200}
 #' This procedure returns a vector of three p-values for the poly-1.5, poly-3, and poly-6 test
-#' respectively.
+#' respectively. The S4 slot results contains the p-values, while the other slots contain 
+#' the input data.
+#' 
 #' @examples
 #' ntp_polyk(ntp_599_female$dose, ntp_599_female$adenoma, ntp_599_female$days_on_study)
-ntp_polyk <- function(dose, tumor, daysOnStudy) {
-  if (sum(tumor > 1) > 0) {
-    stop("Tumors need to be a 0 or 1")
-  }
-  if (sum(tumor < 0) > 0) {
-    stop("Tumors need to be a 0 or 1")
-  }
-  if (sum(daysOnStudy < 0) > 0) {
-    stop("Can not have negative days on study.")
-  }
-
-  if ((length(dose) != length(tumor)) ||
-    (length(tumor) != length(daysOnStudy))) {
-    stop("All arrays are not of the same length.")
-  }
-  if ((sum(is.na(dose)) + sum(is.na(tumor)) + sum(is.na(daysOnStudy))) > 0) {
-    stop("There is an NA in the data.")
-  }
-  result <- .polykCPP(dose, tumor, daysOnStudy)
-
-  result <- as.matrix(result)
-  row.names(result) <- c("Poly 1.5", "Poly-3", "Poly-6")
-  class(result) <- "ntp.polyk"
-  return(result)
-}
-
-.print_polyk_ntp <- function(x, ...) {
-  result <- x
-  cat("The results of the Poly-K test for trend.\n")
-  cat(sprintf("Poly-1.5 P-value = %1.4f\n", result[1]))
-  cat(sprintf("Poly-3   P-value = %1.4f\n", result[2]))
-  cat(sprintf("Poly-6   P-value = %1.4f\n", result[3]))
-}
-
-setClass(
-  "NtpPolyk",
-  slots = c(
-    dose         = "numeric",
-    tumor        = "numeric",
-    daysOnStudy  = "numeric",
-    result       = "matrix"
-  )
-)
-
 ntp_polyk <- function(dose, tumor, daysOnStudy) {
   # Perform your input checks:
   if (sum(tumor > 1) > 0) {
@@ -175,11 +144,11 @@ ntp_polyk <- function(dose, tumor, daysOnStudy) {
 
   # Return a new S4 object
   new("NtpPolyk",
-      result      = result
+      results      = result,
       # If you want to store inputs as well:
-      # dose        = dose,
-      # tumor       = tumor,
-      # daysOnStudy = daysOnStudy
+      dose        = dose,
+      tumor       = tumor,
+      daysOnStudy = daysOnStudy
   )
 }
 
@@ -188,9 +157,9 @@ setMethod(
   signature = "NtpPolyk",
   definition = function(object) {
     cat("The results of the Poly-K test for trend.\n")
-    cat(sprintf("Poly-1.5 P-value = %1.4f\n", object@result[1]))
-    cat(sprintf("Poly-3   P-value = %1.4f\n", object@result[2]))
-    cat(sprintf("Poly-6   P-value = %1.4f\n", object@result[3]))
+    cat(sprintf("Poly-1.5 P-value = %1.4f\n", object@results[1]))
+    cat(sprintf("Poly-3   P-value = %1.4f\n", object@results[2]))
+    cat(sprintf("Poly-6   P-value = %1.4f\n", object@results[3]))
   }
 )
 ## -----------------------------------------------------------
@@ -215,7 +184,8 @@ setMethod(
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @param pair  The type of test used for pairwise comparison. It can either be
 #' "Williams" or "Shirley"
-#' @return The results of a global test for difference from background.
+#' @return An S4 object with results of a global test for difference from background 
+#' contained in the S4 slot results.
 #' @examples
 #'
 #' ntp_jonckeere(
@@ -402,7 +372,7 @@ setClass(
 ## ----------------------
 ## 	WILLIAM'S TEST
 ## ----------------------
-#' Williams Trend test for
+#' Williams Trend test for each level in \eqn{dose\_name}.
 #' @title Wiliam's trend test
 #' @param formula An equation of the form \eqn{Y \sim X.} Here the variable
 #' \eqn{Y} is the response of interest, and \eqn{X} represents discrete experimental
@@ -411,8 +381,9 @@ setClass(
 #' @param data A data frame with column names in the formula.
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of a Williams trend test for each level in \eqn{dose_name}.
-#' For more information on the Williams trend test: \doi{10.2307/2528930}
+#' @return The results of a Williams trend test for each level in \eqn{dose\_name}.
+#' For more information on the Williams trend test: \doi{10.2307/2528930}.
+#' An S4 object with a results slot that returns a data.frame containing:
 #' #' \itemize{
 #'  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
 #'  \item \code{dose:} the dose groups relative to control.
@@ -424,7 +395,7 @@ setClass(
 #' @examples
 #'
 #' a <- ntp_williams(weight ~ sex, data = ntp_weight_data)
-#' summary(a)
+#' a
 ntp_williams <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -717,14 +688,15 @@ ntp_williams <- function(formula, data, dose_name = "dose") {
 #' @param data A data frame with column names in the formula.
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of a Dunn's  test for each level in \eqn{dose_name}.
+#' @return An S4 object with results of a Dunn's  test for each level in \eqn{dose\_name}
+#' in the S4 slot results.
 #' @examples
 #'
 #' a <- ntp_dunn(response ~ sex + response_type,
 #'   data = ntp_599_hemotology,
 #'   dose_name = "concentration"
 #' )
-#' summary(a)
+#' a
 ntp_dunn <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- numTies <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -944,14 +916,15 @@ ntp_dunn <- function(formula, data, dose_name = "dose") {
 #' @param data A data frame with column names in the formula.
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
-#' @return The results of Dunnet's  test for each level in \eqn{dose_name}
+#' @return An S4 object with results of Dunnet's  test for each level in \eqn{dose\_name}
+#' in the S4 slot results.
 #' @examples
 #' a <- ntp_dunnett(
 #'        response ~ sex + response_type,
 #'        data = ntp_599_hemotology, 
 #'        dose_name = "concentration"
 #' )
-#' summary(a)
+#' a
 ntp_dunnett <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -1059,8 +1032,8 @@ ntp_dunnett <- function(formula, data, dose_name = "dose") {
 #' @param dose_name The name of the variable containing the doses in the data frame \eqn{data}.
 #' It is expected multiple doses for each of the experimental conditions \eqn{X}.
 #' @return The results of a non-parametric Shirley's isotone test for trend on
-#' each level in \eqn{dose_name}. For more information see: \doi{10.2307/2529789}
-#' The returned list contains:
+#' each level in \eqn{dose\_name}. For more information see: \doi{10.2307/2529789}
+#' The S4 object has a slot called results that contains a data.frame with:
 #' \itemize{
 #'  \item \code{X}: this represents all the class objects on the right hand side of \eqn{ Y \sim X} above.
 #'  \item \code{dose:} the dose groups relative to control.
@@ -1071,7 +1044,7 @@ ntp_dunnett <- function(formula, data, dose_name = "dose") {
 #' }
 #' @examples
 #' a <- ntp_shirley(weight ~ sex, data = ntp_weight_data)
-#' summary(a)
+#' a
 ntp_shirley <- function(formula, data, dose_name = "dose") {
   mult_comp_test <- numTies <- NULL
   data[, c(dose_name)] <- as.numeric(unlist(data[, c(dose_name)]))
@@ -1336,7 +1309,7 @@ ntp_shirley <- function(formula, data, dose_name = "dose") {
   print(output, row.names = F)
 }
 setMethod(
-  "summary",
+  "show",
   signature = "NtpWilliams",
   definition = function(object) {
     df <- object@results
@@ -1390,7 +1363,7 @@ setMethod(
 }
 
 setMethod(
-  "summary",
+  "show",
   signature = "NtpDunn",
   definition = function(object) {
     df <- object@results
@@ -1446,7 +1419,7 @@ setMethod(
 }
 
 setMethod(
-  "summary",
+  "show",
   signature = "NtpDunnett",
   definition = function(object) {
     df <- object@results
@@ -1499,7 +1472,7 @@ setMethod(
 }
 
 setMethod(
-  "summary",
+  "show",
   signature = "NtpShirley",
   definition = function(object) {
     df <- object@results

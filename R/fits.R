@@ -9,6 +9,28 @@ setGeneric("plot",
 # S4 Class Definitions
 ###############################################################################
 # For MCMC-based continuous fits
+
+#' Single continuous model MCMC fit class
+#' 
+#' Methods include plot and predict
+#'
+#' @slot bmd A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#' @slot data Matrix of input data
+#' @slot prior Prior information
+#' @slot model String specifying the mean model used.
+#' @slot options Numeric vector of options used in the fitting procedure.
+#' @slot mcmc_result List of 2 matrices: BMD and parameter samples
+#' @slot covariance The variance-covariance matrix for the parameters. 
+#' @slot maximum Maximum value of likelihood/posterior
+#' @slot bmd_dist Quantiles for the BMD distribution.
+#' @slot fitted_model A list with a simplified S3 object
+#' @slot transformed Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
+#' @slot full_model The model along with the likelihood distribution.
+#' @slot parameters The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}.
+#'
+#' @return A BMD continuous fit (MCMC) object
+#' @export
 setClass(
   "BMD_continuous_fit_MCMC",
   slots = c(
@@ -29,6 +51,27 @@ setClass(
 )
 
 # For MLE / Laplace-based continuous fits
+
+#' Single continuous model maximized (Laplace or MLE) fit class
+#' 
+#' Methods include plot and predict
+#'
+#' @slot bmd A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#' @slot data Matrix of input data
+#' @slot prior Prior information
+#' @slot model String specifying the mean model used.
+#' @slot options Numeric vector of options used in the fitting procedure.
+#' @slot covariance The variance-covariance matrix for the parameters. 
+#' @slot maximum Maximum value of likelihood/posterior
+#' @slot bmd_dist Quantiles for the BMD distribution.
+#' @slot fitted_model A list with a simplified S3 object
+#' @slot transformed Are the data \eqn{\log(x+\sqrt{x^2+1})} transformed? 
+#' @slot full_model The model along with the likelihood distribution.
+#' @slot parameters The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}.
+#'
+#' @return A BMD continuous fit (Maximized) object
+#' @export
 setClass(
   "BMD_continuous_fit_maximized",
   slots = c(
@@ -109,6 +152,25 @@ BMD_continuous_fit_maximized <- function(
   )
 }
 
+#' Single dichotomous model MCMC fit class
+#' 
+#' Methods include plot and predict
+#'
+#' @slot full_model The model along with the likelihood distribution. 
+#' @slot parameters The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(sigma^2)}. 
+#' @slot covariance The variance-covariance matrix for the parameters.  
+#' @slot bmd_dist Quantiles for the BMD distribution. 
+#' @slot bmd A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#' @slot maximum The maximum value of the likelihood/posterior.
+#' @slot prior Prior information
+#' @slot model String specifying the mean model used.
+#' @slot data Matrix of input data
+#' @slot mcmc_result List of 2 matrices: BMD and parameter samples
+#' @slot options Numeric vector of options used in the fitting procedure.
+#'
+#' @return A BMD dichotomous fit (MCMC) object
+#' @export
 setClass(
   "BMD_dichotomous_fit_MCMC",
   slots = c(
@@ -118,8 +180,8 @@ setClass(
     bmd_dist = "matrix",
     bmd = "numeric",
     maximum = "numeric",
-    gof_p_value = "numeric",
-    gof_chi_sqr_statistic = "numeric",
+    #gof_p_value = "numeric",
+    #gof_chi_sqr_statistic = "numeric",
     prior = "ANY",
     model = "character",
     data = "matrix",
@@ -135,8 +197,8 @@ BMD_dichotomous_fit_MCMC <- function(
   bmd_dist     = matrix(0,0,0),
   bmd          = numeric(3),
   maximum      = NA_real_,
-  gof_p_value  = NA_real_,
-  gof_chi_sqr_statistic = NA_real_,
+  #gof_p_value  = NA_real_,
+  #gof_chi_sqr_statistic = NA_real_,
   prior        = NULL,
   model        = "",
   data         = matrix(),
@@ -150,8 +212,8 @@ BMD_dichotomous_fit_MCMC <- function(
       bmd_dist     = bmd_dist,
       bmd          = bmd,
       maximum      = maximum,
-      gof_p_value  = gof_p_value,
-      gof_chi_sqr_statistic = gof_chi_sqr_statistic,
+      #gof_p_value  = gof_p_value,
+      #gof_chi_sqr_statistic = gof_chi_sqr_statistic,
       prior        = prior,
       model        = model,
       data         = data,
@@ -160,6 +222,26 @@ BMD_dichotomous_fit_MCMC <- function(
   )
 }
 
+#' Single dichotomous model maximized (Laplace or MLE) fit class
+#' 
+#' Methods include plot and predict
+#'
+#' @slot full_model The model along with the likelihood distribution. 
+#' @slot parameters The parameter estimates produced by the procedure, which are relative to the model '
+#'                             given in \code{full_model}.  The last parameter is always the estimate for \eqn{\log(\sigma^2)}. 
+#' @slot covariance The variance-covariance matrix for the parameters.  
+#' @slot bmd_dist Quantiles for the BMD distribution. 
+#' @slot bmd A vector containing the benchmark dose (BMD) and \eqn{100\times(1-2\alpha)} confidence intervals. 
+#' @slot maximum The maximum value of the likelihood/posterior.
+#' @slot gof_p_value GOF p-value for the Pearson \eqn{\chi^2} GOF test. 
+#' @slot gof_chi_sqr_statistic The GOF statistic.
+#' @slot prior Prior information
+#' @slot model String specifying the mean model used.
+#' @slot data Matrix of input data
+#' @slot options Numeric vector of options used in the fitting procedure.
+#'
+#' @return A BMD continuous fit (Maximized) object
+#' @export
 setClass(
   "BMD_dichotomous_fit_maximized",
   slots = c(
@@ -174,7 +256,7 @@ setClass(
     prior = "ANY", # for Bayesian laplace (or NA if MLE)
     model = "character",
     data = "matrix", # [Dose, Y, N, ...]
-    mcmc_result = "ANY",
+#    mcmc_result = "ANY",
     options = "numeric" # BMR, alpha, samples, burnin, etc.
   )
 )
@@ -206,7 +288,7 @@ BMD_dichotomous_fit_maximized <- function(
       prior        = prior,
       model        = model,
       data         = data,
-      mcmc_result  = mcmc_result,
+#      mcmc_result  = mcmc_result,
       options      = options
   )
 }
@@ -242,21 +324,40 @@ BMD_dichotomous_fit_MA <- function(
 
 setMethod("show", "BMD_continuous_fit_MCMC", function(object) {
   cat("BMD Continuous Fit (MCMC)\n")
-  cat("  Model:          ", object@model, "\n")
+  cat("  Model:          ", object@full_model, "\n")
   cat("  BMD:            ", paste(object@bmd, collapse = ", "), "\n")
-  cat("  Maximum Posterior: ", object@maximum, "\n")
-  # etc.
+  #cat("  Maximum Posterior: ", object@maximum, "\n")
+  cat("  Parameters: ", paste(object@parameters, collapse = ", "), "\n")
+  invisible(object)
+})
+
+setMethod("show", "BMD_continuous_fit_maximized", function(object) {
+  cat("BMD Continuous Fit (Laplace)\n")
+  cat("  Model:          ", object@full_model, "\n")
+  cat("  BMD:            ", paste(object@bmd, collapse = ", "), "\n")
+  #cat("  Maximum Posterior: ", object@maximum, "\n")
+  cat("  Parameters: ", paste(object@parameters, collapse = ", "), "\n")
   invisible(object)
 })
 
 ###############################################################################
 # S4 Methods
 ###############################################################################
-setMethod("show", "BMD_continuous_fit_maximized", function(object) {
-  cat("BMD Continuous Fit (Maximized)\n")
-  cat("  Model:   ", object@model, "\n")
+setMethod("show", "BMD_dichotomous_fit_maximized", function(object) {
+  cat("BMD Dichotomous Fit (Maximized with", ifelse(is.null(object@prior), "MLE", "Laplace"), ") \n")
+  cat("  Model:   ", object@full_model, "\n")
   cat("  BMD:     ", paste(object@bmd, collapse = ", "), "\n")
-  cat("  Maximum: ", object@maximum, "\n")
+  #cat("  Maximum: ", object@maximum, "\n")
+  cat("  Parameters: ", paste(object@parameters, collapse = ", "), "\n")
+  invisible(object)
+})
+
+setMethod("show", "BMD_dichotomous_fit_MCMC", function(object) {
+  cat("BMD Dichotomous Fit (MCMC)\n")
+  cat("  Model:   ", object@full_model, "\n")
+  cat("  BMD:     ", paste(object@bmd, collapse = ", "), "\n")
+  #cat("  Maximum: ", object@maximum, "\n")
+  cat("  Parameters: ", paste(object@parameters, collapse = ", "), "\n")
   invisible(object)
 })
 
@@ -825,286 +926,315 @@ setMethod(
   }
 )
 
-# 4C) Model-Averaged approach: replicate .plot.BMDdichotomous_MA
-# We store submodels in x@submodels, each either MCMC or maximized
-# We store x@fit_type == "mcmc" or "laplace" (like your old class checks).
+
 setMethod(
-  "plot",
-  signature = signature(x = "BMD_dichotomous_fit_MA", y = "missing"),
-  function(x, y, ...) {
-    temp_args <- list(...)
-    if (!"qprob" %in% names(temp_args)) {
-      qprob <- 0.05
+  "predict",
+  signature = signature(object = "BMD_dichotomous_fit_maximized"),
+  function(object, new_doses = NULL, ...) {
+
+    # Extract from slots
+    data_d <- object@data # old fit$data
+    pars <- object@parameters
+    model_name <- object@model
+
+    # if user doesn't supply new_doses, default to the original data
+    if (is.null(new_doses)) {
+      test_doses <- data_d[, 1] # first column is dose
     } else {
-      qprob <- temp_args$qprob
+      test_doses <- new_doses
     }
 
-    density_col <- "blueviolet"
-    credint_col <- "azure2"
-    submods <- x@submodels
-    nSub <- length(submods)
-    if (nSub < 1) {
-      stop("No submodels found in this MA object.")
-    }
-    A <- x
+    # replicate the logic from .dichotomous_predict_model:
+    if (model_name == "hill") f <- .dich_hill_f(pars, test_doses)
 
-    # assume all submodels share same data shape
-    # take data from first submodel
-    data_d <- submods[[1]]@data
-    probs <- (0.5 + data_d[, 2]) / (1.0 + data_d[, 3])
-    se <- sqrt(probs * (1 - probs) / data_d[, 3])
-    doses <- data_d[, 1]
-    uerror <- apply(cbind(probs * 0 + 1, probs + se), 1, min)
-    lerror <- apply(cbind(probs * 0, probs - se), 1, max)
+    if (model_name == "gamma") f <- .dich_gamma_f(pars, test_doses)
 
-    library(ggplot2)
-    plot_gg <- ggplot() +
-      geom_errorbar(aes(x = doses, ymin = lerror, ymax = uerror), color = "grey") +
-      xlim(c(-5 * max(doses)), 5 * max(doses)) +
-      labs(x = "Dose", y = "Proportion", title = paste(x@full_model, "MA")) +
-      theme_minimal()
+    if (model_name == "logistic") f <- .dich_logist_f(pars, test_doses)
 
-    max_dose <- max(doses)
-    min_dose <- min(doses)
-    test_doses <- seq(min_dose, max_dose, (max_dose - min_dose) / 500)
+    if (model_name == "log-logistic") f <- .dich_llogist_f(pars, test_doses)
 
-    if (x@fit_type == "mcmc") {
-      # -------------- "BMDdichotomous_MA_mcmc" logic --------------
-      # sample submodels with prob A@posterior_probs,
-      n_samps <- nrow(submods[[1]]@mcmc_result$PARM_samples)
-      ma_samps <- sample(seq_along(submods), n_samps, replace = TRUE, prob = x@posterior_probs)
-      temp_f <- matrix(0, n_samps, length(test_doses))
-      temp_bmd <- rep(0, n_samps)
+    if (model_name == "probit") f <- .dich_probit_f(pars, test_doses)
 
-      for (ii in seq_len(n_samps)) {
-        fit_i <- submods[[ma_samps[ii]]] # pick submodel
-        if (fit_i@model == "hill") {
-          temp_f[ii,] <- .dich_hill_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "gamma") {
-          temp_f[ii,] <- .dich_gamma_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "logistic") {
-          temp_f[ii,] <- .dich_logist_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "log-logistic") {
-          temp_f[ii,] <- .dich_llogist_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "probit") {
-          temp_f[ii,] <- .dich_probit_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "log-probit") {
-          temp_f[ii,] <- .dich_lprobit_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "multistage") {
-          temp_f[ii,] <- .dich_multistage_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "qlinear") {
-          temp_f[ii,] <- .dich_qlinear_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        } else if (fit_i@model == "weibull") {
-          temp_f[ii,] <- .dich_weibull_f(fit_i@mcmc_result$PARM_samples[ii,], test_doses)
-          temp_bmd[ii] <- fit_i@mcmc_result$BMD_samples[ii]
-        }
-      }
+    if (model_name == "log-probit") f <- .dich_lprobit_f(pars, test_doses)
 
-      me <- colMeans(temp_f)
-      lq <- apply(temp_f, 2, quantile, probs = qprob, na.rm = TRUE)
-      uq <- apply(temp_f, 2, quantile, probs = 1 - qprob, na.rm = TRUE)
+    if (model_name == "multistage") f <- .dich_multistage_f(pars, test_doses)
 
-      df_ma <- data.frame(dose = test_doses, me = me, lq = lq, uq = uq)
-      plot_gg <- plot_gg +
-        geom_ribbon(aes(x = dose, ymin = lq, ymax = uq), fill = "blue", alpha = 0.1, data = df_ma) +
-        geom_line(aes(x = dose, y = me), col = "blue", linewidth = 2, data = df_ma) +
-        geom_point(aes(x = doses, y = probs))
+    if (model_name == "qlinear") f <- .dich_qlinear_f(pars, test_doses)
 
-      temp_fit <- splinefun(test_doses, me)
-      # add BMD lines
-      bmdv <- x@bmd
-      plot_gg <- plot_gg +
-        geom_segment(aes(
-          x = bmdv[2], y = temp_fit(bmdv[1]),
-          xend = bmdv[3], yend = temp_fit(bmdv[1])
-        ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
-        annotate(
-          geom = "text", x = bmdv[2], y = temp_fit(bmdv[1]),
-          label = "[", size = 10, color = "darkslategrey", alpha = 0.9
-        ) +
-        annotate(
-          geom = "text", x = bmdv[3], y = temp_fit(bmdv[1]),
-          label = "]", size = 10, color = "darkslategrey", alpha = 0.9
-        ) +
-        annotate(
-          geom = "point", x = bmdv[1], y = temp_fit(bmdv[1]),
-          size = 5, color = "darkslategrey", shape = 17, alpha = 0.9
-        )
+    if (model_name == "weibull") f <- .dich_weibull_f(pars, test_doses)
 
-      # density for temp_bmd
-      temp_bmd <- temp_bmd[!is.nan(temp_bmd)]
-      temp_bmd <- temp_bmd[!is.infinite(temp_bmd)]
-      temp_bmd <- temp_bmd[temp_bmd < 5 * max(doses)]
-      Dens <- density(temp_bmd, cut = c(5 * max(test_doses)), n = 1000, from = 0, to = max(test_doses))
-      max_u <- max(uerror)
-      min_l <- min(lerror)
-      Dens$y <- Dens$y / max(Dens$y) * (max_u - min_l) * 0.6
-      idx2 <- which(Dens$x < max(test_doses))
-      D1_y <- Dens$y[idx2]
-      D1_x <- Dens$x[idx2]
-      scale <- (max_u - min_l) / max(D1_y) * 0.40
-
-      plot_gg <- plot_gg +
-        geom_polygon(aes(
-          x = c(max(0, min(D1_x)), D1_x, max(D1_x)),
-          y = c(min_l, min_l + D1_y * scale, min_l)
-        ),
-        fill = "blueviolet", alpha = 0.6
-        )
-
-      # Add lines for each submodel if posterior_probs > 0.05
-      df <- NULL
-      for (ii in seq_along(submods)) {
-        if (!is.finite(x@posterior_probs[ii])) {
-          x@posterior_probs[ii] = 0
-        }
-        if (x@posterior_probs[ii] > 0.05) {
-          fit_i <- submods[[ii]]
-          # Single line
-          if (fit_i@model == "hill") {
-            f <- .dich_hill_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "gamma") {
-            f <- .dich_gamma_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "logistic") {
-            f <- .dich_logist_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "log-logistic") {
-            f <- .dich_llogist_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "probit") {
-            f <- .dich_probit_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "log-probit") {
-            f <- .dich_lprobit_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "multistage") {
-            f <- .dich_multistage_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "qlinear") {
-            f <- .dich_qlinear_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "weibull") {
-            f <- .dich_weibull_f(fit_i@parameters, test_doses)
-          } else {
-            next
-          }
-          alpha_val <- x@posterior_probs[ii]
-          tmp_df <- data.frame(x_axis = test_doses, y_axis = f, alpha_lev = alpha_val, model_no = ii)
-          plot_gg <- plot_gg +
-            geom_line(data = tmp_df, aes(x = x_axis, y = y_axis), color = "coral3", alpha = alpha_val) +
-            theme_minimal()
-        }
-      }
-
-      return(plot_gg + coord_cartesian(xlim = c(min(doses), max(doses)), expand = FALSE))
-
-    } else if (x@fit_type == "laplace") {
-      # -------------- "BMDdichotomous_MA_laplace" logic --------------
-      x@posterior_probs[!is.finite(x@posterior_probs)] <- 0
-      num_model <- length(x@posterior_probs)
-      test_doses <- seq(min_dose, max_dose, length.out = 500)
-      temp_f <- matrix(0, num_model, length(test_doses))
-
-      for (ii in seq_len(num_model)) {
-        fit_loop <- submods[[ii]]
-        w <- x@posterior_probs[ii]
-
-        # Use "parameters" to get me
-        if (fit_loop@model == "hill") {
-          temp_f[ii,] <- .dich_hill_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "gamma") {
-          temp_f[ii,] <- .dich_gamma_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "logistic") {
-          temp_f[ii,] <- .dich_logist_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "log-logistic") {
-          temp_f[ii,] <- .dich_llogist_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "probit") {
-          temp_f[ii,] <- .dich_probit_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "log-probit") {
-          temp_f[ii,] <- .dich_lprobit_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "multistage") {
-          temp_f[ii,] <- .dich_multistage_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "qlinear") {
-          temp_f[ii,] <- .dich_qlinear_f(fit_loop@parameters, test_doses) * w
-        } else if (fit_loop@model == "weibull") {
-          temp_f[ii,] <- .dich_weibull_f(fit_loop@parameters, test_doses) * w
-        }
-      }
-
-      me <- colSums(temp_f)
-      temp_fit <- splinefun(test_doses, me)
-
-      # build plot
-      plot_gg <- plot_gg +
-        ylim(c(min(lerror, me) * 0.95, max(uerror, me) * 1.05)) +
-        geom_line(aes(x = test_doses, y = me), col = "blue", linewidth = 1.2) +
-        geom_point(aes(x = doses, y = probs))
-
-      # bmd lines
-      bmdv <- x@bmd
-      plot_gg <- plot_gg +
-        geom_segment(aes(
-          x = bmdv[2], y = temp_fit(bmdv[1]),
-          xend = bmdv[3], yend = temp_fit(bmdv[1])
-        ), color = "darkslategrey", linewidth = 1.2, alpha = 0.9) +
-        annotate(
-          geom = "text", x = bmdv[2], y = temp_fit(bmdv[1]),
-          label = "[", size = 10, color = "darkslategrey", alpha = 0.9
-        ) +
-        annotate(
-          geom = "text", x = bmdv[3], y = temp_fit(bmdv[1]),
-          label = "]", size = 10, color = "darkslategrey", alpha = 0.9
-        ) +
-        annotate(
-          geom = "point", x = bmdv[1], y = temp_fit(bmdv[1]),
-          size = 5, color = "darkslategrey", shape = 17, alpha = 0.9
-        )
-
-      # overlay submodels with posterior prob > 0.05
-      df <- NULL
-      for (ii in seq_len(num_model)) {
-        if (!is.finite(x@posterior_probs[ii])) {
-          x@posterior_probs[ii] = 0
-        }
-        if (x@posterior_probs[ii] > 0.05) {
-          fit_i <- submods[[ii]]
-          # single line
-          if (fit_i@model == "hill") {
-            f <- .dich_hill_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "gamma") {
-            f <- .dich_gamma_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "logistic") {
-            f <- .dich_logist_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "log-logistic") {
-            f <- .dich_llogist_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "probit") {
-            f <- .dich_probit_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "log-probit") {
-            f <- .dich_lprobit_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "multistage") {
-            f <- .dich_multistage_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "qlinear") {
-            f <- .dich_qlinear_f(fit_i@parameters, test_doses)
-          } else if (fit_i@model == "weibull") {
-            f <- .dich_weibull_f(fit_i@parameters, test_doses)
-          } else {
-            next
-          }
-          alpha_val <- x@posterior_probs[ii]
-          tmp_df <- data.frame(x_axis = test_doses, y_axis = f, alpha_lev = alpha_val, model_no = ii)
-          plot_gg <- plot_gg +
-            geom_line(data = tmp_df, aes(x = x_axis, y = y_axis), color = "coral3", alpha = alpha_val) +
-            theme_minimal()
-        }
-      }
-
-      return(plot_gg + coord_cartesian(xlim = c(min(doses), max(doses)), expand = FALSE))
-    }
-
-    # if fit_type is neither "mcmc" nor "laplace"
-    stop("BMD_dichotomous_fit_MA with unknown fit_type:", x@fit_type)
+    return(list(X = test_doses, Y = f))
   }
 )
 
+setMethod(
+  "predict",
+  signature = signature(object = "BMD_dichotomous_fit_MCMC"),
+  function(object, new_doses = NULL, ...) {
+
+    data_d <- object@data
+    model_name <- object@model
+    # MCMC samples in object@mcmc_result$PARM_samples
+    param_mat <- object@mcmc_result$PARM_samples
+
+    if (is.null(new_doses)) {
+      test_doses <- data_d[, 1]
+    } else {
+      test_doses <- new_doses
+    }
+
+    # replicate .dichotomous_predict_model_mcmc
+    if (model_name == "hill") {
+      f <- apply(param_mat, 1, .dich_hill_f, d = test_doses)
+    }
+    if (model_name == "gamma") {
+      f <- apply(param_mat, 1, .dich_gamma_f, d = test_doses)
+    }
+    if (model_name == "logistic") {
+      f <- apply(param_mat, 1, .dich_logist_f, d = test_doses)
+    }
+    if (model_name == "log-logistic") {
+      f <- apply(param_mat, 1, .dich_llogist_f, d = test_doses)
+    }
+    if (model_name == "probit") {
+      f <- apply(param_mat, 1, .dich_probit_f, d = test_doses)
+    }
+    if (model_name == "log-probit") {
+      f <- apply(param_mat, 1, .dich_lprobit_f, d = test_doses)
+    }
+    if (model_name == "multistage") {
+      f <- apply(param_mat, 1, .dich_multistage_f, d = test_doses)
+    }
+    if (model_name == "qlinear") {
+      f <- apply(param_mat, 1, .dich_qlinear_f, d = test_doses)
+    }
+    if (model_name == "weibull") {
+      f <- apply(param_mat, 1, .dich_weibull_f, d = test_doses)
+    }
+
+    # f is matrix, each col = dose, each row = sample => transpose if needed
+    return(list(X = test_doses, Y = f))
+  }
+)
+
+setMethod(
+  "predict",
+  signature = signature(object = "BMD_continuous_fit_maximized"),
+  function(object, new_doses = NULL, ...) {
+
+    data_d <- object@data
+    pars <- object@parameters
+    model <- object@model
+    full_mod <- object@full_model
+
+    if (ncol(data_d) == 4) {
+      mean_v <- data_d[, 2, drop = FALSE]
+      se <- data_d[, 4, drop = FALSE] / sqrt(data_d[, 3, drop = FALSE])
+      doses <- data_d[, 1, drop = FALSE]
+      lm_fit <- lm(mean_v ~ doses, weights = 1 / (se * se))
+    } else {
+      # single-col Y
+      Response <- data_d[, 2, drop = FALSE]
+      doses <- data_d[, 1, drop = FALSE]
+      lm_fit <- lm(Response ~ doses)
+    }
+
+    # decide new_doses
+    if (is.null(new_doses)) {
+      test_doses <- data_d[, 1]
+    } else {
+      test_doses <- new_doses
+    }
+
+    decrease <- (coefficients(lm_fit)[2] < 0)
+
+    f <- NULL
+    # Check model name
+    if (model == "FUNL") {
+      f <- .cont_FUNL_f(pars, test_doses)
+    }
+    if (model == "hill") {
+      f <- .cont_hill_f(pars, test_doses)
+    }
+    if (model == "exp-3") {
+      f <- .cont_exp_3_f(pars, test_doses, decrease)
+    }
+    if (model == "exp-5") {
+      f <- .cont_exp_5_f(pars, test_doses)
+    }
+    if (model == "power") {
+      f <- .cont_power_f(pars, test_doses)
+    }
+    if (model == "exp-aerts") {
+      f <- .cont_exp_aerts_f(pars, test_doses)
+    }
+    if (model == "invexp-aerts") {
+      f <- .cont_invexp_aerts_f(pars, test_doses)
+    }
+    if (model == "gamma-aerts") {
+      f <- .cont_gamma_aerts_f(pars, test_doses)
+    }
+    if (model == "invgamma-aerts") {
+      f <- .cont_invgamma_aerts_f(pars, test_doses)
+    }
+    if (model == "hill-aerts") {
+      f <- .cont_hill_aerts_f(pars, test_doses)
+    }
+    if (model == "lomax-aerts") {
+      f <- .cont_lomax_aerts_f(pars, test_doses)
+    }
+    if (model == "invlomax-aerts") {
+      f <- .cont_invlomax_aerts_f(pars, test_doses)
+    }
+    if (model == "lognormal-aerts") {
+      f <- .cont_lognormal_aerts_f(pars, test_doses)
+    }
+    if (model == "logskew-aerts") {
+      f <- .cont_logskew_aerts_f(pars, test_doses)
+    }
+    if (model == "invlogskew-aerts") {
+      f <- .cont_invlogskew_aerts_f(pars, test_doses)
+    }
+    if (model == "logistic-aerts") {
+      f <- .cont_logistic_aerts_f(pars, test_doses)
+    }
+    if (model == "probit-aerts") {
+      f <- .cont_probit_aerts_f(pars, test_doses)
+    }
+    if (model == "LMS") {
+      f <- .cont_LMS_f(pars, test_doses)
+    }
+    if (model == "polynomial") {
+      # check degree
+      if (length(grep(": normal-ncv", tolower(full_mod))) > 0) {
+        degree <- length(pars) - 2
+      } else {
+        degree <- length(pars) - 1
+      }
+      f <- .cont_polynomial_f(pars[1:degree], test_doses)
+    }
+
+    # handle lognormal case
+    if (grepl("Log-Normal", full_mod)) {
+      # check if it's an aerts model
+      if (model %in% c("exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts",
+                        "lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts",
+                        "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS")) {
+        retY <- exp(as.numeric(f) + 0.5 * exp(pars[length(pars)]))
+      } else {
+        retY <- exp(log(as.numeric(f)) + 0.5 * exp(pars[length(pars)]))
+      }
+      return(list(X = test_doses, Y = retY))
+    } else {
+      return(list(X = test_doses, Y = as.numeric(f)))
+    }
+  }
+)
+
+setMethod(
+  "predict",
+  signature = signature(object = "BMD_continuous_fit_MCMC"),
+  function(object, new_doses = NULL, ...) {
+
+    data_d <- object@data
+    model <- object@model
+    full_mod <- object@full_model
+    param_mat <- object@mcmc_result$PARM_samples
+
+    if (ncol(data_d) == 4) {
+      mean_v <- data_d[, 2, drop = FALSE]
+      se <- data_d[, 4, drop = FALSE] / sqrt(data_d[, 3, drop = FALSE])
+      doses <- data_d[, 1, drop = FALSE]
+      lm_fit <- lm(mean_v ~ doses, weights = 1 / (se * se))
+    } else {
+      Response <- data_d[, 2, drop = FALSE]
+      doses <- data_d[, 1, drop = FALSE]
+      lm_fit <- lm(Response ~ doses)
+    }
+
+    if (is.null(new_doses)) {
+      test_doses <- data_d[, 1]
+    } else {
+      test_doses <- new_doses
+    }
+    decrease <- (coefficients(lm_fit)[2] < 0)
+
+    # replicate .continuous_predict_model_mcmc:
+    if (model == "FUNL") {
+      f <- apply(param_mat, 1, .cont_FUNL_f, test_doses)
+    }
+    if (model == "hill") {
+      f <- apply(param_mat, 1, .cont_hill_f, test_doses)
+    }
+    if (model == "exp-3") {
+      f <- apply(param_mat, 1, .cont_exp_3_f, test_doses)
+    }
+    if (model == "exp-5") {
+      f <- apply(param_mat, 1, .cont_exp_5_f, test_doses)
+    }
+    if (model == "power") {
+      f <- apply(param_mat, 1, .cont_power_f, test_doses)
+    }
+    if (model == "exp-aerts") {
+      f <- apply(param_mat, 1, .cont_exp_aerts_f, test_doses)
+    }
+    if (model == "invexp-aerts") {
+      f <- apply(param_mat, 1, .cont_invexp_aerts_f, test_doses)
+    }
+    if (model == "gamma-aerts") {
+      f <- apply(param_mat, 1, .cont_gamma_aerts_f, test_doses)
+    }
+    if (model == "invgamma-aerts") {
+      f <- apply(param_mat, 1, .cont_invgamma_aerts_f, test_doses)
+    }
+    if (model == "hill-aerts") {
+      f <- apply(param_mat, 1, .cont_hill_aerts_f, test_doses)
+    }
+    if (model == "lomax-aerts") {
+      f <- apply(param_mat, 1, .cont_lomax_aerts_f, test_doses)
+    }
+    if (model == "invlomax-aerts") {
+      f <- apply(param_mat, 1, .cont_invlomax_aerts_f, test_doses)
+    }
+    if (model == "lognormal-aerts") {
+      f <- apply(param_mat, 1, .cont_lognormal_aerts_f, test_doses)
+    }
+    if (model == "logskew-aerts") {
+      f <- apply(param_mat, 1, .cont_logskew_aerts_f, test_doses)
+    }
+    if (model == "invlogskew-aerts") {
+      f <- apply(param_mat, 1, .cont_invlogskew_aerts_f, test_doses)
+    }
+    if (model == "logistic-aerts") {
+      f <- apply(param_mat, 1, .cont_logistic_aerts_f, test_doses)
+    }
+    if (model == "probit-aerts") {
+      f <- apply(param_mat, 1, .cont_probit_aerts_f, test_doses)
+    }
+    if (model == "LMS") {
+      f <- apply(param_mat, 1, .cont_LMS_f, test_doses)
+    }
+    if (model == "polynomial") {
+      if (length(grep(": normal-ncv", tolower(full_mod))) > 0) {
+        degree <- ncol(param_mat) - 2
+      } else {
+        degree <- ncol(param_mat) - 1
+      }
+
+      f <- apply(param_mat[, 1:degree], 1, .cont_polynomial_f, test_doses)
+    }
+    # handle lognormal
+    if (grepl("Log-Normal", full_mod)) {
+      if (model %in% c("exp-aerts", "invexp-aerts", "gamma-aerts", "invgamma-aerts", "hill-aerts",
+                        "lomax-aerts", "invlomax-aerts", "lognormal-aerts", "logskew-aerts",
+                        "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS")) {
+        retY <- exp(f + 0.5 * exp(object@parameters[length(object@parameters)]))
+      } else {
+        retY <- exp(log(f) + 0.5 * exp(object@parameters[length(object@parameters)]))
+      }
+      return(list(X = test_doses, Y = retY))
+    } else {
+      return(list(X = test_doses, Y = f))
+    }
+  }
+)

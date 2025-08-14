@@ -31,20 +31,20 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
   n_sub <- length(submods)
   bmd_ind <- matrix(0, n_sub + 1, 5)
 
-  for (i in seq_len(n_sub)) {
-    # Submodel's BMD vector: median, 5%, 95%
-    bmd_ind[i, 1] <- submods[[i]]@bmd[1] # median
-    bmd_ind[i, 2] <- submods[[i]]@bmd[2] # 5%
-    bmd_ind[i, 3] <- submods[[i]]@bmd[3] # 95%
-    bmd_ind[i, 4] <- submods[[i]]@model
-    bmd_ind[i, 5] <- A@posterior_probs[i] # posterior probability
-  }
+#   for (i in seq_len(n_sub)) {
+#     # Submodel's BMD vector: median, 5%, 95%
+#     bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
+#     bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
+#     bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
+#     bmd_ind[i, 4] <- A@models[[i]]@model
+#     bmd_ind[i, 5] <- A@posterior_probs[i] # posterior probability
+#   }
 
-  bmd_ind[n_sub + 1, 1] <- A@bmd[1]
-  bmd_ind[n_sub + 1, 2] <- A@bmd[2]
-  bmd_ind[n_sub + 1, 3] <- A@bmd[3]
-  bmd_ind[n_sub + 1, 4] <- "Model Average"
-  bmd_ind[n_sub + 1, 5] <- 1
+#   bmd_ind[n_sub + 1, 1] <- A@bmd[1]
+#   bmd_ind[n_sub + 1, 2] <- A@bmd[2]
+#   bmd_ind[n_sub + 1, 3] <- A@bmd[3]
+#   bmd_ind[n_sub + 1, 4] <- "Model Average"
+#   bmd_ind[n_sub + 1, 5] <- 1
 
   bmd_ind_df <- data.frame(bmd_ind)
   names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
@@ -86,30 +86,30 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
       alpha = 0.3
     )
 
-  return(out)
-})
+#   return(out)
+# })
 
-setMethod("cleveland_plot", "BMD_Bayes_continuous_model", function(A) {
-  # submodels is a list of submodel objects, each with a bmd, model, etc.
-  submods <- A@submodels
-  n_sub <- length(submods)
+# setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
+#   # submodels is a list of submodel objects, each with a bmd, model, etc.
+#   #submods <- A@models
+#   n_sub <- length(A@models)
 
-  bmd_ind <- matrix(0, n_sub + 1, 5)
+#   bmd_ind <- matrix(0, n_sub + 1, 5)
 
-  for (i in seq_len(n_sub)) {
-    bmd_ind[i, 1] <- submods[[i]]@bmd[1] # median
-    bmd_ind[i, 2] <- submods[[i]]@bmd[2] # 5%
-    bmd_ind[i, 3] <- submods[[i]]@bmd[3] # 95%
-    bmd_ind[i, 4] <- submods[[i]]@model
-    bmd_ind[i, 5] <- A@posterior_probs[i]
-  }
+#   for (i in seq_len(n_sub)) {
+#     bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
+#     bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
+#     bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
+#     bmd_ind[i, 4] <- names(A@posterior_probs)[i]#A@models[[i]]@full_model
+#     bmd_ind[i, 5] <- A@posterior_probs[i]
+#   }
 
-  # Add row for the "Model Average"
-  bmd_ind[n_sub + 1, 1] <- A@bmd[1]
-  bmd_ind[n_sub + 1, 2] <- A@bmd[2]
-  bmd_ind[n_sub + 1, 3] <- A@bmd[3]
-  bmd_ind[n_sub + 1, 4] <- "Model Average"
-  bmd_ind[n_sub + 1, 5] <- 1
+#   # Add row for the "Model Average"
+#   bmd_ind[n_sub + 1, 1] <- A@bmd[1]
+#   bmd_ind[n_sub + 1, 2] <- A@bmd[2]
+#   bmd_ind[n_sub + 1, 3] <- A@bmd[3]
+#   bmd_ind[n_sub + 1, 4] <- "Model Average"
+#   bmd_ind[n_sub + 1, 5] <- 1
 
   bmd_ind_df <- data.frame(bmd_ind)
   names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
@@ -149,5 +149,5 @@ setMethod("cleveland_plot", "BMD_Bayes_continuous_model", function(A) {
       alpha = 0.3
     )
 
-  return(out)
-})
+#   return(out)
+# })

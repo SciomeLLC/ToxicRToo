@@ -25,14 +25,14 @@
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
 #' @param threads specify the number of OpenMP threads to use for the calculations. Default = 2
 #' @param seed specify the GSL seed. Default = 12331
-#' @return This function model object containing a list of individual fits and model averaging fits
+#' @return Returns a fitted S4 model class (\code{\link{BMD_continuous_MA}}) with the following slots:
 #' \itemize{
-#'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
-#'         is the number of models in the model average.  For each \code{X}, this is an individual model
-#'         fit identical to what is returned in `\code{single_continuous_fit}.'
+#'  \item \code{models}: A list of \code{\link{BMD_continuous_fit_maximized}} or 
+#'         \code{\link{BMD_continuous_fit_MCMC}} objects of length equal to the number of models to average.
 #'  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
 #'  \item \code{posterior_probs}: The posterior model probabilities used in the MA.
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
+#'  \item \code{type}: String describing the fit_type
 #' }
 #' @examples
 #' \donttest{
@@ -44,9 +44,9 @@
 #' mean <- hill_m(doses)
 #' y <- rnorm(length(mean), mean, 20.14)
 #' model <- ma_continuous_fit(doses, y, fit_type = "laplace", BMR_TYPE = "sd", BMR = 1)
-#' summary(model)
+#' model
 #' }
-ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
+ma_continuous_fit <- function(D, Y, model_list = NULL, fit_type = "laplace",
                               BMR_TYPE = "sd", BMR = 0.1, point_p = 0.01,
                               alpha = 0.05, EFSA = TRUE, samples = 21000,
                               burnin = 1000, BMD_TYPE = NA, threads=2, seed = 12331) {
@@ -87,7 +87,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   } # internally hybrid is coded as 6
 
 
-  if (is.na(model_list[[1]][1])) {
+  if (is.null(model_list[[1]])) {
     # no prior distribution specified as a parameter
     if(!(EFSA)){
       model_list <- c(rep("hill", 2), rep("exp-3", 3), rep("exp-5", 3), rep("power", 2))
@@ -151,7 +151,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       temp_prior <- model_list[[ii]]
 
 
-      if (!("BMD_Bayes_continuous_model" %in% class(temp_prior))) {
+      if (!("priorClass" %in% class(temp_prior))) {
         stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
       }
   result <- parse_prior(temp_prior)
@@ -217,6 +217,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     }
   }
   options <- c(rt, BMR, point_p, alpha, is_increasing, samples, burnin)
+  model_fit_list = list()
   if (fit_type == "mcmc") {
     temp_r <- .run_continuous_ma_mcmc(
       priors, models, dlists, Y, D,
@@ -251,7 +252,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 
       data_temp <- temp[[jj]]$bmd_dist
       data_temp <- data_temp[!is.infinite(data_temp[, 1]) & !is.na(data_temp[, 1]), ]
-      temp[[jj]]$bmd <- c(NA, NA, NA)
+      temp[[jj]]$bmd <- as.numeric(c(NA, NA, NA))
 
 
       if (length(data_temp) > 0) {
@@ -270,6 +271,24 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       names(temp[[jj]]$bmd) <- c("BMD", "BMDL", "BMDU")
       temp[[jj]]$options <- options
       class(temp[[jj]]) <- "BMDcont_fit_MCMC"
+
+      bmd_fit <- BMD_continuous_fit_MCMC(
+        bmd = temp[[jj]]$bmd,
+        data = temp[[jj]]$data,
+        prior = temp[[jj]]$prior,
+        model = prior_list[[jj]]$model,
+        options = temp[[jj]]$options,
+        covariance = temp[[jj]]$covariance,
+        maximum = temp[[jj]]$maximum,
+        bmd_dist = temp[[jj]]$bmd_dist,
+        fitted_model = NULL,
+        transformed = FALSE,
+        full_model = temp[[jj]]$full_model, 
+        parameters = temp[[jj]]$parameters,
+        mcmc_result = temp[[jj]]$mcmc_result
+      )
+      model_fit_list[[jj]] = bmd_fit
+      
       jj <- jj + 1
     }
     # for (ii in idx_mcmc)
@@ -281,7 +300,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     data_temp <- temp$ma_bmd
     data_temp <- data_temp[!is.infinite(data_temp[, 1]) & !is.na(data_temp[, 1]), ]
     #    data_temp = data_temp[!is.na(data_temp[,1]),]
-    temp$bmd <- c(NA, NA, NA)
+    temp$bmd <- as.numeric(c(NA, NA, NA))
 
     if(min(data_temp[,2]) > alpha){
         data_temp <- rbind(c(0,0), data_temp)
@@ -304,8 +323,6 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     temp$posterior_probs <- tempn$posterior_probs
     names(temp$posterior_probs) <- paste(model_list2, distribution_list, sep="_")
-    class(temp) <- c("BMDcontinuous_MA", "BMDcontinuous_MA_mcmc")
-    return(temp)
   } else {
     temp <- .run_continuous_ma_laplace(
       priors, models, dlists, Y, D,
@@ -318,8 +335,8 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     for (ii in idx) {
       temp[[ii]]$prior <- priors[[which(ii == idx)]]
       temp[[ii]]$data <- cbind(D, Y)
-      temp[[ii]]$model <- prior_list[[jj]]$model
-
+      temp[[ii]]$model <- prior_list[[ii]]$model
+      
       data_temp <- temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), ]
       if (length(data_temp) > 0) {
         data_temp <- data_temp[!is.na(data_temp[, 1]), ]
@@ -330,7 +347,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
             temp[[ii]]$bmd[3] <- 1e300
           }
         } else {
-          temp[[ii]]$bmd <- c(NA, NA, NA)
+          temp[[ii]]$bmd <- as.numeric(c(NA, NA, NA))
         }
       }
 
@@ -341,14 +358,30 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 
       names(temp[[ii]]$bmd) <- c("BMD", "BMDL", "BMDU")
       temp[[ii]]$options <- options
-      # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
+      # names(temp)[jj] <- sprintf("Individual_Model_%s", jj)
       names(temp)[ii] <- sprintf("Indiv_%s_%s",model_list2[ii], distribution_list[ii])
       class(temp[[ii]]) <- "BMDcont_fit_maximized"
       jj <- jj + 1
+      
+      bmd_fit <- BMD_continuous_fit_maximized(
+        bmd = temp[[ii]]$bmd,
+        data = temp[[ii]]$data,
+        prior = temp[[ii]]$prior,
+        model = prior_list[[ii]]$model,
+        options = temp[[ii]]$options,
+        covariance = temp[[ii]]$covariance,
+        maximum = temp[[ii]]$maximum,
+        bmd_dist = temp[[ii]]$bmd_dist,
+        fitted_model = NULL,
+        transformed = FALSE,
+        full_model = temp[[ii]]$full_model, 
+        parameters = temp[[ii]]$parameters
+      )
+      model_fit_list[[ii]] = bmd_fit
     }
 
     temp_me <- temp$ma_bmd
-    temp$bmd <- c(NA, NA, NA)
+    temp$bmd <- as.numeric(c(NA, NA, NA))
     if (!is.null(dim(temp_me))) {
       temp_me <- temp_me[!is.infinite(temp_me[, 1]), ]
       temp_me <- temp_me[!is.na(temp_me[, 1]), ]
@@ -364,7 +397,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
 
         if (max(temp_me[, 2]) < 1 - alpha) {
-          temp$bmd[3] <- 1e300
+           bmd[3] <- 1e300
         }
       } else {
         temp$bmd <- c(Inf, 0, Inf)
@@ -374,9 +407,15 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
     #temp$posterior_probs <- temp$posterior_probs
     names(temp$posterior_probs) <- paste(model_list2, distribution_list, sep="_")
-    class(temp) <- c("BMDcontinuous_MA", "BMDcontinuous_MA_laplace")
-    return(temp)
   }
+  ret_val <- BMD_continuous_MA(
+      models = model_fit_list,
+      bmd = temp$bmd,
+      ma_bmd = temp$ma_bmd,
+      posterior_probs = temp$posterior_probs,
+      type = if (fit_type == "mcmc") "mcmc" else "laplace"
+    )
+  return(ret_val)
 }
 
 .dichotomous_model_type <- function(model_name) {
@@ -403,7 +442,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 #' @param Y response matrix
 #' @param N number of replicates matrix
 #' @param model_list a list of configurations for the single models (priors, model type)
-#' @param fit_type the method used to fit (laplace, mle, or mcmc)
+#' @param fit_type the method used to fit (laplace or mcmc)
 #' @param BMR_TYPE Specifies the type of benchmark dose analysis to be performed. For dichotomous models, "extra" is the default BMR type. Other strings lead to "added" BMR calculations.
 #' @param BMR This option specifies the benchmark response BMR. The BMR is defined in relation to the BMD calculation requested (see BMD).  By default, the "BMR = 0.1."
 #' @param point_p This option is only used for hybrid BMD calculations. It defines a probability that is the cutpoint for observations.  It is the probability that observations have this probability, or less, of being observed at the background dose.
@@ -413,14 +452,14 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 #' @param BMD_TYPE Deprecated version of BMR_TYPE that specifies the type of benchmark dose analysis to be performed
 #' @param threads number of threads to use. Default = 2
 #' @param seed specify the GSL seed. Default = 12331
-#' @return a model object containing a list of single models
+#' @return Returns a fitted S4 model class (\code{\link{BMD_dichotomous_MA}}) with the following slots:
 #' \itemize{
-#'  \item \code{Individual_Model_X}: Here \code{X} is a number \eqn{1\leq X \leq n,} where \eqn{n}
-#'         is the number of models in the model average.  For each \code{X}, this is an individual model
-#'         fit identical to what is returned in `\code{single_continuous_fit}.'
+#'  \item \code{models}: A list of \code{\link{BMD_dichotomous_fit_maximized}} or 
+#'         \code{\link{BMD_dichotomous_fit_MCMC}} objects of length equal to the number of models to average.
 #'  \item \code{ma_bmd}: The CDF of the model averaged BMD distribution.
 #'  \item \code{posterior_probs}: The posterior model probabilities used in the MA.
 #'  \item \code{bmd}: The BMD and the \eqn{100\times(1-2\alpha)\%} confidence intervals.
+#'  \item \code{type}: String describing the fit_type
 #' }
 #' @examples
 #' \donttest{
@@ -437,7 +476,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
 #' N <- mData[, 3]
 #' model <- ma_dichotomous_fit(D, Y, N)
 #' 
-#' summary(model)
+#' model
 #' }
 #' @export
 ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "laplace",
@@ -464,7 +503,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     model_i <- rep(0, length(model_list))
   for (ii in seq_along(model_list)) {
       temp_prior_l[[ii]] <- .bayesian_prior_dich(model_list[ii])
-      priors[[ii]] <- temp_prior_l[[ii]]@priors
+      priors[[ii]] <- temp_prior_l[[ii]]@prior
       model_i[ii] <- .dichotomous_model_type(model_list[ii])
     }
   } else {
@@ -506,6 +545,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   o2 <- c(BTYPE, 2, samples, burnin)
 
   data <- as.matrix(cbind(D, Y, N))
+  model_fit_list = list()
   if (fit_type == "laplace") {
     # Laplace Run
     temp <- .run_ma_dichotomous(
@@ -523,6 +563,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     t_names <- names(temp)
 
     idx <- grep("Fitted_Model", t_names)
+    jj = 1
     for (ii in idx) {
       # temp[[ii]]$prior <- priors[[which(ii == idx)]]
       temp[[ii]]$data <- data
@@ -541,10 +582,10 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
             temp[[ii]]$bmd[3] <- 1e300
           }
         } else {
-          temp[[ii]]$bmd <- c(NA, NA, NA)
+          temp[[ii]]$bmd <- as.numeric(c(NA, NA, NA))
         }
       }else{
-        temp[[ii]]$bmd <- c(NA,NA,NA)
+        temp[[ii]]$bmd <- as.numeric(c(NA,NA,NA))
       }
 
       #te <- splinefun(temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 2], temp[[ii]]$bmd_dist[!is.infinite(temp[[ii]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
@@ -562,12 +603,31 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   #  temp = temp[[which(names(temp) == "BMD_CDF")]] # keep access inline if needed
       temp[[ii]]$options <- c(o1, o2)
 
+      bmd_fit <- BMD_dichotomous_fit_maximized(
+          bmd = temp[[ii]]$bmd,
+          data = temp[[ii]]$data,
+          prior = priors[[jj]],
+          #prior = temp[[ii]]$prior,
+          model = .dichotomous_models[model_i[jj]],#temp[[ii]]$full_model,
+          options = temp[[ii]]$options,
+          covariance = temp[[ii]]$covariance,
+          maximum = temp[[ii]]$maximum,
+          bmd_dist = temp[[ii]]$bmd_dist,
+          full_model = temp[[ii]]$full_model, 
+          parameters = temp[[ii]]$parameters,
+#          mcmc_result = NULL,
+          gof_p_value = temp[[ii]]$gof_p_value,
+          gof_chi_sqr_statistic = temp[[ii]]$gof_chi_sqr_statistic
+        )
+      model_fit_list[[jj]] = bmd_fit
+      jj = jj + 1
+
       #names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
 
     }
     names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
 
-    class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_laplace")
+    # class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_laplace")
   } else {
     # MCMC run
     temp_r <- .run_ma_dichotomous(
@@ -607,10 +667,10 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
             temp[[ii]]$bmd[3] <- 1e300
           }
         } else {
-          temp[[ii]]$bmd <- c(NA, NA, NA)
+          temp[[ii]]$bmd <- as.numeric(c(NA, NA, NA))
         }
       }else{
-        temp[[ii]]$bmd <- c(NA,NA,NA)
+        temp[[ii]]$bmd <- as.numeric(c(NA,NA,NA))
       }
 
       #te <- splinefun(temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 2], temp[[jj]]$bmd_dist[!is.infinite(temp[[jj]]$bmd_dist[, 1]), 1], method = "monoH.FC",ties=mean)
@@ -621,7 +681,25 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
         tempn$posterior_probs[ii] <- NA
       }
 
-      class(temp[[jj]]) <- "BMDdich_fit_MCMC"
+      # class(temp[[jj]]) <- "BMDdich_fit_MCMC"
+      
+      bmd_fit <- BMD_dichotomous_fit_MCMC(
+          bmd = temp[[jj]]$bmd,
+          data = temp[[jj]]$data,
+          prior = priors[[jj]],
+          #prior = temp[[jj]]$prior,
+          model = .dichotomous_models[model_i[jj]],#temp[[jj]]$full_model,
+          options = temp[[jj]]$options,
+          covariance = temp[[jj]]$covariance,
+          maximum = temp[[jj]]$maximum,
+          bmd_dist = temp[[jj]]$bmd_dist,
+          full_model = temp[[jj]]$full_model, 
+          parameters = temp[[jj]]$parameters,
+          mcmc_result = temp[[jj]]$mcmc_result
+          # gof_p_value = temp[[jj]]$gof_p_value,
+          # gof_chi_sqr_statistic = temp[[jj]]$gof_chi_sqr_statistic
+        )
+      model_fit_list[[jj]] = bmd_fit
       jj <- jj + 1
     }
     # for (ii in idx_mcmc)
@@ -634,8 +712,18 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     temp$posterior_probs <- tempn$posterior_probs
     names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
     #temp$post_prob
-    class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_mcmc")
+    # class(temp) <- c("BMDdichotomous_MA", "BMDdichotomous_MA_mcmc")
+
   }
   names(temp$bmd) <- c("BMD", "BMDL", "BMDU")
-  return(temp)
+
+  ret_val <- BMD_dichotomous_MA(
+    models = model_fit_list,
+    bmd = temp$bmd,
+    ma_bmd = temp$ma_bmd,
+    posterior_probs = temp$posterior_probs,
+    type = if (fit_type == "laplace") "laplace" else "mcmc"
+  )
+  
+  return(ret_val)
 }
