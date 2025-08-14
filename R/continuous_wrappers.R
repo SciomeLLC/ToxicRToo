@@ -176,22 +176,22 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
     #specify variance of last parameter to variance of response
     if (distribution == "lognormal") {
       if (ncol(Y) > 1) {
-        PR$priors[nrow(PR$priors), 2] = log(mean(Y[, 3]) ^ 2)
+        if (is.matrix(PR)) PR[nrow(PR), 2] <- log(mean(Y[, 3]) ^ 2) else PR$priors[nrow(PR$priors), 2] <- log(mean(Y[, 3]) ^ 2)
       } else {
-        PR$priors[nrow(PR$priors), 2] = log(var(log(Y[, 1])))
+        if (is.matrix(PR)) PR[nrow(PR), 2] <- log(var(log(Y[, 1]))) else PR$priors[nrow(PR$priors), 2] <- log(var(log(Y[, 1])))
       }
     } else {
       if (ncol(Y) > 1) {
         if (distribution == "normal") {
-          PR$priors[nrow(PR$priors), 2] = log(mean(Y[, 3]) ^ 2)
+          if (is.matrix(PR)) PR[nrow(PR), 2] <- log(mean(Y[, 3]) ^ 2) else PR$priors[nrow(PR$priors), 2] <- log(mean(Y[, 3]) ^ 2)
         } else {
-          PR$priors[nrow(PR$priors), 2] = log(abs(mean(Y[1,])) / mean(Y[, 3]) ^ 2)
+          if (is.matrix(PR)) PR[nrow(PR), 2] <- log(abs(mean(Y[1, ])) / mean(Y[, 3]) ^ 2) else PR$priors[nrow(PR$priors), 2] <- log(abs(mean(Y[1, ])) / mean(Y[, 3]) ^ 2)
         }
       } else {
         if (distribution == "normal") {
-          PR$priors[nrow(PR$priors), 2] = log(var(Y[, 1]))
+          if (is.matrix(PR)) PR[nrow(PR), 2] <- log(var(Y[, 1])) else PR$priors[nrow(PR$priors), 2] <- log(var(Y[, 1]))
         } else {
-          PR$priors[nrow(PR$priors), 2] = log(abs(mean(Y[, 1])) / var(Y[, 1]))
+          if (is.matrix(PR)) PR[nrow(PR), 2] <- log(abs(mean(Y[, 1])) / var(Y[, 1])) else PR$priors[nrow(PR$priors), 2] <- log(abs(mean(Y[, 1])) / var(Y[, 1]))
         }
       }
     }

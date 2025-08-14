@@ -151,3 +151,82 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
 
   return(out)
 })
+
+# Support legacy MA classes too
+setMethod("cleveland_plot", "BMD_dichotomous_MA", function(A) {
+  submods <- A@models
+  n_sub <- length(submods)
+  bmd_ind <- matrix(0, n_sub + 1, 5)
+  for (i in seq_len(n_sub)) {
+    bmd_ind[i, 1] <- submods[[i]]@bmd[1]
+    bmd_ind[i, 2] <- submods[[i]]@bmd[2]
+    bmd_ind[i, 3] <- submods[[i]]@bmd[3]
+    bmd_ind[i, 4] <- submods[[i]]@model
+    bmd_ind[i, 5] <- A@posterior_probs[i]
+  }
+  bmd_ind[n_sub + 1, 1:3] <- A@bmd[1:3]
+  bmd_ind[n_sub + 1, 4] <- "Model Average"
+  bmd_ind[n_sub + 1, 5] <- 1
+  df <- data.frame(bmd_ind)
+  names(df) <- c("BMD","BMDL","BMDU","Model","PostProb")
+  df <- dplyr::filter(df, rlang::.data$PostProb > 0.05)
+  df <- df[!is.na(df$BMD), ]
+  ggplot2::ggplot() +
+    ggplot2::geom_point(
+      data = df,
+      ggplot2::aes(x = as.numeric(rlang::.data$BMD),
+                   y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
+                   size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)),
+      color = "red"
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(x = "Dose Level", y = "",
+                  title = "BMD Estimates by Each Model (Sorted by Posterior Probability)",
+                  size = "Posterior Probability") +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::geom_errorbar(
+      data = df, width = 0.2,
+      ggplot2::aes(xmin = as.numeric(rlang::.data$BMDL), xmax = as.numeric(rlang::.data$BMDU),
+                   y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)),
+      color = "black", alpha = 0.3
+    )
+})
+
+setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
+  submods <- A@models
+  n_sub <- length(submods)
+  bmd_ind <- matrix(0, n_sub + 1, 5)
+  for (i in seq_len(n_sub)) {
+    bmd_ind[i, 1] <- submods[[i]]@bmd[1]
+    bmd_ind[i, 2] <- submods[[i]]@bmd[2]
+    bmd_ind[i, 3] <- submods[[i]]@bmd[3]
+    bmd_ind[i, 4] <- submods[[i]]@model
+    bmd_ind[i, 5] <- A@posterior_probs[i]
+  }
+  bmd_ind[n_sub + 1, 1:3] <- A@bmd[1:3]
+  bmd_ind[n_sub + 1, 4] <- "Model Average"
+  bmd_ind[n_sub + 1, 5] <- 1
+  df <- data.frame(bmd_ind)
+  names(df) <- c("BMD","BMDL","BMDU","Model","PostProb")
+  df <- dplyr::filter(df, rlang::.data$PostProb > 0.05)
+  df <- df[!is.na(df$BMD), ]
+  ggplot2::ggplot() +
+    ggplot2::geom_point(
+      data = df,
+      ggplot2::aes(x = as.numeric(rlang::.data$BMD),
+                   y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
+                   size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)),
+      color = "red"
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::labs(x = "Dose Level", y = "",
+                  title = "BMD Estimates by Each Model (Sorted by Posterior Probability)",
+                  size = "Posterior Probability") +
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::geom_errorbar(
+      data = df, width = 0.2,
+      ggplot2::aes(xmin = as.numeric(rlang::.data$BMDL), xmax = as.numeric(rlang::.data$BMDU),
+                   y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)),
+      color = "black", alpha = 0.3
+    )
+})
