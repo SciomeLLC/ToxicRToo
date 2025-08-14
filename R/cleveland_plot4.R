@@ -149,5 +149,5 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
       alpha = 0.3
     )
 
-#   return(out)
-# })
+  return(out)
+})

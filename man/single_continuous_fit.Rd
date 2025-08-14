@@ -149,5 +149,5 @@ model = single_continuous_fit(
          seed = 12331
 )
 
-model
+print(model)
 }

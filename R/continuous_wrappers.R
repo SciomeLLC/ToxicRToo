@@ -120,7 +120,6 @@
 #' print(model)
 single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace",
                                    prior = NULL, BMR_TYPE = "sd",
-                                   prior = NULL, BMR_TYPE = "sd",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
                                    alpha = 0.05, samples = 25000, degree = 2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
