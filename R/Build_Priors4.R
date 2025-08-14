@@ -93,21 +93,13 @@ setMethod("create_continuous_prior",
 
     ret_obj <- BMD_Bayes_continuous_model(
       prior = p_matrix,
-      distribution = distribution,
       model = p$model,
-      mean = p$mean,
+      distribution = distribution,
       parameters = p$parameters,
-      distribution = distribution
+      mean = p$mean,
+      degree = ifelse(!is.null(p$degree), p$degree, deg)
     )
-    # ret_obj <- BMD_Bayes_continuous_model(
-    #   prior = prior,
-    #   distribution = distribution,
-    #   model = p$model,
-    #   parameters = p$parameters,
-    #   mean = p$mean,
-    #   degree = ifelse(!is.null(p$degree), p$degree, deg)
-    # )
-    return(prior)
+    return(ret_obj)
   }
 )
 

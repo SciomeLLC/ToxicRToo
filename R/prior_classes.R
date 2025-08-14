@@ -197,20 +197,32 @@ create_prior_list <- function(x1, x2, ...) {
 
 
 .combine_prior_lists <- function(p1, p2) {
-  if (as.character(class(p1)) == "BMDprior") {
-    x1 <- as.matrix(p1[, , drop = F])
+  # Normalize inputs: accept BMDprior-like matrices or BMDmodelprior lists
+  x1 <- if (is.matrix(p1)) {
+    p1
+  } else if (is.list(p1) && !is.null(p1$priors)) {
+    p1$priors
+  } else if (is.list(p1) && length(p1) >= 1 && is.matrix(p1[[1]])) {
+    p1[[1]]
+  } else if (identical(as.character(class(p1)), "BMDprior")) {
+    as.matrix(p1[, , drop = FALSE])
   } else {
-    x1 <- p1[[1]]
+    stop("Unsupported prior format for p1 in .combine_prior_lists")
   }
 
-  if (as.character(class(p2)) == "BMDprior") {
-    x2 <- as.matrix(p2[, , drop = F])
+  x2 <- if (is.matrix(p2)) {
+    p2
+  } else if (is.list(p2) && !is.null(p2$priors)) {
+    p2$priors
+  } else if (is.list(p2) && length(p2) >= 1 && is.matrix(p2[[1]])) {
+    p2[[1]]
+  } else if (identical(as.character(class(p2)), "BMDprior")) {
+    as.matrix(p2[, , drop = FALSE])
   } else {
-    x2 <- p2[[1]]
+    stop("Unsupported prior format for p2 in .combine_prior_lists")
   }
 
   retval <- list(priors = rbind(x1, x2))
-
   class(retval) <- "BMDmodelprior"
   return(retval)
 }
