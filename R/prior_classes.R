@@ -192,11 +192,7 @@ create_prior_list <- function(x1, x2, ...) {
   for (ii in 1:length(mf)) {
     X[ii, ] <- eval(mf[[ii]])
   }
-  Y <- list()
-  Y[[1]] <- X
-  names(Y) <- c("priors")
-  class(Y) <- "BMDmodelprior"
-  return(Y)
+  return(X)
 }
 
 

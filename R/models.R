@@ -1,4 +1,13 @@
 ## Continuous model class
+setClass("prior",
+  slots = c(
+    prior = "ANY",
+    model = "character",
+    mean = "character",
+    parameters = "character"
+  )
+)
+
 setClass(
   "BMD_Bayes_continuous_model",
   slots = c(
@@ -104,4 +113,16 @@ setMethod("show", "BMD_Bayes_dichotomous_model", function(object) {
   cat("  Prior:\n")
   str(object@prior)
   cat("\n")
+})
+
+# Define S4 generic and methods for parse_prior after classes exist
+setGeneric("parse_prior", function(prior) standardGeneric("parse_prior"))
+
+## Return the object; downstream code reads slots via @distribution, @mean, @prior
+setMethod("parse_prior", signature(prior = "BMD_Bayes_continuous_model"), function(prior) {
+  prior
+})
+
+setMethod("parse_prior", signature(prior = "BMD_Bayes_dichotomous_model"), function(prior) {
+  prior
 })

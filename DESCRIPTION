@@ -74,15 +74,17 @@ License: LGPL (>= 3)
 URL: https://github.com/NIEHS/ToxicR
 LazyData: true
 Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.3.2), shiny (>= 1.5.0), coda
-        (>= 0.19-4), scales (>= 1.1.1), forcats, ggridges (>= 0.5.3),
-        doBy (>= 4.6.11), multcomp (>= 1.4), dplyr (>= 1.0.7), remotes, methods
+       (>= 0.19-4), scales (>= 1.1.1), forcats, ggridges (>= 0.5.3),
+       doBy (>= 4.6.11), multcomp (>= 1.4), dplyr (>= 1.0.7), remotes, methods, rlang (>= 1.0.0)
 LinkingTo: Rcpp, RcppEigen, RcppGSL
 RoxygenNote: 7.3.2
 Encoding: UTF-8
 VignetteBuilder: knitr
 Suggests: plotly (>= 4.9.2.1), rmarkdown, ggpubr (>=
-        0.4.0), testthat (>= 3.1.0),gridExtra (>= 2.3), VIM (>= 6.1.1),
-        knitr (>= 1.36), modules, actuar (>= 3.2-0)
+       0.4.0), testthat (>= 3.1.0), gridExtra (>= 2.3), VIM (>= 6.1.1),
+       knitr (>= 1.36), modules, actuar (>= 3.2-0),
+       BiocStyle, SummarizedExperiment, MultiAssayExperiment,
+       BiocParallel, S4Vectors
 NeedsCompilation: yes
 Packaged: 2024-04-12 20:00:54 UTC; shail.choksi
 Author: Matt Wheeler [aut, cre] (<https://orcid.org/0000-0002-8242-2391>),
@@ -105,3 +107,32 @@ Author: Matt Wheeler [aut, cre] (<https://orcid.org/0000-0002-8242-2391>),
   U.S. Deptartment of Health and Human Services (US HHS), National
     Institute of Environmental Health Sciences (NIEHS) [cph] (Owns
     Copyright for all ToxicRToo code outside NLOPT and nloptr scripts.)
+Collate:
+       'TOXICR_GLOBALS.R'
+       'models.R'
+       'prior_classes.R'
+       'RcppExports.R'
+       'cont_functions.R'
+       'dicho_functions.R'
+       'data_checks.R'
+       'NTP.R'
+       'opening_messages.R'
+       'Build_Priors.R'
+       'Build_Priors4.R'
+       'fits.R'
+       'continuous_clean.R'
+       'continuous_plots.R'
+       'continuous_pvalue.R'
+       'dichotomous_plots.R'
+       'continuous_wrappers.R'
+       'dichotomous_wrappers.R'
+       'model_checks_cont.R'
+       'model_checks_dich.R'
+       'model_averaging_fits.R'
+       'summary_continuous.R'
+       'summary_dichotomous.R'
+       'MAdensity_plot.R'
+       'cleveland_plot.R'
+       'cleveland_plot4.R'
+       'predict.R'
+       'update_ToxicR.R'

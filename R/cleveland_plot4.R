@@ -1,4 +1,5 @@
 setGeneric("cleveland_plot", function(A) standardGeneric("cleveland_plot"))
+utils::globalVariables(c("X1","X2","X3","X4","X5","BMD","BMDL","BMDU","Model","PostProb"))
 
 #' Create a Cleveland plot from a model averaged model.
 #'
@@ -46,39 +47,40 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
   bmd_ind[n_sub + 1, 5] <- 1
 
   bmd_ind_df <- data.frame(bmd_ind)
+  names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
 
   # Filter out submodels with posterior prob <= 0.05
-  bmd_ind_df <- dplyr::filter(bmd_ind_df, as.numeric(X5) > 0.05)
+  bmd_ind_df <- dplyr::filter(bmd_ind_df, rlang::.data$PostProb > 0.05)
 
   # Drop any NA rows
-  bmd_ind_df2 <- bmd_ind_df[!is.na(bmd_ind_df[, 1]),]
+  bmd_ind_df2 <- bmd_ind_df[!is.na(bmd_ind_df[, "BMD"]), ]
 
   # Build the ggplot
-  out <- ggplot() +
-    geom_point(
+  out <- ggplot2::ggplot() +
+    ggplot2::geom_point(
       data = bmd_ind_df2,
-      aes(
-        x = as.numeric(X1),
-        y = forcats::fct_reorder(X4, as.numeric(X5), .desc = TRUE),
-        size = sqrt(as.numeric(X5) + 0.01)
+      ggplot2::aes(
+        x = as.numeric(rlang::.data$BMD),
+        y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
+        size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)
       ),
       color = "red"
     ) +
-    theme_minimal() +
-    labs(
+    ggplot2::theme_minimal() +
+    ggplot2::labs(
       x = "Dose Level",
       y = "",
       title = "BMD Estimates by Each Model (Sorted by Posterior Probability)",
       size = "Posterior Probability"
     ) +
-    theme(legend.position = "none") +
-    geom_errorbar(
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::geom_errorbar(
       data = bmd_ind_df2,
       width = 0.2,
-      aes(
-        xmin = as.numeric(X2),
-        xmax = as.numeric(X3),
-        y = forcats::fct_reorder(X4, X5, .desc = TRUE)
+      ggplot2::aes(
+        xmin = as.numeric(rlang::.data$BMDL),
+        xmax = as.numeric(rlang::.data$BMDU),
+        y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)
       ),
       color = "black",
       alpha = 0.3
@@ -110,37 +112,38 @@ setMethod("cleveland_plot", "BMD_Bayes_continuous_model", function(A) {
   bmd_ind[n_sub + 1, 5] <- 1
 
   bmd_ind_df <- data.frame(bmd_ind)
+  names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
 
   # Filter out any submodels with posterior prob <= 0.05, etc.
-  bmd_ind_df <- dplyr::filter(bmd_ind_df, as.numeric(X5) > 0.05)
+  bmd_ind_df <- dplyr::filter(bmd_ind_df, rlang::.data$PostProb > 0.05)
 
-  bmd_ind_df2 <- bmd_ind_df[!is.na(bmd_ind_df[, 1]),]
+  bmd_ind_df2 <- bmd_ind_df[!is.na(bmd_ind_df[, "BMD"]), ]
 
-  out <- ggplot() +
-    geom_point(
+  out <- ggplot2::ggplot() +
+    ggplot2::geom_point(
       data = bmd_ind_df2,
-      aes(
-        x = as.numeric(X1),
-        y = forcats::fct_reorder(X4, as.numeric(X5), .desc = TRUE),
-        size = sqrt(as.numeric(X5) + 0.01)
+      ggplot2::aes(
+        x = as.numeric(rlang::.data$BMD),
+        y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
+        size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)
       ),
       color = "red"
     ) +
-    theme_minimal() +
-    labs(
+    ggplot2::theme_minimal() +
+    ggplot2::labs(
       x = "Dose Level",
       y = "",
       title = "BMD Estimates by Each Model (Sorted by Posterior Probability)",
       size = "Posterior Probability"
     ) +
-    theme(legend.position = "none") +
-    geom_errorbar(
+    ggplot2::theme(legend.position = "none") +
+    ggplot2::geom_errorbar(
       data = bmd_ind_df2,
       width = 0.2,
-      aes(
-        xmin = as.numeric(X2),
-        xmax = as.numeric(X3),
-        y = forcats::fct_reorder(X4, X5, .desc = TRUE)
+      ggplot2::aes(
+        xmin = as.numeric(rlang::.data$BMDL),
+        xmax = as.numeric(rlang::.data$BMDU),
+        y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)
       ),
       color = "black",
       alpha = 0.3

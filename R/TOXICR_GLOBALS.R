@@ -30,3 +30,8 @@
 
 .dichotomous_models       <- c("hill","gamma","logistic","log-logistic","log-probit","multistage","probit",
                                "qlinear","weibull")
+
+# Silence R CMD check NOTES about non-standard evaluation or S4 generics looked up at runtime
+utils::globalVariables(c(
+    "parse_prior", "create_continuous_prior", "create_dichotomous_prior"
+))

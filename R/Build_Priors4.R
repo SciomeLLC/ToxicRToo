@@ -1,4 +1,3 @@
-setGeneric("parse_prior", function(prior) standardGeneric("parse_prior"))
 setGeneric("create_continuous_prior",
   function(prior_list, model, distribution, deg = 2) {
     standardGeneric("create_continuous_prior")
@@ -6,33 +5,6 @@ setGeneric("create_continuous_prior",
 )
 setGeneric("create_dichotomous_prior", function(prior, model) {
   standardGeneric("create_dichotomous_prior")
-})
-setGeneric(
-  "create_dichotomous_prior",
-  function(prior, model, ...) standardGeneric("create_dichotomous_prior")
-)
-
-
-setMethod("parse_prior", "list", function(prior) {
-  # Build the distribution from the string
-  rV <- list()
-  rV$prior <- prior$prior
-
-  temp_a <- regexpr("[[][a-zA-Z]+-*[a-zA-Z]+[]]", prior$model)
-  start <- temp_a[1] + 1
-  end <- start + attr(temp_a, "match.length") - 3
-  if (temp_a == -1) {
-    stop("Could not find a distribution for analysis.")
-  }
-  rV$distribution <- substr(prior$model, start, end)
-  rV$model <- prior$mean
-  BMD_Bayes_continuous_model(
-    prior = rV$prior,
-    model = rV$model,
-    distribution = rV$distribution,
-    parameters = character(),
-    mean = rV$model
-  )
 })
 
 #' @title create_continuous_prior  Given priorlist, a model,
@@ -64,50 +36,63 @@ setMethod("create_continuous_prior",
     distribution = "character"
   ),
   function(prior_list, model, distribution, deg = 2) {
-    if (!("BMDmodelprior" %in% class(prior_list))) {
-      stop("Prior is not of a 'BMDmodelprior' class. 
-           Define the prior with `create_prior_list()` or similar.")
+    # Normalize prior_list to a BMDmodelprior-like list with a 'priors' matrix
+    if (is.matrix(prior_list)) {
+      pl <- list(priors = prior_list)
+      class(pl) <- "BMDmodelprior"
+    } else if (is.list(prior_list) && (!is.null(prior_list$priors) || "BMDmodelprior" %in% class(prior_list))) {
+      pl <- prior_list
+      if (is.null(pl$priors) && length(pl) >= 1 && is.matrix(pl[[1]])) {
+        # Back-compat: some callers used a list with the matrix at [[1]]
+        pl$priors <- pl[[1]]
+      }
+      class(pl) <- unique(c("BMDmodelprior", class(pl)))
+    } else {
+      stop("Prior must be a prior matrix (from create_prior_list) or an object of class 'BMDmodelprior'.")
     }
 
     p <- NA
     if (grepl("aerts", model)) {
       if (model %in% c("exp-aerts", "invexp-aerts", "hill-aerts", "lognormal-aerts")) {
-        p <- .check_4param(prior_list, distribution)
+        p <- .check_4param(pl, distribution)
       } else if (model %in% c("logistic-aerts", "probit-aerts")) {
-        p <- .check_4param_sigmoidal(prior_list, distribution)
+        p <- .check_4param_sigmoidal(pl, distribution)
       } else if (model %in% c("gamma-aerts", "invgamma-aerts", "lomax-aerts",
                               "invlomax-aerts", "logskew-aerts", "invlogskew-aerts")) {
-        p <- .check_5param(prior_list, distribution)
+        p <- .check_5param(pl, distribution)
       }
       if (model %in% c("gamma-aerts", "invgamma-aerts")) {
-        p <- .check_5param_gamma(prior_list, distribution)
+        p <- .check_5param_gamma(pl, distribution)
       }
       p$mean <- model
     } else {
       # handle the non-aerts
       if (model == "LMS") {
-        p <- .check_4param(prior_list, distribution)
+        p <- .check_4param(pl, distribution)
         p$mean <- model
       } else if (model == "gamma-efsa") {
-        p <- .check_4param_gamma(prior_list, distribution)
+        p <- .check_4param_gamma(pl, distribution)
         p$mean <- model
       } else if (model == "hill") {
-        p <- .check_hill(prior_list, distribution)
+        p <- .check_hill(pl, distribution)
       } else if (model == "FUNL") {
-        p <- .check_FUNL(prior_list, distribution)
+        p <- .check_FUNL(pl, distribution)
       } else if (model == "exp-5") {
-        p <- .check_exp5(prior_list, distribution)
+        p <- .check_exp5(pl, distribution)
       } else if (model == "exp-3") {
-        p <- .check_exp3(prior_list, distribution)
+        p <- .check_exp3(pl, distribution)
       } else if (model == "polynomial") {
-        p <- .check_polynomial(prior_list, distribution)
+        p <- .check_polynomial(pl, distribution)
       } else if (model == "power") {
-        p <- .check_power(prior_list, distribution)
+        p <- .check_power(pl, distribution)
       }
     }
 
+    # Prefer p$priors, then p$prior; otherwise fall back to the normalized input matrix
+    p_matrix <- if (!is.null(p$priors)) p$priors else if (!is.null(p$prior)) p$prior else pl$priors
+
     ret_obj <- BMD_Bayes_continuous_model(
-      prior = p$prior,
+      prior = p_matrix,
       distribution = distribution,
       model = p$model,
       parameters = p$parameters,
@@ -136,9 +121,17 @@ setMethod(
   "create_dichotomous_prior",
   signature(prior = "ANY", model = "character"),
   function(prior, model) {
-    if (!("BMDmodelprior" %in% class(prior))) {
-      stop("Prior is not of a 'BMDmodelprior' class. 
-            A probable solution is to define the prior with `create_prior_list()`.")
+    # Normalize prior to a BMDmodelprior-like list with [[1]] being the matrix
+    if (is.matrix(prior)) {
+      prior <- list(priors = prior)
+      class(prior) <- "BMDmodelprior"
+    } else if (is.list(prior) && (!is.null(prior$priors) || "BMDmodelprior" %in% class(prior))) {
+      if (is.null(prior$priors) && length(prior) >= 1 && is.matrix(prior[[1]])) {
+        prior$priors <- prior[[1]]
+      }
+      class(prior) <- unique(c("BMDmodelprior", class(prior)))
+    } else {
+      stop("Prior must be a prior matrix (from create_prior_list) or an object of class 'BMDmodelprior'.")
     }
     if (!(model %in% .dichotomous_models)) {
       stop("Model type must be one of: ", paste(.dichotomous_models, collapse=", "))
@@ -146,7 +139,7 @@ setMethod(
 
     # replicate the old code that calls .check_d_*:
     p <- NA
-    temp <- prior[[1]]  # typical: 'prior' is a list with a matrix in slot [[1]]
+  temp <- prior[[1]]  # typical: 'prior' is a list with a matrix in slot [[1]]
 
     # check if lower bound > upper bound
     if (any(temp[,4] > temp[,5])) {
@@ -462,7 +455,7 @@ ma_build_priors <- function(Y = NA, model_list = NA, distribution_list = NA, ma_
   if (sum(temp[, 4] > temp[, 5]) > 0) {
     stop("One of the parameter's lower bounds is greater than the upper bound.")
   }
-  if (temp[2,4] <= 0  | temp[5,4] <= 0){
+  if (temp[2,4] <= 0  || temp[5,4] <= 0){
     stop("The lower bounds on b and xi must be positive (for numerical stability).")
   }
   if(temp[4,4] < 0){
@@ -510,7 +503,7 @@ ma_build_priors <- function(Y = NA, model_list = NA, distribution_list = NA, ma_
   if (sum(temp[, 4] > temp[, 5]) > 0) {
     stop("One of the parameter's lower bounds is greater than the upper bound.")
   }
-  if (temp[2,4] <= 0  | temp[5,4] <= 0){
+  if (temp[2,4] <= 0  || temp[5,4] <= 0){
     stop("The lower bounds on b and xi must be positive (for numerical stability).")
   }
   if(temp[4,4] < 0){

@@ -116,9 +116,9 @@
 #'          seed = 12331
 #' )
 #' 
-#' summary(model)
+#' print(model)
 single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace",
-                                   prior = NA, BMR_TYPE = "sd",
+                                   prior = NULL, BMR_TYPE = "sd",
                                    BMR = 0.1, point_p = 0.01, distribution = "normal-ncv",
                                    alpha = 0.05, samples = 25000, degree = 2,
                                    burnin = 1000, BMD_priors = FALSE, ewald = FALSE,
@@ -144,22 +144,22 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
   D = D[test == TRUE,, drop = F]
   DATA <- cbind(D, Y);
 
-  myD = Y;
+  # myD = Y; # unused
   sstat = F # set sufficient statistics to false if there is only one column
   if (ncol(Y) > 1) {
     sstat = T
   }
 
-  if (!is.na(prior[1])) {
+  if (!is.null(prior)) {
     #parse the prior
     if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
       stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
     }
-    t_prior_result <- .parse_prior(prior)
-    distribution <- t_prior_result@distribution
-    model_type <- t_prior_result@model
-    prior = t_prior_result@prior
-    PR = t_prior_result@prior
+  t_prior_result <- parse_prior(prior)
+  distribution <- t_prior_result@distribution
+  model_type <- t_prior_result@mean
+  prior <- t_prior_result@prior
+  PR <- t_prior_result@prior
   } else {
     dmodel = which(model_type == .continuous_models)
 
@@ -285,9 +285,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
 
   if (distribution == "normal-ncv") {
     constVar = FALSE
-    vt = 2;
   } else {
-    vt = 1
     constVar = TRUE
   }
 
@@ -334,7 +332,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
           PR[6, 4:5] <- c(-18, 18)
         }
       }
-      if (fitmodel == 8 & distribution == "normal-ncv") {
+  if (fitmodel == 8 && distribution == "normal-ncv") {
         #power NCV
         PR[2,] <- c(1, 0, 10, -10000, 10000)
       }
@@ -350,7 +348,7 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
   if (rt == 4) { rt = 6; }
   #internally in Rcpp hybrid is coded as 6	
 
-  tmodel <- permuteMat[dmodel, 2]
+  # permuted model id kept in fitmodel
 
   options <- c(rt, BMR, point_p, alpha, is_increasing, constVar, burnin, samples, transform)
 
@@ -386,19 +384,18 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
     rvals$prior <- t_prior_result
     rvals$bmd_dist <- rvals$fitted_model$bmd_dist
     if (!identical(rvals$bmd_dist, numeric(0))) {
-      temp_me = rvals$bmd_dist
+      bmd_clean <- rvals$bmd_dist
       #rarely gives error, so wrap in tryCatch: if fails, create 2x2 0 matrix
       tryCatch({
-        temp_me = temp_me[!is.infinite(temp_me[, 1]),]
-        temp_me = temp_me[!is.na(temp_me[, 1]),]
-        temp_me = temp_me[!is.nan(temp_me[, 1]),]
-      }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
+        keep <- is.finite(bmd_clean[, 1]) & !is.na(bmd_clean[, 1]) & !is.nan(bmd_clean[, 1])
+        bmd_clean <- bmd_clean[keep, , drop = FALSE]
+      }, error = function(e) bmd_clean <- matrix(0, nrow = 2, ncol = 2))
       #nrow can throw error too
-      if (is.null(nrow(temp_me))) {
-        temp_me <- matrix(0, nrow = 2, ncol = 2)
+      if (is.null(nrow(bmd_clean))) {
+        bmd_clean <- matrix(0, nrow = 2, ncol = 2)
       }
-      if (nrow(temp_me) > 5) {
-        te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC", ties = mean)
+      if (nrow(bmd_clean) > 5) {
+        te <- splinefun(bmd_clean[, 2], bmd_clean[, 1], method = "monoH.FC", ties = mean)
         rvals$bmd[2:3] <- c(te(alpha), te(1 - alpha))
       } else {
         rvals$bmd[2:3] <- c(NA, NA)
@@ -441,18 +438,17 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
       rvals$prior <- t_prior_result
     }
     if (!identical(rvals$bmd_dist, numeric(0))) {
-      temp_me = rvals$bmd_dist
+      bmd_clean <- rvals$bmd_dist
       tryCatch({
-        temp_me = temp_me[!is.infinite(temp_me[, 1]),]
-        temp_me = temp_me[!is.na(temp_me[, 1]),]
-        temp_me = temp_me[!is.nan(temp_me[, 1]),]
-      }, error = function(e) temp_me <- matrix(0, nrow = 2, ncol = 2))
+        keep <- is.finite(bmd_clean[, 1]) & !is.na(bmd_clean[, 1]) & !is.nan(bmd_clean[, 1])
+        bmd_clean <- bmd_clean[keep, , drop = FALSE]
+      }, error = function(e) bmd_clean <- matrix(0, nrow = 2, ncol = 2))
       #nrow can throw error too
-      if (is.null(nrow(temp_me))) {
-        temp_me <- matrix(0, nrow = 2, ncol = 2)
+      if (is.null(nrow(bmd_clean))) {
+        bmd_clean <- matrix(0, nrow = 2, ncol = 2)
       }
-      if (nrow(temp_me) > 5) {
-        te <- splinefun(temp_me[, 2], temp_me[, 1], method = "monoH.FC", ties = mean)
+      if (nrow(bmd_clean) > 5) {
+        te <- splinefun(bmd_clean[, 2], bmd_clean[, 1], method = "monoH.FC", ties = mean)
         rvals$bmd[2:3] <- c(te(alpha), te(1 - alpha))
       } else {
         rvals$bmd[2:3] <- c(NA, NA)

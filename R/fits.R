@@ -330,7 +330,7 @@ setMethod(
       NULL
     )
     if (isLogNormal && !is.null(Q)) {
-      # original: Q <- exp(Q + exp(fit$mcmc_result$PARM_samples[,ncol(...)]) / 2)
+      # original: Q <- exp(Q + exp(x@mcmc_result$PARM_samples[,ncol(...)]) / 2)
       Q <- exp(Q + exp(x@mcmc_result$PARM_samples[, ncol(x@mcmc_result$PARM_samples)]) / 2)
     }
     if (x@model == "FUNL") {
@@ -503,51 +503,51 @@ setMethod(
     }
 
     me <- switch(x@model,
-      "exp-aerts" = .cont_exp_aerts_f(fit$parameters, test_doses),
-      "invexp-aerts" = .cont_invexp_aerts_f(fit$parameters, test_doses),
-      "gamma-aerts" = .cont_gamma_aerts_f(fit$parameters, test_doses),
-      "invgamma-aerts" = .cont_invgamma_aerts_f(fit$parameters, test_doses),
-      "hill-aerts" = .cont_hill_aerts_f(fit$parameters, test_doses),
-      "lomax-aerts" = .cont_lomax_aerts_f(fit$parameters, test_doses),
-      "invlomax-aerts" = .cont_invlomax_aerts_f(fit$parameters, test_doses),
-      "lognormal-aerts" = .cont_lognormal_aerts_f(fit$parameters, test_doses),
-      "logskew-aerts" = .cont_logskew_aerts_f(fit$parameters, test_doses),
-      "invlogskew-aerts" = .cont_invlogskew_aerts_f(fit$parameters, test_doses),
-      "logistic-aerts" = .cont_logistic_aerts_f(fit$parameters, test_doses),
-      "probit-aerts" = .cont_probit_aerts_f(fit$parameters, test_doses),
-      "LMS" = .cont_LMS_f(fit$parameters, test_doses),
-      "gamma-efsa" = .cont_gamma_efsa_f(fit$parameters, test_doses)
+      "exp-aerts" = .cont_exp_aerts_f(x@parameters, test_doses),
+      "invexp-aerts" = .cont_invexp_aerts_f(x@parameters, test_doses),
+      "gamma-aerts" = .cont_gamma_aerts_f(x@parameters, test_doses),
+      "invgamma-aerts" = .cont_invgamma_aerts_f(x@parameters, test_doses),
+      "hill-aerts" = .cont_hill_aerts_f(x@parameters, test_doses),
+      "lomax-aerts" = .cont_lomax_aerts_f(x@parameters, test_doses),
+      "invlomax-aerts" = .cont_invlomax_aerts_f(x@parameters, test_doses),
+      "lognormal-aerts" = .cont_lognormal_aerts_f(x@parameters, test_doses),
+      "logskew-aerts" = .cont_logskew_aerts_f(x@parameters, test_doses),
+      "invlogskew-aerts" = .cont_invlogskew_aerts_f(x@parameters, test_doses),
+      "logistic-aerts" = .cont_logistic_aerts_f(x@parameters, test_doses),
+      "probit-aerts" = .cont_probit_aerts_f(x@parameters, test_doses),
+      "LMS" = .cont_LMS_f(x@parameters, test_doses),
+      "gamma-efsa" = .cont_gamma_efsa_f(x@parameters, test_doses)
     )
 
     if (isLogNormal && !is.null(me)) {
       me <- exp(me)
     }
     if (x@model == "FUNL") {
-      me <- .cont_FUNL_f(fit$parameters, test_doses)
+      me <- .cont_FUNL_f(x@parameters, test_doses)
     }
     if (x@model == "hill") {
-      me <- .cont_hill_f(fit$parameters, test_doses)
+      me <- .cont_hill_f(x@parameters, test_doses)
     }
     if (x@model == "exp-3") {
-      me <- .cont_exp_3_f(fit$parameters, test_doses, decrease)
+      me <- .cont_exp_3_f(x@parameters, test_doses, decrease)
     }
     if (x@model == "exp-5") {
-      me <- .cont_exp_5_f(fit$parameters, test_doses)
+      me <- .cont_exp_5_f(x@parameters, test_doses)
     }
     if (x@model == "power") {
-      me <- .cont_power_f(fit$parameters, test_doses)
+      me <- .cont_power_f(x@parameters, test_doses)
     }
     if (x@model == "polynomial") {
       # if distribution is normal-ncv vs normal, etc.
       if (length(grep(": normal-ncv", tolower(x@full_model))) > 0) {
-        deg <- length(fit$parameters) - 2
+        deg <- length(x@parameters) - 2
       } else {
-        deg <- length(fit$parameters) - 1
+        deg <- length(x@parameters) - 1
       }
-      me <- .cont_polynomial_f(fit$parameters[1:deg], test_doses)
+      me <- .cont_polynomial_f(x@parameters[1:deg], test_doses)
     }
     if (isLogNormal) {
-      var_ <- exp(fit$parameters[length(fit$parameters)])
+      var_ <- exp(x@parameters[length(x@parameters)])
       me <- exp(log(me) + var_ / 2)
     }
 

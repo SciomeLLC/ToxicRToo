@@ -2,7 +2,11 @@ useDynLib(ToxicRToo, .registration=TRUE)
 exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
 importFrom(forcats,fct_reorder)
-importFrom("methods", "new")
+importFrom("methods", "new", "setGeneric", "setMethod")
+export(parse_prior)
+export(create_continuous_prior)
+export(create_dichotomous_prior)
+export(cleveland_plot)
 importFrom("utils", "str")
 
 ###############################
@@ -26,6 +30,7 @@ importFrom("stats", "aov", "as.formula", "coefficients", "cor.test",
 
 # Added two additional package 2012/12/08 SL
 import(ggridges)
+importFrom(ggplot2, ggplot, aes, geom_point, geom_errorbar, theme_minimal, labs, theme)
 ###############################
 
 #register all of the S3 methods for the print commands

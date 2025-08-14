@@ -1,7 +1,7 @@
-# Configure Script for ToxicR
+# Configure Script for ToxicRToo
 # Modified 4/27/2022
 
-AC_INIT([ToxicR], 1.0.1)  dnl Package version
+AC_INIT([ToxicRToo], 1.0.1)  dnl Package version
 
 CXX=`"${R_HOME}/bin/R" CMD config CXX`
 CXXFLAGS=`"${R_HOME}/bin/R" CMD config CXXFLAGS`

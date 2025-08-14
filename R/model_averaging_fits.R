@@ -51,7 +51,6 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
                               alpha = 0.05, EFSA = TRUE, samples = 21000,
                               burnin = 1000, BMD_TYPE = NA, threads=2, seed = 12331) {
   # .setseedGSL(seed)
-  myD <- Y
   Y <- as.matrix(Y)
   D <- as.matrix(D)
   .setseedGSL(seed)
@@ -67,7 +66,6 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
         "logskew-aerts", "invlogskew-aerts", "logistic-aerts", "probit-aerts", "LMS", "gamma-efsa")
   current_dists <- c("normal", "normal-ncv", "lognormal")
   fit_type = tolower(fit_type)
-  type_of_fit <- which(fit_type == c("laplace", "mcmc"))
 
   if(!is.na(BMD_TYPE)){
     warning("BMD_TYPE is deprecated. Please use BMR_TYPE instead")
@@ -116,7 +114,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
       }
     }
     prior_list <- list()
-    for (ii in 1:length(model_list)) {
+  for (ii in seq_along(model_list)) {
       PR <- .bayesian_prior_continuous_default(model_list[ii], distribution_list[ii], 2)
       # specify variance of last parameter to variance of response
       if (distribution_list[ii] == "lognormal") {
@@ -149,23 +147,23 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
     prior_list <- list()
     distribution_list <- c()
     model_list2 <- c()
-    for (ii in 1:length(model_list)) {
+  for (ii in seq_along(model_list)) {
       temp_prior <- model_list[[ii]]
 
 
       if (!("BMD_Bayes_continuous_model" %in% class(temp_prior))) {
         stop("Prior is not the correct form. Please use a Bayesian Continuous Prior Model.")
       }
-      result <- .parse_prior(temp_prior)
-      distribution <- result$distribution
-      model_type <- result$model
+  result <- parse_prior(temp_prior)
+  distribution <- result@distribution
+  model_type <- result@mean
 
       if (model_type == "polynomial") {
         stop("Polynomial models are not allowed in model averaging.")
       }
       a <- list(
         model = model_type, dist = distribution,
-        prior = result$prior
+  prior = result@prior
       )
       prior_list[[ii]] <- a
       distribution_list <- c(distribution_list, distribution)
@@ -178,7 +176,7 @@ ma_continuous_fit <- function(D, Y, model_list = NA, fit_type = "laplace",
   priors <- list()
   # permuteMat <- cbind(c(1, 2, 3, 4, 5), c(6, 3, 5, 8, 10)) # c++ internal adjustment
   permuteMat = cbind(c(1,2,3,4,5,7:20),c(6,3,5,8,10, 11:24))
-  for (ii in 1:length(prior_list)) {
+  for (ii in seq_along(prior_list)) {
     models[ii] <- permuteMat[which(prior_list[[ii]]$model == current_models), 2] # readjust for c++ internal
     priors[[ii]] <- prior_list[[ii]]$prior
     dlists[ii] <- which(prior_list[[ii]]$dist == current_dists)
@@ -464,7 +462,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
   if (length(model_list) < 1) {
     model_list <- .dichotomous_models
     model_i <- rep(0, length(model_list))
-    for (ii in 1:length(model_list)) {
+  for (ii in seq_along(model_list)) {
       temp_prior_l[[ii]] <- .bayesian_prior_dich(model_list[ii])
       priors[[ii]] <- temp_prior_l[[ii]]@priors
       model_i[ii] <- .dichotomous_model_type(model_list[ii])
@@ -476,7 +474,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
     tmodel_list <- model_list
     model_list <- rep("", length(model_list))
     model_i <- rep(0, length(model_list))
-    for (ii in 1:length(model_list)) {
+  for (ii in seq_along(model_list)) {
       if (!("BMD_Bayes_dichotomous_model" %in% class(tmodel_list[[ii]]))) {
         stop("One of the specified models is not a 'BMD_Bayes_dichotomous_model.'")
       }
@@ -561,8 +559,7 @@ ma_dichotomous_fit <- function(D, Y, N, model_list = integer(0), fit_type = "lap
       # names(temp)[ii] <- sprintf("Individual_Model_%s", ii)
       names(temp)[ii] <- sprintf("Indiv_%s_%s", model_list[ii], distribution_list[ii])
 
-      tmp_id <- which(names(temp) == "BMD_CDF")
-      #  temp = temp[-tmp_id]
+  #  temp = temp[[which(names(temp) == "BMD_CDF")]] # keep access inline if needed
       temp[[ii]]$options <- c(o1, o2)
 
       #names(temp$posterior_probs) <- paste(model_list, distribution_list, sep="_")
