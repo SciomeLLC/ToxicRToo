@@ -116,31 +116,47 @@ ma_continuous_fit <- function(D, Y, model_list = NULL, fit_type = "laplace",
     prior_list <- list()
   for (ii in seq_along(model_list)) {
       PR <- .bayesian_prior_continuous_default(model_list[ii], distribution_list[ii], 2)
+      # Normalize to a matrix for mutation, then write back preserving structure
+      get_mat <- function(obj) {
+        if (is.matrix(obj)) return(obj)
+        if (is.list(obj) && !is.null(obj$priors)) return(obj$priors)
+        if (is.list(obj) && length(obj) >= 1 && is.matrix(obj[[1]])) return(obj[[1]])
+        stop("Unsupported prior format when preparing defaults")
+      }
+      set_mat <- function(obj, mat) {
+        if (is.matrix(obj)) return(mat)
+        if (is.list(obj) && !is.null(obj$priors)) { obj$priors <- mat; return(obj) }
+        if (is.list(obj) && length(obj) >= 1 && is.matrix(obj[[1]])) { obj[[1]] <- mat; return(obj) }
+        stop("Unsupported prior format when writing defaults")
+      }
+      M <- get_mat(PR)
       # specify variance of last parameter to variance of response
       if (distribution_list[ii] == "lognormal") {
         if (ncol(Y) > 1) {
-          PR$priors[nrow(PR$priors), 2] <- log(mean(Y[, 3])^2)
+          M[nrow(M), 2] <- log(mean(Y[, 3])^2)
         } else {
-          PR$priors[nrow(PR$priors), 2] <- log(var(log(Y)))
+          M[nrow(M), 2] <- log(var(log(Y)))
         }
       } else {
         if (ncol(Y) > 1) {
           if (distribution_list[ii] == "normal") {
-            PR$priors[nrow(PR$priors), 2] <- log(mean(Y[, 3])^2)
+            M[nrow(M), 2] <- log(mean(Y[, 3])^2)
           } else {
-            PR$priors[nrow(PR$priors), 2] <- log(abs(mean(Y[1, ])) / mean(Y[, 3])^2)
+            M[nrow(M), 2] <- log(abs(mean(Y[1, ])) / mean(Y[, 3])^2)
           }
         } else {
           if (distribution_list[ii] == "normal") {
-            PR$priors[nrow(PR$priors), 2] <- log(var(Y))
+            M[nrow(M), 2] <- log(var(Y))
           } else {
-            PR$priors[nrow(PR$priors), 2] <- log(abs(mean(Y)) / var(Y))
+            M[nrow(M), 2] <- log(abs(mean(Y)) / var(Y))
           }
         }
       }
+      PR <- set_mat(PR, M)
       t_prior_result <- create_continuous_prior(PR, model_list[ii], distribution_list[ii], 2)
       PR <- t_prior_result@prior
-      prior_list[[ii]] <- list(prior = PR, model_tye = model_list[ii], dist = distribution_list[ii])
+      # keep a clean record with consistent keys used downstream
+      prior_list[[ii]] <- list(prior = PR, model = model_list[ii], dist = distribution_list[ii])
     }
     model_list2 <- model_list
   } else {

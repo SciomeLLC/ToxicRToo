@@ -25,6 +25,11 @@
 #include <iostream>
 #include <cmath>
 #include <math.h>
+
+// Thread-safety note: GSL CDF functions used in this file (gsl_cdf_gamma_P, 
+// gsl_cdf_lognormal_P, etc.) are thread-safe for read-only mathematical 
+// computations. Random number generation is handled by the Seeder singleton class.
+
 using namespace std;
 
 int lognormalGAMMA_efsa_BMD_NC::type_of_profile(contbmd TYPE)

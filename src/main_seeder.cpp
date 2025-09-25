@@ -7,7 +7,6 @@
 // output: none
 // [[Rcpp::export(".setseedGSL")]]
 void setseedGSL(int s) {
-  Seeder *seeder = Seeder::getInstance();
-  seeder->setSeed(s);
+  Seeder::setGlobalSeed(s); 
   return;
 }

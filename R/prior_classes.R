@@ -991,7 +991,19 @@ create_prior_list <- function(x1, x2, ...) {
   
   
 
-  prior <- unclass(prior)
-  prior[[1]][, 1] <- 0
-  return(prior)
+  # Ensure first column (distribution code) is zeroed for all prior rows
+  # Handle both matrix prior and list forms that wrap a matrix
+  if (is.matrix(prior)) {
+    prior[, 1] <- 0
+    return(prior)
+  }
+  if (is.list(prior) && !is.null(prior$priors) && is.matrix(prior$priors)) {
+    prior$priors[, 1] <- 0
+    return(prior)
+  }
+  if (is.list(prior) && length(prior) >= 1 && is.matrix(prior[[1]])) {
+    prior[[1]][, 1] <- 0
+    return(prior)
+  }
+  stop("Unsupported prior structure produced by .MLE_bounds_continuous")
 }

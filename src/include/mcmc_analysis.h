@@ -100,10 +100,10 @@ MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D,
   //  ziggurat is used as it is the fastest sampler algorithm gsl has
   Eigen::MatrixXd rNormal(n, samples);
   rNormal.setZero();
-  Seeder *seeder = Seeder::getInstance();
+  Seeder seeder = Seeder();
   for (int i = 0; i < samples; i++) {
     for (int j = 0; j < n; j++) {
-      rNormal(j, i) = seeder->get_gaussian_ziggurat();
+      rNormal(j, i) = seeder.get_gaussian_ziggurat();
     }
   }
 
@@ -142,7 +142,7 @@ MCMC_bmd_analysis_DNC(Eigen::MatrixXd Y, Eigen::MatrixXd D,
       double denom = penLike(0, i - 1) + b(0, 0);
 
       double test = exp(numer - denom);
-      double rr = seeder->get_uniform();
+      double rr = seeder.get_uniform();
 
       if (isnan(test)) {
         test = 0.0; // no probability of making this jump
@@ -220,10 +220,10 @@ mcmc_continuous(cBMDModel<LL, PR> *model, int samples, contbmd BMDt, double BMR,
   Eigen::MatrixXd rNormal(n, samples);
   rNormal.setZero();
 
-  Seeder *seeder = Seeder::getInstance();
+  Seeder seeder = Seeder();
   for (int i = 0; i < samples; i++) {
     for (int j = 0; j < n; j++) {
-      rNormal(j, i) = seeder->get_gaussian_ziggurat();
+      rNormal(j, i) = seeder.get_gaussian_ziggurat();
     }
   }
 
@@ -268,7 +268,7 @@ mcmc_continuous(cBMDModel<LL, PR> *model, int samples, contbmd BMDt, double BMR,
       double numer = -model->negPenLike(value) + a(0, 0);
       double denom = penLike(0, i - 1) + b(0, 0);
       double test = exp(numer - denom);
-      double rr = seeder->get_uniform();
+      double rr = seeder.get_uniform();
 
       if (isnan(test)) {
         test = 0.0; // no probability of making this jump

@@ -458,6 +458,50 @@
 # Base plot- MCMC or BMD?
 .plot.BMDcontinuous_MA <- function(x,...){
   A = x
+  # If provided an S4 MA object, convert to the legacy list shape expected below
+  if (isS4(A) && methods::is(A, "BMD_continuous_MA")) {
+    A2 <- list()
+    A2$posterior_probs <- A@posterior_probs
+    A2$bmd <- A@bmd
+    # create list entries for each submodel similar to legacy structure
+    nm <- character(length(A@models))
+    for (ii in seq_along(A@models)) {
+      sm <- A@models[[ii]]
+      if (methods::is(sm, "BMD_continuous_fit_MCMC")) {
+        A2[[ii]] <- list(
+          mcmc_result = sm@mcmc_result,
+          full_model = sm@full_model,
+          parameters = sm@parameters,
+          covariance = sm@covariance,
+          maximum = sm@maximum,
+          bmd_dist = sm@bmd_dist,
+          data = sm@data,
+          model = sm@model,
+          transformed = sm@transformed
+        )
+      } else { # maximized
+        A2[[ii]] <- list(
+          full_model = sm@full_model,
+          parameters = sm@parameters,
+          covariance = sm@covariance,
+          maximum = sm@maximum,
+          bmd_dist = sm@bmd_dist,
+          data = sm@data,
+          model = sm@model,
+          transformed = sm@transformed
+        )
+      }
+      nm[ii] <- sprintf("Indiv_%s_", sm@model)
+    }
+    names(A2)[seq_along(nm)] <- nm
+    # emulate old class names to select branches
+    if (length(A@models) && methods::is(A@models[[1]], "BMD_continuous_fit_MCMC")) {
+      class(A2) <- c("BMDcontinuous_MA_mcmc")
+    } else {
+      class(A2) <- c("BMDcontinuous_MA_laplace")
+    }
+    A <- A2
+  }
   model_no <- x_axis <- y_axis <-cols <- NULL
   temp_args = list(...)
   if (!exists("qprob",temp_args)){

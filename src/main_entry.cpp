@@ -96,8 +96,7 @@ double owenst_fn(double x, double fx) { return tfn(x, fx); }
 List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
                             Eigen::MatrixXd pr, NumericVector options1,
                             IntegerVector options2, int seed) {
-  Seeder *seeder = Seeder::getInstance();
-  seeder->setSeed(seed);
+  Seeder::setGlobalSeed(seed); 
   // Rcpp::Rcout << "In single dichotomous and set seed" << std::endl;
   dichotomous_analysis Anal;
   Anal.BMD_type = (options1[0] == 1) ? eExtraRisk : eAddedRisk;
@@ -207,8 +206,7 @@ List run_continuous_single(IntegerVector model, Eigen::MatrixXd Y,
                            Eigen::MatrixXd X, Eigen::MatrixXd prior,
                            NumericVector options, IntegerVector dist_type,
                            int seed) {
-  Seeder *seeder = Seeder::getInstance();
-  seeder->setSeed(seed);
+  Seeder::setGlobalSeed(seed); 
   // Rcpp::Rcout << "In run_continuous_single and set seed" << std::endl;
   bool is_increasing = (bool)options[4];
   // double alpha = (double)options[3];

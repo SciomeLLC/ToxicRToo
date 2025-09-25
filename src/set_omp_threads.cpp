@@ -18,7 +18,6 @@ int set_threads(int num_threads) {
   if(omp_get_max_threads() > 1){
     if (num_threads > omp_get_num_threads()) {
       { omp_set_num_threads(num_threads); }
-      // Rcpp::Rcout << "OpenMP threads set to " << num_threads << std::endl;
       return 1;
     }
   }else{

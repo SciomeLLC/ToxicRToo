@@ -3,103 +3,116 @@
 #ifndef SEEDER
 #define SEEDER
 
-// Check for MinGW or MSVC (both support __declspec(thread))
+// Cross-platform thread-local storage
 #if defined(_MSC_VER) || defined(__MINGW32__)
 #define THREAD_LOCAL __declspec(thread)
-
-// Check for GCC or Clang on non-Windows systems
 #elif defined(__GNUC__) || defined(__clang__)
 #define THREAD_LOCAL thread_local
-
 #else
 #define THREAD_LOCAL // Fallback for unsupported compilers
 #endif
-#include <Rcpp.h>
+
+//#include <Rcpp.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include <mutex>
 #include <thread>
 #include <vector>
 #include <nlopt.hpp>
+#include <iostream>
+#ifndef NO_OMP
+#include <omp.h>  
+#endif
 
 class Seeder {
 private:
-  THREAD_LOCAL static gsl_rng *rng;
+  static int globalSeed;              // Global seed shared by all instances
+  static std::mutex seedMutex;        // Thread safety for seed setting
+  THREAD_LOCAL static gsl_rng *rng;   // Thread-local RNG
   const gsl_rng_type *T = gsl_rng_mt19937;
-  int currentSeed = 0;
-
-  Seeder() {}
-  Seeder(Seeder const &) = delete;
-  Seeder &operator=(Seeder const &) = delete;
+  int max_threads = 1;
+  std::vector<gsl_rng*> rngs;
 
 public:
-  static Seeder *getInstance() {
-    static Seeder instance;
-    return &instance;
+  // Constructor - uses global seed
+  Seeder() {
+    std::cout<<"Creating new Seeder with global seed: "<< globalSeed<<std::endl;
+    initializeThreadRNG();
   }
+  
+  // Static method to set global seed (call once, affects all instances)
+  static void setGlobalSeed(int seed) {
+    std::lock_guard<std::mutex> lock(seedMutex);
+    globalSeed = seed;
+    nlopt_srand(seed);
+    std::cout<<"Global seed set to: "<< seed<<std::endl;
+  }
+  
+  // Static method to get current global seed
+  static int getGlobalSeed() {
+    std::lock_guard<std::mutex> lock(seedMutex);
+    return globalSeed;
+  }
+  
+private:
+  void initializeThreadRNG() {
+    if (!rng) {
+      rng = gsl_rng_alloc(T);
+      #ifndef NO_OMP
+      int thread_num = omp_get_thread_num();
+      gsl_rng_set(rng, globalSeed + thread_num);
+      std::cout<<"Thread "<<thread_num<<" RNG initialized with seed: "<<(globalSeed + thread_num)<<std::endl;
+      #else
+      gsl_rng_set(rng, globalSeed);
+      std::cout<<"Main thread RNG initialized with seed: "<<globalSeed<<std::endl;
+      #endif
+    }
+  }
+  
+  // Copy constructor and assignment operator can be enabled if needed
+  // For now, keeping them deleted for safety
+  Seeder(Seeder const &) = delete;
+  Seeder &operator=(Seeder const &) = delete;
 
   void reset_max_threads(int threads) {
   #ifndef NO_OMP
     if(max_threads < threads) {
-      int num_prev_threads = max_threads;
       max_threads = threads;
-      
-      rngs.reserve(threads);
-      #pragma omp parallel for
-      for (int i = 0; i < threads; i++) {
-        int thread_num = omp_get_thread_num();
-        if (thread_num < num_prev_threads) {
-          continue;
-        }
-        thread_local gsl_rng* r_local = gsl_rng_alloc(T);
-        gsl_rng_set(r_local, currentSeed);
-        rngs[thread_num] = r_local;
-      }
+      // Thread-local RNGs are automatically initialized when accessed
+      // No need to pre-allocate since each thread creates its own
     }
   #endif
   }
 
+public:
+  // Destructor - public so objects can be properly destroyed
   ~Seeder() {
-    if (rng) {
-      gsl_rng_free(rng);
+    std::cout<<"Destroying Seeder and cleaning up thread-local RNG"<<std::endl;
+    // Thread-local RNG cleanup is automatic when thread ends
+    // No need for explicit cleanup in destructor
+  }
+  // Get thread-specific RNG - automatically initializes if needed
+  gsl_rng* get_thread_rng() {
+    if (!rng) {
+      initializeThreadRNG();
     }
+    return rng;
   }
 
-  void setSeed(int seed) {
-    if (seed < 0) {
-      Rcpp::stop("Error: Seed must be a positive integer.");
-    }
-    if (!rng) {
-      rng = gsl_rng_alloc(T);
-    }
-    gsl_rng_set(rng, seed);
-    // Rcpp::Rcout << "GSL seed set to: " << seed << std::endl;
-    nlopt_srand(seed);
-    currentSeed = seed;
-  }
-  
   double get_uniform() {
-    if (!rng) {
-      Rcpp::warning("Error: RNG not initialized.");
-      setSeed(currentSeed);
-    }
-    return gsl_rng_uniform(rng);
+    gsl_rng* current_rng = get_thread_rng();
+    return gsl_rng_uniform(current_rng);
   }
 
   double get_gaussian_ziggurat() {
-    if (!rng) {
-      Rcpp::warning("Error: RNG not initialized.");
-      setSeed(currentSeed);
-    }
-    return gsl_ran_gaussian_ziggurat(rng, 1.0);
+    gsl_rng* current_rng = get_thread_rng();
+    return gsl_ran_gaussian_ziggurat(current_rng, 1.0);
   }
 
   double get_ran_flat() {
-    if (!rng) {
-      Rcpp::warning("Error: RNG not initialized.");
-      setSeed(currentSeed);
-    }
-    return gsl_ran_flat(rng, -1, 1);
+    gsl_rng* current_rng = get_thread_rng();
+    return gsl_ran_flat(current_rng, -1, 1);
   }
 };
+
 #endif

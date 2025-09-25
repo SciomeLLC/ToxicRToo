@@ -1238,3 +1238,29 @@ setMethod(
     }
   }
 )
+
+###############################################################################
+# S4 plot methods for Model-Averaged S4 classes
+###############################################################################
+
+#' Plot for model-averaged continuous fits
+setMethod(
+  "plot",
+  signature = signature(x = "BMD_continuous_MA", y = "missing"),
+  function(x, y, ...) {
+    # Reuse existing helper to produce a ggplot
+    plt <- .plot.BMDcontinuous_MA(x, ...)
+    return(plt)
+  }
+)
+
+#' Plot for model-averaged dichotomous fits
+setMethod(
+  "plot",
+  signature = signature(x = "BMD_dichotomous_MA", y = "missing"),
+  function(x, y, ...) {
+    # The helper .plot.BMDdichotomous_MA expects a list-like; our class stores similar fields
+    plt <- .plot.BMDdichotomous_MA(x, ...)
+    return(plt)
+  }
+)

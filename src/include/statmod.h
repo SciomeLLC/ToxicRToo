@@ -457,7 +457,7 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
   }
   Eigen::MatrixXd test = startV;
   // test = M->startValue();
-  Seeder *seeder = Seeder::getInstance();
+  Seeder seeder = Seeder();
 
   population[NI] = startV;
   llist[NI] = M->negPenLike(test);
@@ -469,7 +469,7 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
     // generate new value to be within the specified bounds
     for (int j = 0; j < M->nParms(); j++) {
       // random number in the bounds
-      test(j, 0) = startV(j, 0) + seeder->get_ran_flat();
+      test(j, 0) = startV(j, 0) + seeder.get_ran_flat();
 
       if (test(j, 0) > ub[j]) {
         test(j, 0) = ub[j];
@@ -550,7 +550,7 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
         // individuals in the tourny.
 
         // choose which element in the population
-        int sel = (int)(population.size() * seeder->get_uniform());
+        int sel = (int)(population.size() * seeder.get_uniform());
         cur_tourny_nll[z] = llist[sel];
         cur_tourny_parms[z] = population[sel];
       }
@@ -568,16 +568,16 @@ std::vector<double> startValue_F(statModel<LL, PR> *M, Eigen::MatrixXd startV,
       // the best is the zero element
       // randomly select another element to find the diference
       bool correctBounds = true;
-      int idx = (int)(cur_tourny_parms.size() - 1) * seeder->get_uniform() + 1;
+      int idx = (int)(cur_tourny_parms.size() - 1) * seeder.get_uniform() + 1;
       Eigen::MatrixXd temp_delta = best_parm - cur_tourny_parms[idx];
       // Create a new child as a mix between the best and some other value.
       Eigen::MatrixXd child =
-          best_parm + 0.8 * temp_delta * (2 * seeder->get_uniform() - 1);
+          best_parm + 0.8 * temp_delta * (2 * seeder.get_uniform() - 1);
 
       for (int iii = 0; iii < M->nParms(); iii++) {
         // perterb the individual values in the child
         child(iii, 0) = child(iii, 0) + 0.2 * abs(child(iii, 0)) *
-                                            (2 * seeder->get_uniform() - 1);
+                                            (2 * seeder.get_uniform() - 1);
         if (lb[iii] > child(iii, 0) || ub[iii] < child(iii, 0)) {
           correctBounds = false;
           break;
