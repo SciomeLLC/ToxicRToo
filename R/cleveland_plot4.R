@@ -50,7 +50,7 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
   names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
 
   # Filter out submodels with posterior prob <= 0.05
-  bmd_ind_df <- dplyr::filter(bmd_ind_df, rlang::.data$PostProb > 0.05)
+  bmd_ind_df <- dplyr::filter(bmd_ind_df, PostProb > 0.05)
 
   # Drop any NA rows
   bmd_ind_df2 <- bmd_ind_df[!is.na(bmd_ind_df[, "BMD"]), ]
@@ -60,8 +60,8 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
     ggplot2::geom_point(
       data = bmd_ind_df2,
       ggplot2::aes(
-        x = as.numeric(rlang::.data$BMD),
-        y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
+        x = as.numeric(BMD),
+        y = forcats::fct_reorder(Model, as.numeric(PostProb), .desc = TRUE),
         size = sqrt(as.numeric(PostProb) + 0.01)
       ),
       color = "red"
@@ -78,9 +78,9 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
       data = bmd_ind_df2,
       width = 0.2,
       ggplot2::aes(
-        xmin = as.numeric(rlang::.data$BMDL),
-        xmax = as.numeric(rlang::.data$BMDU),
-        y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)
+        xmin = as.numeric(BMDL),
+        xmax = as.numeric(BMDU),
+        y = forcats::fct_reorder(Model, PostProb, .desc = TRUE)
       ),
       color = "black",
       alpha = 0.3
@@ -168,14 +168,14 @@ setMethod("cleveland_plot", "BMD_dichotomous_MA", function(A) {
   bmd_ind[n_sub + 1, 5] <- 1
   df <- data.frame(bmd_ind)
   names(df) <- c("BMD","BMDL","BMDU","Model","PostProb")
-  df <- dplyr::filter(df, rlang::.data$PostProb > 0.05)
+  df <- dplyr::filter(df, PostProb > 0.05)
   df <- df[!is.na(df$BMD), ]
   ggplot2::ggplot() +
     ggplot2::geom_point(
       data = df,
-      ggplot2::aes(x = as.numeric(rlang::.data$BMD),
-                   y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
-                   size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)),
+      ggplot2::aes(x = as.numeric(BMD),
+                   y = forcats::fct_reorder(Model, as.numeric(PostProb), .desc = TRUE),
+                   size = sqrt(as.numeric(PostProb) + 0.01)),
       color = "red"
     ) +
     ggplot2::theme_minimal() +
@@ -185,8 +185,8 @@ setMethod("cleveland_plot", "BMD_dichotomous_MA", function(A) {
     ggplot2::theme(legend.position = "none") +
     ggplot2::geom_errorbar(
       data = df, width = 0.2,
-      ggplot2::aes(xmin = as.numeric(rlang::.data$BMDL), xmax = as.numeric(rlang::.data$BMDU),
-                   y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)),
+      ggplot2::aes(xmin = as.numeric(BMDL), xmax = as.numeric(BMDU),
+                   y = forcats::fct_reorder(Model, PostProb, .desc = TRUE)),
       color = "black", alpha = 0.3
     )
 })
@@ -207,14 +207,14 @@ setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
   bmd_ind[n_sub + 1, 5] <- 1
   df <- data.frame(bmd_ind)
   names(df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
-  df <- dplyr::filter(df, rlang::.data$PostProb > 0.05)
+  df <- dplyr::filter(df, PostProb > 0.05)
   df <- df[!is.na(df$BMD), ]
   ggplot2::ggplot() +
     ggplot2::geom_point(
       data = df,
-      ggplot2::aes(x = as.numeric(rlang::.data$BMD),
-                   y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
-                   size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)),
+      ggplot2::aes(x = as.numeric(BMD),
+                   y = forcats::fct_reorder(Model, as.numeric(PostProb), .desc = TRUE),
+                   size = sqrt(as.numeric(PostProb) + 0.01)),
       color = "red"
     ) +
     ggplot2::theme_minimal() +
@@ -224,8 +224,8 @@ setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
     ggplot2::theme(legend.position = "none") +
     ggplot2::geom_errorbar(
       data = df, width = 0.2,
-      ggplot2::aes(xmin = as.numeric(rlang::.data$BMDL), xmax = as.numeric(rlang::.data$BMDU),
-                   y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)),
+      ggplot2::aes(xmin = as.numeric(BMDL), xmax = as.numeric(BMDU),
+                   y = forcats::fct_reorder(Model, PostProb, .desc = TRUE)),
       color = "black", alpha = 0.3
     )
 })
