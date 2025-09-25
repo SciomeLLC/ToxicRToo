@@ -31,20 +31,20 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
   n_sub <- length(submods)
   bmd_ind <- matrix(0, n_sub + 1, 5)
 
-#   for (i in seq_len(n_sub)) {
-#     # Submodel's BMD vector: median, 5%, 95%
-#     bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
-#     bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
-#     bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
-#     bmd_ind[i, 4] <- A@models[[i]]@model
-#     bmd_ind[i, 5] <- A@posterior_probs[i] # posterior probability
-#   }
+  for (i in seq_len(n_sub)) {
+    # Submodel's BMD vector: median, 5%, 95%
+    bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
+    bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
+    bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
+    bmd_ind[i, 4] <- A@models[[i]]@model
+    bmd_ind[i, 5] <- A@posterior_probs[i] # posterior probability
+  }
 
-#   bmd_ind[n_sub + 1, 1] <- A@bmd[1]
-#   bmd_ind[n_sub + 1, 2] <- A@bmd[2]
-#   bmd_ind[n_sub + 1, 3] <- A@bmd[3]
-#   bmd_ind[n_sub + 1, 4] <- "Model Average"
-#   bmd_ind[n_sub + 1, 5] <- 1
+  bmd_ind[n_sub + 1, 1] <- A@bmd[1]
+  bmd_ind[n_sub + 1, 2] <- A@bmd[2]
+  bmd_ind[n_sub + 1, 3] <- A@bmd[3]
+  bmd_ind[n_sub + 1, 4] <- "Model Average"
+  bmd_ind[n_sub + 1, 5] <- 1
 
   bmd_ind_df <- data.frame(bmd_ind)
   names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
@@ -62,7 +62,7 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
       ggplot2::aes(
         x = as.numeric(rlang::.data$BMD),
         y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
-        size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)
+        size = sqrt(as.numeric(PostProb) + 0.01)
       ),
       color = "red"
     ) +
@@ -86,36 +86,35 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
       alpha = 0.3
     )
 
-#   return(out)
-# })
+  return(out)
+})
 
-# setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
-#   # submodels is a list of submodel objects, each with a bmd, model, etc.
-#   #submods <- A@models
-#   n_sub <- length(A@models)
+setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
+  # submodels is a list of submodel objects, each with a bmd, model, etc.
+  n_sub <- length(A@models)
 
-#   bmd_ind <- matrix(0, n_sub + 1, 5)
+  bmd_ind <- matrix(0, n_sub + 1, 5)
 
-#   for (i in seq_len(n_sub)) {
-#     bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
-#     bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
-#     bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
-#     bmd_ind[i, 4] <- names(A@posterior_probs)[i]#A@models[[i]]@full_model
-#     bmd_ind[i, 5] <- A@posterior_probs[i]
-#   }
+  for (i in seq_len(n_sub)) {
+    bmd_ind[i, 1] <- A@models[[i]]@bmd[1] # median
+    bmd_ind[i, 2] <- A@models[[i]]@bmd[2] # 5%
+    bmd_ind[i, 3] <- A@models[[i]]@bmd[3] # 95%
+    bmd_ind[i, 4] <- names(A@posterior_probs)[i]#A@models[[i]]@full_model
+    bmd_ind[i, 5] <- A@posterior_probs[i]
+  }
 
-#   # Add row for the "Model Average"
-#   bmd_ind[n_sub + 1, 1] <- A@bmd[1]
-#   bmd_ind[n_sub + 1, 2] <- A@bmd[2]
-#   bmd_ind[n_sub + 1, 3] <- A@bmd[3]
-#   bmd_ind[n_sub + 1, 4] <- "Model Average"
-#   bmd_ind[n_sub + 1, 5] <- 1
+  # Add row for the "Model Average"
+  bmd_ind[n_sub + 1, 1] <- A@bmd[1]
+  bmd_ind[n_sub + 1, 2] <- A@bmd[2]
+  bmd_ind[n_sub + 1, 3] <- A@bmd[3]
+  bmd_ind[n_sub + 1, 4] <- "Model Average"
+  bmd_ind[n_sub + 1, 5] <- 1
 
   bmd_ind_df <- data.frame(bmd_ind)
   names(bmd_ind_df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
 
   # Filter out any submodels with posterior prob <= 0.05, etc.
-  bmd_ind_df <- dplyr::filter(bmd_ind_df, rlang::.data$PostProb > 0.05)
+  bmd_ind_df <- dplyr::filter(bmd_ind_df, PostProb > 0.05)
 
   bmd_ind_df2 <- bmd_ind_df[!is.na(bmd_ind_df[, "BMD"]), ]
 
@@ -123,9 +122,9 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
     ggplot2::geom_point(
       data = bmd_ind_df2,
       ggplot2::aes(
-        x = as.numeric(rlang::.data$BMD),
-        y = forcats::fct_reorder(rlang::.data$Model, as.numeric(rlang::.data$PostProb), .desc = TRUE),
-        size = sqrt(as.numeric(rlang::.data$PostProb) + 0.01)
+        x = as.numeric(BMD),
+        y = forcats::fct_reorder(Model, as.numeric(PostProb), .desc = TRUE),
+        size = sqrt(as.numeric(PostProb) + 0.01)
       ),
       color = "red"
     ) +
@@ -141,9 +140,9 @@ setMethod("cleveland_plot", "BMD_Bayes_dichotomous_model", function(A) {
       data = bmd_ind_df2,
       width = 0.2,
       ggplot2::aes(
-        xmin = as.numeric(rlang::.data$BMDL),
-        xmax = as.numeric(rlang::.data$BMDU),
-        y = forcats::fct_reorder(rlang::.data$Model, rlang::.data$PostProb, .desc = TRUE)
+        xmin = as.numeric(BMDL),
+        xmax = as.numeric(BMDU),
+        y = forcats::fct_reorder(Model, PostProb, .desc = TRUE)
       ),
       color = "black",
       alpha = 0.3
@@ -207,7 +206,7 @@ setMethod("cleveland_plot", "BMD_continuous_MA", function(A) {
   bmd_ind[n_sub + 1, 4] <- "Model Average"
   bmd_ind[n_sub + 1, 5] <- 1
   df <- data.frame(bmd_ind)
-  names(df) <- c("BMD","BMDL","BMDU","Model","PostProb")
+  names(df) <- c("BMD", "BMDL", "BMDU", "Model", "PostProb")
   df <- dplyr::filter(df, rlang::.data$PostProb > 0.05)
   df <- df[!is.na(df$BMD), ]
   ggplot2::ggplot() +
