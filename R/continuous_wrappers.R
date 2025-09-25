@@ -300,9 +300,6 @@ single_continuous_fit <- function(D, Y, model_type = "hill", fit_type = "laplace
   #For MLE 
   if (type_of_fit == 2) {
     PR = .MLE_bounds_continuous(model_type, distribution, degree, is_increasing)
-    if (is.list(PR) && !is.null(PR$priors)) {
-      PR = PR$priors
-    }
   }
 
   if (distribution == "lognormal") {
