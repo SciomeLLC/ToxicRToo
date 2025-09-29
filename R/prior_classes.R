@@ -757,7 +757,7 @@ create_prior_list <- function(x1, x2, ...) {
       prior <- create_prior_list(
         normprior(0, 1, -0, 100),
         lnormprior(0, 0.5, 0, 100),
-        normprior(0, 0.5, -20, 20), # log(c)
+        normprior(0, 0.5, 0, 0), # log(c) - FIXED parameter for exp-3
         lnormprior(0, 0.3, 1, 18), # d
         lnormprior(0, 0.5, 0, 18),
         normprior(0, 1, -18, 18)
@@ -766,7 +766,7 @@ create_prior_list <- function(x1, x2, ...) {
       prior <- create_prior_list(
         normprior(0, 0.1, 0, 100), # a
         lnormprior(0, 1, 0, 100), # b
-        normprior(0, 0.5, -20, 20), # log(c)
+        normprior(0, 0.5, 0, 0), # log(c) - FIXED parameter for exp-3
         lnormprior(1, 0.2, 1, 18), # d
         normprior(0, 1, -18, 18)
       )
@@ -774,7 +774,7 @@ create_prior_list <- function(x1, x2, ...) {
       prior <- create_prior_list(
         normprior(0, 0.1, -1000, 1000), # a
         lnormprior(0, 1, 0, 100), # b
-        normprior(0, 1, -20, 20), # log(c)
+        normprior(0, 1, 0, 0), # log(c) - FIXED parameter for exp-3
         lnormprior(1, 0.2, 1, 18), # d
         normprior(0, 1, -18, 18)
       )
