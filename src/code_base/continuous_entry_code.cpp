@@ -2674,7 +2674,8 @@ void estimate_ma_laplace(continuousMA_analysis *MA, continuous_analysis *CA,
       init_opt =
           MA->disttype[i] == distribution::log_normal
               ?
-
+        // For EXP-3, fix the 3rd parameter (index 2) to log(0.001)
+        ([&](){ if (MA->models[i] == (int)cont_model::exp_3 && fixedB.size() > 2) { fixedB[2] = true; fixedV[2] = std::log(0.001);} return 0; })(),
               bmd_continuous_optimization<lognormalEXPONENTIAL_BMD_NC, IDPrior>(
                   Y_LN, X, tprior, fixedB, fixedV,
                   MA->disttype[i] != distribution::normal_ncv, CA->isIncreasing,
@@ -3988,6 +3989,11 @@ void estimate_ma_MCMC(continuousMA_analysis *MA, continuous_analysis *CA,
       break;
     case cont_model::exp_3:
     case cont_model::exp_5:
+      // For EXP-3, fix the 3rd parameter (index 2) to log(0.001)
+      if (MA->models[i] == (int)cont_model::exp_3 && fixedB.size() > 2) {
+        fixedB[2] = true;
+        fixedV[2] = std::log(0.001);
+      }
       init_opt = MA->disttype[i] == distribution::log_normal
                      ? bmd_continuous_optimization<lognormalEXPONENTIAL_BMD_NC,
                                                    IDPriorMCMC>(
@@ -4676,7 +4682,11 @@ void estimate_sm_laplace(continuous_analysis *CA, continuous_model_result *res,
     break;
   case cont_model::exp_3:
   case cont_model::exp_5:
-
+    // For EXP-3, fix the 3rd parameter (index 2) to log(0.001)
+    if (CA->model == cont_model::exp_3 && fixedB.size() > 2) {
+      fixedB[2] = true;
+      fixedV[2] = std::log(0.001);
+    }
     init_opt =
         CA->disttype == distribution::log_normal
             ?
@@ -5210,7 +5220,11 @@ void estimate_sm_mcmc(continuous_analysis *CA, continuous_model_result *res,
     break;
   case cont_model::exp_3:
   case cont_model::exp_5:
-
+    // For EXP-3, fix the 3rd parameter (index 2) to log(0.001)
+    if (CA->model == cont_model::exp_3 && fixedB.size() > 2) {
+      fixedB[2] = true;
+      fixedV[2] = std::log(0.001);
+    }
     init_opt = CA->disttype == distribution::log_normal
                    ? bmd_continuous_optimization<lognormalEXPONENTIAL_BMD_NC,
                                                  IDPriorMCMC>(
