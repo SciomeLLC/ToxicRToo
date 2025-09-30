@@ -55,18 +55,23 @@ jobs:
             with:
               r-version: ${{matrix.R}}
               install-r: true
+              use-public-rspm: true
+              http-user-agent: release
           - name: Cache R packages
             id: cache-r-packages
             uses: actions/cache@v4
             with:
               path: ${{ env.R_LIBS_USER }} 
-              key: ${{ runner.os }}-r-${{ hashFiles('DESCRIPTION') }}
+              key: ${{ runner.os }}-r-${{ matrix.R }}-${{ hashFiles('DESCRIPTION') }}
               restore-keys: |
+                ${{ runner.os }}-r-${{ matrix.R }}-
                 ${{ runner.os }}-r-
           - uses: r-lib/actions/setup-r-dependencies@v2
             if: steps.cache-r-packages.outputs.cache-hit != 'true'
             with:
-              extra-packages: any::rcmdcheck, any::roxygen2
+              extra-packages: |
+                any::rcmdcheck
+                any::roxygen2
               needs: check
           - name: Build and Check ToxicR
             run: |

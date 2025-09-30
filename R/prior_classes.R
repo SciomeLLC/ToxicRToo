@@ -317,6 +317,9 @@ create_prior_list <- function(x1, x2, ...) {
       prior <- create_prior_list(
         normprior(0, 1, -100, 100),
         lnormprior(0, 2, 0, 100),
+        # Fixed placeholder for log(c) at log(0.001)
+        # This aligns parameter count with the C++ exp-3 model (5 params)
+        normprior(log(0.001), 1, log(0.001), log(0.001)),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         normprior(0, 2, -18, 18)
       )
@@ -324,6 +327,9 @@ create_prior_list <- function(x1, x2, ...) {
       prior <- create_prior_list(
         normprior(0, 1, -100, 100),
         lnormprior(0, 2, 0, 100),
+        # Fixed placeholder for log(c) at log(0.001)
+        # normal-ncv exp-3 has 6 parameters
+        normprior(log(0.001), 1, log(0.001), log(0.001)),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         lnormprior(0, 0.5, 0, 18),
         normprior(0, 1, -30, 30)
@@ -332,6 +338,9 @@ create_prior_list <- function(x1, x2, ...) {
       prior <- create_prior_list(
         lnormprior(0, 1, 0, 100),
         lnormprior(0, 2, 0, 100),
+        # Fixed placeholder for log(c) at log(0.001)
+        # lognormal exp-3 has 5 parameters
+        normprior(log(0.001), 1, log(0.001), log(0.001)),
         lnormprior(log(1.6), 0.4214036, 0, 18),
         normprior(0, 1, -18, 18)
       )
