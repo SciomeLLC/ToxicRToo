@@ -680,8 +680,8 @@ ma_build_priors <- function(Y = NA, model_list = NA, distribution_list = NA, ma_
   temp <- prior[[1]]
 
   if (distribution == "normal") {
-    if (nrow(temp) != 4) {
-      stop("Normal Exponential-3  model prior requires 4 parameters.")
+    if (!(nrow(temp) %in% c(4, 5))) {
+      stop("Normal Exponential-3 model prior requires 4 parameters (or 5 if including fixed c).")
     }
     if (sum(temp[, 4] > temp[, 5]) > 0) {
       stop("One of the parameter's lower bounds is greater than the upper bound.")
@@ -692,8 +692,8 @@ ma_build_priors <- function(Y = NA, model_list = NA, distribution_list = NA, ma_
   }
 
   if (distribution == "normal-ncv") {
-    if (nrow(temp) != 5) {
-      stop("Normal Exponential-3 model prior requires 5 parameters.")
+    if (!(nrow(temp) %in% c(5, 6))) {
+      stop("Normal Exponential-3 model prior requires 5 parameters (or 6 if including fixed c).")
     }
     if (sum(temp[, 4] > temp[, 5]) > 0) {
       stop("One of the parameter's lower bounds is greater than the upper bound.")
@@ -707,8 +707,8 @@ ma_build_priors <- function(Y = NA, model_list = NA, distribution_list = NA, ma_
 
   if (distribution == "lognormal") {
     temp <- prior[[1]]
-    if (nrow(temp) != 4) {
-      stop("Lognormal Exponential-3  model prior requires 4 parameters.")
+    if (!(nrow(temp) %in% c(4, 5))) {
+      stop("Lognormal Exponential-3 model prior requires 4 parameters (or 5 if including fixed c).")
     }
     if (sum(temp[, 4] > temp[, 5]) > 0) {
       stop("One of the parameter's lower bounds is greater than the upper bound.")
@@ -718,13 +718,28 @@ ma_build_priors <- function(Y = NA, model_list = NA, distribution_list = NA, ma_
   }
 
   prior$mean <- .continuous_models[2]
-  temp <- prior$prior
-  prior$prior <- matrix(NA, nrow = nrow(temp) + 1, 5)
-  prior$prior[1:2, ] <- temp[1:2, ]
-  prior$prior[3, ] <- c(1, 0, 1, -100, 100)
-  prior$prior[4:nrow(prior$prior), ] <- temp[3:nrow(temp), ]
-
-  cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  # Insert placeholder only if compact input (without c) was provided; otherwise pass-through
+  if (distribution == "normal" && nrow(temp) == 4) {
+    prior$prior <- matrix(NA, nrow = nrow(temp) + 1, 5)
+    prior$prior[1:2, ] <- temp[1:2, ]
+    prior$prior[3, ] <- c(1, log(0.001), 1, log(0.001), log(0.001))
+    prior$prior[4:nrow(prior$prior), ] <- temp[3:nrow(temp), ]
+    cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  } else if (distribution == "normal-ncv" && nrow(temp) == 5) {
+    prior$prior <- matrix(NA, nrow = nrow(temp) + 1, 5)
+    prior$prior[1:2, ] <- temp[1:2, ]
+    prior$prior[3, ] <- c(1, log(0.001), 1, log(0.001), log(0.001))
+    prior$prior[4:nrow(prior$prior), ] <- temp[3:nrow(temp), ]
+    cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  } else if (distribution == "lognormal" && nrow(temp) == 4) {
+    prior$prior <- matrix(NA, nrow = nrow(temp) + 1, 5)
+    prior$prior[1:2, ] <- temp[1:2, ]
+    prior$prior[3, ] <- c(1, log(0.001), 1, log(0.001), log(0.001))
+    prior$prior[4:nrow(prior$prior), ] <- temp[3:nrow(temp), ]
+    cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  } else {
+    prior$prior <- temp
+  }
   return(prior)
 }
 

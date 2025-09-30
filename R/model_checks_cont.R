@@ -318,8 +318,8 @@
 .check_exp3 <- function(prior, distribution) {
   temp <- prior[[1]]
   if (distribution == "normal") {
-    if (nrow(temp) != 4) {
-      stop("Normal Exponential-3 model requires 4 parameters.")
+    if (!(nrow(temp) %in% c(4, 5))) {
+      stop("Normal Exponential-3 model requires 4 parameters (or 5 if including fixed c).")
     }
     if (sum(temp[, 4] > temp[, 5]) > 0) {
       stop("One param lower bound > upper bound.")
@@ -327,8 +327,8 @@
     prior$model <- "Exponential-3 Model [normal]"
     prior$parameters <- c("a", "b", "c", "d", "log(sigma^2)")
   } else if (distribution == "normal-ncv") {
-    if (nrow(temp) != 5) {
-      stop("Normal Exponential-3 model requires 5 parameters.")
+    if (!(nrow(temp) %in% c(5, 6))) {
+      stop("Normal Exponential-3 model requires 5 parameters (or 6 if including fixed c).")
     }
     if (sum(temp[, 4] > temp[, 5]) > 0) {
       stop("One param lower bound > upper bound.")
@@ -339,8 +339,8 @@
     prior$model <- "Exponential-3 [normal-ncv]"
     prior$parameters <- c("a", "b", "c", "d", "rho", "log(sigma^2)")
   } else if (distribution == "lognormal") {
-    if (nrow(temp) != 4) {
-      stop("Lognormal Exponential-3 model requires 4 parameters.")
+    if (!(nrow(temp) %in% c(4, 5))) {
+      stop("Lognormal Exponential-3 model requires 4 parameters (or 5 if including fixed c).")
     }
     if (sum(temp[, 4] > temp[, 5]) > 0) {
       stop("One param lower bound > upper bound.")
@@ -349,13 +349,33 @@
     prior$parameters <- c("a", "b", "c", "d", "log(sigma^2)")
   }
   prior$mean <- .continuous_models[2]
-  # Insert extra parameter if needed (like your code does)
-  temp2 <- prior$prior
-  prior$prior <- matrix(NA, nrow = nrow(temp2) + 1, ncol = 5)
-  prior$prior[1:2,] <- temp2[1:2,]
-  prior$prior[3,] <- c(1, 0, 1, -100, 100) # an example row
-  prior$prior[4:nrow(prior$prior),] <- temp2[3:nrow(temp2),]
-  cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  # Insert fixed placeholder row for c only if input is compact (without c)
+  # Otherwise, accept as-is when prior already includes the placeholder.
+  if (distribution == "normal" && nrow(temp) == 4) {
+    temp2 <- temp
+    prior$prior <- matrix(NA, nrow = nrow(temp2) + 1, ncol = 5)
+    prior$prior[1:2, ] <- temp2[1:2, ]
+    prior$prior[3, ] <- c(1, log(0.001), 1, log(0.001), log(0.001))
+    prior$prior[4:nrow(prior$prior), ] <- temp2[3:nrow(temp2), ]
+    cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  } else if (distribution == "normal-ncv" && nrow(temp) == 5) {
+    temp2 <- temp
+    prior$prior <- matrix(NA, nrow = nrow(temp2) + 1, ncol = 5)
+    prior$prior[1:2, ] <- temp2[1:2, ]
+    prior$prior[3, ] <- c(1, log(0.001), 1, log(0.001), log(0.001))
+    prior$prior[4:nrow(prior$prior), ] <- temp2[3:nrow(temp2), ]
+    cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  } else if (distribution == "lognormal" && nrow(temp) == 4) {
+    temp2 <- temp
+    prior$prior <- matrix(NA, nrow = nrow(temp2) + 1, ncol = 5)
+    prior$prior[1:2, ] <- temp2[1:2, ]
+    prior$prior[3, ] <- c(1, log(0.001), 1, log(0.001), log(0.001))
+    prior$prior[4:nrow(prior$prior), ] <- temp2[3:nrow(temp2), ]
+    cat("NOTE: Parameter 'c' added to prior list. It is not used in the analysis.\n")
+  } else {
+    # Already has the placeholder row; pass through
+    prior$prior <- temp
+  }
   return(prior)
 }
 
