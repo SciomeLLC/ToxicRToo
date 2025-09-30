@@ -1601,6 +1601,12 @@ bmd_analysis laplace_logNormal(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     // cout << "Running Exponential 3 Model Log-Normality Assumption." << endl;
 #endif
     if (is_increasing) {
+      // For EXP-3, the 3rd parameter (index 2, log(c)) is fixed by design
+      // to log(0.001). Mirror this as a hard constraint at the C++ layer.
+      if (fixedB.size() > 2) {
+        fixedB[2] = true;
+        fixedV[2] = std::log(0.001);
+      }
       if (isFast) {
         a = bmd_fast_BMD_cont<lognormalEXPONENTIAL_BMD_NC, IDcontinuousPrior>(
             likelihood_lnexp3U, model_prior, fixedB, fixedV, riskType, bmrf,
@@ -1612,6 +1618,11 @@ bmd_analysis laplace_logNormal(Eigen::MatrixXd Y, Eigen::MatrixXd X,
       }
 
     } else {
+      // For EXP-3, the 3rd parameter (index 2, log(c)) is fixed by design
+      if (fixedB.size() > 2) {
+        fixedB[2] = true;
+        fixedV[2] = std::log(0.001);
+      }
       if (isFast) {
         a = bmd_fast_BMD_cont<lognormalEXPONENTIAL_BMD_NC, IDcontinuousPrior>(
             likelihood_lnexp3D, model_prior, fixedB, fixedV, riskType, bmrf,
@@ -2085,6 +2096,11 @@ bmd_analysis laplace_Normal(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     }
 #endif
     if (is_increasing) {
+      // For EXP-3, the 3rd parameter (index 2, log(c)) is fixed by design
+      if (fixedB.size() > 2) {
+        fixedB[2] = true;
+        fixedV[2] = std::log(0.001);
+      }
       if (isFast) {
         a = bmd_fast_BMD_cont<normalEXPONENTIAL_BMD_NC, IDcontinuousPrior>(
             likelihood_nexp3U, model_prior, fixedB, fixedV, riskType, bmrf,
@@ -2096,6 +2112,11 @@ bmd_analysis laplace_Normal(Eigen::MatrixXd Y, Eigen::MatrixXd X,
             bk_prob, is_increasing, alpha, step_size, init);
       }
     } else {
+      // For EXP-3, the 3rd parameter (index 2, log(c)) is fixed by design
+      if (fixedB.size() > 2) {
+        fixedB[2] = true;
+        fixedV[2] = std::log(0.001);
+      }
       if (isFast) {
 
         a = bmd_fast_BMD_cont<normalEXPONENTIAL_BMD_NC, IDcontinuousPrior>(
@@ -3096,6 +3117,11 @@ mcmcSamples mcmc_logNormal(Eigen::MatrixXd Y, Eigen::MatrixXd X,
     // cout << "Running Exponential 3 Model Log-Normality Assumption using
     // MCMC." << endl;
 #endif
+    // For EXP-3, fix parameter at index 2 (log(c)) to log(0.001)
+    if (fixedB.size() > 2) {
+      fixedB[2] = true;
+      fixedV[2] = std::log(0.001);
+    }
     a = MCMC_bmd_analysis_CONTINUOUS_LOGNORMAL<lognormalEXPONENTIAL_BMD_NC,
                                                IDPriorMCMC>(
         Y, X, prior, fixedB, fixedV, is_increasing, bk_prob, suff_stat, bmrf,
@@ -3406,6 +3432,11 @@ mcmcSamples mcmc_Normal(Eigen::MatrixXd Y, Eigen::MatrixXd X,
       // MCMC." << endl;
     }
 #endif
+    // For EXP-3, fix parameter at index 2 (log(c)) to log(0.001)
+    if (fixedB.size() > 2) {
+      fixedB[2] = true;
+      fixedV[2] = std::log(0.001);
+    }
     a = MCMC_bmd_analysis_CONTINUOUS_NORMAL<normalEXPONENTIAL_BMD_NC,
                                             IDPriorMCMC>(
         Y, X, prior, fixedB, fixedV, is_increasing, bk_prob, suff_stat, bmrf,
