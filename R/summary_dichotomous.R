@@ -89,3 +89,25 @@
     rownames(s_fit$GOF) <- c("Test: X^2 GOF")
     message(s_fit$GOF)
 }
+
+#' Summary method for BMD_dichotomous_fit_maximized objects
+#'
+#' @param object S4 object BMD_dichotomous_fit_maximized
+#' @param ... additional parameters (not used)
+#' @return invisibly, the summary list (class "summary_dichotomous_max")
+#' @rdname summary
+#' @aliases summary,BMD_dichotomous_fit_maximized,ANY-method
+#' @exportMethod summary
+setMethod("summary", "BMD_dichotomous_fit_maximized", function(object, ...) {
+    model <- list(
+        prior = object@prior,
+        options = object@options,
+        full_model = object@full_model,
+        bmd_dist = object@bmd_dist,
+        gof_chi_sqr_statistic = object@gof_chi_sqr_statistic,
+        gof_p_value = object@gof_p_value
+    )
+    s_fit <- .summary_dichotomous_max(model, ...)
+    .print_summary_dichotomous_max(s_fit)
+    invisible(s_fit)
+})

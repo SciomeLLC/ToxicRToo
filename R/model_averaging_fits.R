@@ -181,7 +181,7 @@ ma_continuous_fit <- function(
     } # internally hybrid is coded as 6
 
 
-    if (is.null(model_list[[1]])) {
+    if (is.null(model_list) || is.null(model_list[[1]])) {
         # no prior distribution specified as a parameter
         if (!(EFSA)) {
             model_list <- c(

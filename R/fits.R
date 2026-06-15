@@ -156,7 +156,8 @@ setClass(
         fitted_model = "ANY",
         transformed = "logical",
         full_model = "character",
-        parameters = "numeric"
+        parameters = "numeric",
+        Deviance = "ANY"
     )
 )
 
@@ -203,7 +204,8 @@ BMD_continuous_fit_maximized <- function(
     fitted_model = NULL,
     transformed = FALSE,
     full_model = character(),
-    parameters = numeric()) {
+    parameters = numeric(),
+    Deviance = NULL) {
     new("BMD_continuous_fit_maximized",
         bmd = bmd,
         data = data,
@@ -216,7 +218,8 @@ BMD_continuous_fit_maximized <- function(
         fitted_model = fitted_model,
         transformed = transformed,
         full_model = full_model,
-        parameters = parameters
+        parameters = parameters,
+        Deviance = Deviance
     )
 }
 
@@ -757,28 +760,30 @@ setMethod(
             ) +
             theme_minimal()
 
-        # If the test_doses are not NaN / Inf, add BMD lines
-        if (sum(!is.nan(test_doses) + !is.infinite(test_doses)) == 0) {
+        # If the test_doses are finite, add BMD lines at the fitted response
+        # level corresponding to the BMD (not the baseline response).
+        if (any(is.finite(test_doses)) && !any(is.na(x@bmd))) {
+            bmd_y <- stats::splinefun(test_doses, me)(x@bmd[1])
             plot_gg <- plot_gg +
                 geom_segment(
                     aes(
-                        x = x@bmd[2], y = me[1], # me[1] ~ me at bmd[1]?
-                        xend = x@bmd[3], yend = me[1]
+                        x = x@bmd[2], y = bmd_y,
+                        xend = x@bmd[3], yend = bmd_y
                     ),
                     color = "darkslategrey", linewidth = 1.2, alpha = 0.9
                 ) +
                 annotate(
-                    geom = "text", x = x@bmd[2], y = me[1], label = "[",
+                    geom = "text", x = x@bmd[2], y = bmd_y, label = "[",
                     size = 10,
                     color = "darkslategrey", alpha = 0.9
                 ) +
                 annotate(
-                    geom = "text", x = x@bmd[3], y = me[1], label = "]",
+                    geom = "text", x = x@bmd[3], y = bmd_y, label = "]",
                     size = 10,
                     color = "darkslategrey", alpha = 0.9
                 ) +
                 annotate(
-                    geom = "point", x = x@bmd[1], y = me[1], size = 5,
+                    geom = "point", x = x@bmd[1], y = bmd_y, size = 5,
                     color = "darkslategrey", shape = 17, alpha = 0.9
                 )
         }
@@ -994,7 +999,7 @@ setMethod(
             theme_minimal()
 
         # If test_doses aren’t infinite/NaN, add BMD lines
-        if (sum(!is.nan(test_doses) + !is.infinite(test_doses)) == 0) {
+        if (any(is.finite(test_doses))) {
             if (!any(is.na(x@bmd))) {
                 plot_gg <- plot_gg +
                     geom_segment(

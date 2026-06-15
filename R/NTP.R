@@ -768,7 +768,7 @@ ntp_williams <- function(formula, data, dose_name = "dose") {
                                             for (k in seq(i - s_count, i + 1)) {
                                                 ## recalculate tempSmean
                                                 sum_slen <- sum(
-                                                    slength[i - s_count:i + 1]
+                                                    slength[seq(i - s_count, i + 1)]
                                                 )
                                                 tempSmean <- tempSmean +
                                                     smeans[k] *

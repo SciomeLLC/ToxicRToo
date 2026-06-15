@@ -614,7 +614,8 @@ single_continuous_fit <- function(
             fitted_model = NULL,
             transformed = transform,
             full_model = rvals$full_model,
-            parameters = rvals$parameters
+            parameters = rvals$parameters,
+            Deviance = rvals$Deviance
         )
         return(ret_obj)
     }

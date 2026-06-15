@@ -1456,7 +1456,7 @@ setMethod(
 
 
 
-            if (sum(!is.nan(test_doses) + !is.infinite(test_doses)) == 0) {
+            if (any(is.finite(test_doses))) {
                 temp <- temp_bmd[temp_bmd < 10 * max(test_doses)]
                 temp <- temp[!is.infinite(temp_bmd)]
                 temp <- temp[!is.na(temp)]

@@ -100,7 +100,7 @@ List run_single_dichotomous(NumericVector model, Eigen::MatrixXd data,
   seeder->setSeed(seed);
   // Rcpp::Rcout << "In single dichotomous and set seed" << std::endl;
   dichotomous_analysis Anal;
-  Anal.BMD_type = (options1[0] == 1) ? eExtraRisk : eAddedRisk;
+  Anal.BMD_type = (options2[0] == 1) ? eExtraRisk : eAddedRisk;
   Anal.BMR = options1[0];
   Anal.alpha = options1[1];
   Anal.parms = pr.rows();

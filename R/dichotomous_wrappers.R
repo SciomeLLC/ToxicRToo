@@ -135,7 +135,9 @@ single_dichotomous_fit <- function(
         }
         model_type <- prior@mean
         if (model_type == "multistage") {
-            degree <- prior@degree
+            # priorClass has no `degree` slot; the multistage degree is the
+            # number of prior rows (parameters) minus 1 (g, b1..b_degree).
+            degree <- nrow(prior@prior) - 1
         }
         if (fit_type == "mle") {
             stop("A Bayesian prior model was specified, but MLE was requested.")

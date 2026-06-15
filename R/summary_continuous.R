@@ -372,6 +372,75 @@
     returnV
 }
 
+#' Summary method for BMD_continuous_fit_maximized objects
+#'
+#' @param object S4 object BMD_continuous_fit_maximized
+#' @param ... additional parameters (not used)
+#' @return invisibly, the summary list (class "summary_continuous_max")
+#' @rdname summary
+#' @aliases summary,BMD_continuous_fit_maximized,ANY-method
+#' @exportMethod summary
+setMethod("summary", "BMD_continuous_fit_maximized", function(object, ...) {
+    model <- list(
+        prior = object@prior,
+        options = object@options,
+        full_model = object@full_model,
+        bmd_dist = object@bmd_dist,
+        Deviance = object@Deviance
+    )
+    s_fit <- .summary_continuous_max(model, ...)
+    .print_summary_continuous_max(s_fit)
+    invisible(s_fit)
+})
+
+#' Summary method for BMD_continuous_fit_MCMC objects
+#'
+#' @param object S4 object BMD_continuous_fit_MCMC
+#' @param ... additional parameters (not used)
+#' @return invisibly, the summary list (class "summary_mcmc")
+#' @rdname summary
+#' @aliases summary,BMD_continuous_fit_MCMC,ANY-method
+#' @exportMethod summary
+setMethod("summary", "BMD_continuous_fit_MCMC", function(object, ...) {
+    model <- list(
+        prior = object@prior,
+        options = object@options,
+        full_model = object@full_model,
+        bmd_dist = object@bmd_dist,
+        mcmc_result = object@mcmc_result
+    )
+    # keep the class hint so .summary_continuous_mcmc selects the
+    # correct alpha index (continuous => options[4]).
+    class(model) <- "BMD_continuous_fit_MCMC"
+    s_fit <- .summary_continuous_mcmc(model, ...)
+    .print_summary_continuous_mcmc(s_fit)
+    invisible(s_fit)
+})
+
+#' Summary method for BMD_dichotomous_fit_MCMC objects
+#'
+#' @param object S4 object BMD_dichotomous_fit_MCMC
+#' @param ... additional parameters (not used)
+#' @return invisibly, the summary list (class "summary_mcmc")
+#' @rdname summary
+#' @aliases summary,BMD_dichotomous_fit_MCMC,ANY-method
+#' @exportMethod summary
+setMethod("summary", "BMD_dichotomous_fit_MCMC", function(object, ...) {
+    model <- list(
+        prior = object@prior,
+        options = object@options,
+        full_model = object@full_model,
+        bmd_dist = object@bmd_dist,
+        mcmc_result = object@mcmc_result
+    )
+    # class hint so .summary_continuous_mcmc selects the dichotomous
+    # alpha index (options[2]).
+    class(model) <- "BMD_dichotomous_fit_MCMC"
+    s_fit <- .summary_continuous_mcmc(model, ...)
+    .print_summary_continuous_mcmc(s_fit)
+    invisible(s_fit)
+})
+
 .print_summary_ma <- function(x, ...) { # nolint
     s_fit <- x
     message("Summary of single MA BMD\n\n")
