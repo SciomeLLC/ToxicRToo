@@ -217,7 +217,7 @@
         labs(
             x = "Dose",
             y = "Proportion",
-            title = paste(fit$full_model, sep = ",  Fit Type: ")
+            title = paste(fit$full_model, "MCMC", sep = ",  Fit Type: ")
         ) +
         theme_minimal() +
         xlim(0 - 5 * max(test_doses), 5 * max(test_doses))
@@ -369,7 +369,7 @@
         labs(
             x = "Dose",
             y = "Proportion",
-            title = paste(fit$full_model, sep = ",  Fit Type: ")
+            title = paste(fit$full_model, "Maximized", sep = ",  Fit Type: ")
         ) +
         theme_minimal()
 

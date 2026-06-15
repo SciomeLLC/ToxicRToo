@@ -160,6 +160,9 @@ ma_continuous_fit <- function(
     current_dists <- c("normal", "normal-ncv", "lognormal")
     fit_type <- tolower(fit_type)
     type_of_fit <- which(fit_type == c("laplace", "mcmc"))
+    if (identical(type_of_fit, integer(0))) {
+        stop("Please choose one of the following fit types: 'laplace','mcmc.'")
+    }
 
     if (!is.na(BMD_TYPE)) {
         warning("BMD_TYPE is deprecated. Please use BMR_TYPE instead")
@@ -368,7 +371,7 @@ ma_continuous_fit <- function(
             temp[[jj]] <- list()
             temp[[jj]]$mcmc_result <- tempm[[ii]]
             # remove the unecessary 'c' column from the exponential fit
-            if ("exp-3" %in% model_list[jj]) {
+            if ("exp-3" %in% model_list2[jj]) {
                 temp[[jj]]$mcmc_result$PARM_samples <-
                     temp[[jj]]$mcmc_result$PARM_samples[, -3]
             }
@@ -569,7 +572,7 @@ ma_continuous_fit <- function(
                 temp$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
 
                 if (max(temp_me[, 2]) < 1 - alpha) {
-                    bmd[3] <- 1e300
+                    temp$bmd[3] <- 1e300
                 }
             } else {
                 temp$bmd <- c(Inf, 0, Inf)
@@ -705,7 +708,7 @@ ma_dichotomous_fit <- function(
         model_list <- rep("", length(model_list))
         model_i <- rep(0, length(model_list))
         for (ii in seq_len(length(model_list))) {
-            if (!isClass(tmodel_list[[ii]], "priorClass")) {
+            if (!is(tmodel_list[[ii]], "priorClass")) {
                 stop(
                     "Prior is not the correct form.
                     Please create a priorClass object with create_prior_list."
@@ -891,15 +894,15 @@ ma_dichotomous_fit <- function(
                         method = "monoH.FC",
                         ties = mean
                     )
-                    temp[[ii]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
+                    temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
                     if (max(data_temp[, 2]) < 1 - alpha) {
-                        temp[[ii]]$bmd[3] <- 1e300
+                        temp[[jj]]$bmd[3] <- 1e300
                     }
                 } else {
-                    temp[[ii]]$bmd <- as.numeric(c(NA, NA, NA))
+                    temp[[jj]]$bmd <- as.numeric(c(NA, NA, NA))
                 }
             } else {
-                temp[[ii]]$bmd <- as.numeric(c(NA, NA, NA))
+                temp[[jj]]$bmd <- as.numeric(c(NA, NA, NA))
             }
 
             # te <- splinefun(
@@ -909,8 +912,8 @@ ma_dichotomous_fit <- function(
             # temp[[jj]]$bmd <- c(te(0.5), te(alpha), te(1 - alpha))
 
             # add NAs if bad hessian or NaN BMD
-            if (det(temp[[ii]]$covariance) < 0 || is.na(temp[[ii]]$bmd[1])) {
-                tempn$posterior_probs[ii] <- NA
+            if (det(temp[[jj]]$covariance) < 0 || is.na(temp[[jj]]$bmd[1])) {
+                tempn$posterior_probs[jj] <- NA
             }
 
             # class(temp[[jj]]) <- "BMDdich_fit_MCMC"

@@ -279,9 +279,9 @@
     )
     if (is.numeric(ma_temp_function)) {
         returnV$BMD <- c(NA, NA, NA)
+    } else {
+        returnV$BMD <- ma_temp_function(1 - c(1 - alpha, 0.5, alpha))
     }
-
-    returnV$BMD <- ma_temp_function(1 - c(1 - alpha, 0.5, alpha))
     names(returnV$BMD) <- c("BMDL", "BMD", "BMDU")
     returnV$alpha <- alpha
 
@@ -361,10 +361,9 @@
     )
     if (is.numeric(ma_temp_function)) {
         returnV$BMD <- c(NA, NA, NA)
+    } else {
+        returnV$BMD <- ma_temp_function(1 - c(1 - alpha, 0.5, alpha))
     }
-
-
-    returnV$BMD <- ma_temp_function(1 - c(1 - alpha, 0.5, alpha))
     names(returnV$BMD) <- c("BMDL", "BMD", "BMDU")
     returnV$alpha <- alpha
 

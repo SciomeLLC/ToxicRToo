@@ -127,7 +127,7 @@ single_dichotomous_fit <- function(
     if (is.null(prior)) {
         prior <- .bayesian_prior_dich(model_type, degree)
     } else {
-        if (!isClass(prior, "priorClass")) {
+        if (!is(prior, "priorClass")) {
             stop(
                 "Prior is not the correct form.
         Please create a priorClass object with create_prior_list."

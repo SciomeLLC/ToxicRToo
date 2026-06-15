@@ -203,16 +203,6 @@ single_continuous_fit <- function(
     Y <- as.matrix(Y)
     D <- as.matrix(D)
 
-    dis_type <- which(distribution == c("normal", "normal-ncv", "lognormal"))
-
-    if (dis_type == 3) {
-        is_neg <- .check_negative_response(Y)
-        if (is_neg) {
-            stop("Can't fit a negative response to the log-normal
-            distribution.")
-        }
-    }
-
     DATA <- cbind(D, Y)
     test <- .check_for_na(DATA)
     Y <- Y[test == TRUE, , drop = FALSE]
@@ -228,7 +218,7 @@ single_continuous_fit <- function(
     if (!is.null(prior)) {
         # parse the prior
         # if (!("BMD_Bayes_continuous_model" %in% class(prior))) {
-        if (!isClass(prior, "priorClass")) {
+        if (!is(prior, "priorClass")) {
             stop(
                 "Prior is not the correct form.
         Please create a priorClass object with create_prior_list."
@@ -300,6 +290,23 @@ single_continuous_fit <- function(
         )
         PR <- t_prior_result@prior
     }
+
+    # Recompute the distribution code from the final distribution: a user prior
+    # overrides the `distribution` argument above. Validate before use so an
+    # invalid value yields the friendly message instead of an "argument is of
+    # length zero" error, and run the lognormal negative-response guard against
+    # the distribution actually used.
+    dis_type <- which(distribution == c("normal", "normal-ncv", "lognormal"))
+    if (identical(dis_type, integer(0))) {
+        stop('Please specify the distribution as one of the following:\n
+            "normal","normal-ncv","lognormal"')
+    }
+    if (dis_type == 3) {
+        if (.check_negative_response(Y)) {
+            stop("Can't fit a negative response to the log-normal distribution.")
+        }
+    }
+
     dmodel <- which(model_type == .continuous_models)
 
     fit_type <- tolower(fit_type)
@@ -319,12 +326,6 @@ single_continuous_fit <- function(
 
     if (rt == 4) {
         rt <- 6
-    }
-
-
-    if (identical(dis_type, integer(0))) {
-        stop('Please specify the distribution as one of the following:\n
-            "normal","normal-ncv","lognormal"')
     }
 
 

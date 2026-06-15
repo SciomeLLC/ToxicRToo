@@ -1173,7 +1173,7 @@ setMethod(
             ) +
             labs(
                 x = "Dose", y = "Proportion",
-                title = paste(x@full_model, sep = ",  Fit Type: ")
+                title = paste(x@full_model, "MCMC", sep = ",  Fit Type: ")
             ) +
             theme_minimal() +
             xlim(0 - 5 * max(test_doses), 5 * max(test_doses))
@@ -1323,7 +1323,7 @@ setMethod(
             labs(
                 x = "Dose",
                 y = "Proportion",
-                title = paste(x@full_model, sep = ",  Fit Type: ")
+                title = paste(x@full_model, "Maximized", sep = ",  Fit Type: ")
             ) +
             theme_minimal()
 
