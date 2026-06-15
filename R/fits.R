@@ -468,7 +468,11 @@ setMethod("show", "BMD_continuous_fit_MCMC", function(object) {
 })
 
 setMethod("show", "BMD_continuous_fit_maximized", function(object) {
-    cat("BMD Continuous Fit (Laplace)\n")
+    cat(
+        "BMD Continuous Fit (Maximized with",
+        ifelse(is.null(object@prior), "MLE", "Laplace"),
+        ")\n"
+    )
     cat("  Model:          ", object@full_model, "\n")
     cat("  BMD:            ", paste(object@bmd, collapse = ", "), "\n")
     # cat("  Maximum Posterior: ", object@maximum, "\n")
